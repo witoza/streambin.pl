@@ -142,7 +142,7 @@ app.get('/d/:file_uuid', function(req, res) {
 	D.func.do_stream(did);
 });
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/../_frontend/app'));
 app.set('port', (process.env.PORT || 9001));
 var server = http.createServer(app).listen(app.get('port'), function() {
 	console.log("StreamBin backend is running at: " + app.get('port'));
