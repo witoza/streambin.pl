@@ -14,6 +14,7 @@ angular
             };
 
             const host = location.origin;
+            console.log("location", location);
 
             $scope.theFiles = [];
 
