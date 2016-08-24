@@ -1,19 +1,19 @@
 function get_genid($http, cb) {
-    $http.get('/genid').then(function (data) {
+    $http.get('/streambin/genid').then(function (data) {
         console.log("generated uuid", data.data);
         cb(data.data);
     });
 }
 
 function get_genuuid($http, cb) {
-    $http.get('/genuuid').then(function (data) {
+    $http.get('/streambin/genuuid').then(function (data) {
         console.log("generated uuid", data.data);
         cb(data.data);
     });
 }
 
 function get_streams($http, dirId, cb) {
-    $http.get('/status', {
+    $http.get('/streambin/status', {
         params: {
             dir_uuid: dirId
         }
@@ -24,7 +24,7 @@ function get_streams($http, dirId, cb) {
 }
 
 function get_stats($http, cb) {
-    $http.get('/stats').then(function (data) {
+    $http.get('/streambin/stats').then(function (data) {
         console.log("get_stats", data.data);
         cb(data.data);
     });

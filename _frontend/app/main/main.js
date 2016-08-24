@@ -107,7 +107,7 @@ angular
 
             $scope.state = 1;
 
-            const binaryJsClient_ulr = host.replace(/^http/, 'ws') + '/binary-uploader-stream';
+            const binaryJsClient_ulr = host.replace(/^http/, 'ws') + '/streambin/binary-uploader-stream';
 
             const uploader = $scope.uploader = new FileUploader({
                 binaryJsClient_ulr: binaryJsClient_ulr,
