@@ -1,7 +1,10 @@
 <ul class="nav nav-tabs">
-	<li role="presentation" ng-class="{active: state==1}"><a ng-click="state=1" href><i class="glyphicon glyphicon-transfer"></i> Share Files</a></li>
-	<li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
-	<li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i class="glyphicon glyphicon-user"></i> Me</a></li>
+    <li role="presentation" ng-class="{active: state==1}"><a ng-click="state=1" href><i
+            class="glyphicon glyphicon-transfer"></i> Share Files</a></li>
+    <li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i
+            class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
+    <li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i
+            class="glyphicon glyphicon-user"></i> Me</a></li>
 </ul>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
@@ -11,8 +14,8 @@
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
-            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
-            Drag and drop here or
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select manually
                 </span>
@@ -26,9 +29,9 @@
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
-            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
-            Selected files {{ theFiles.length }} / 4<br/>
-            Drag and drop here or
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                Selected files {{ theFiles.length }} / 4<br/>
+                Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select manually
                 </span>
@@ -39,17 +42,21 @@
 
         <div ng-repeat="theFile in theFiles">
 
-            <center><h4><p>File <b>{{theFile.file.name}}</b> is being published !</p></h4></center>
-            <center><p>Download it via <b><a ng-href="{{ theFile.download_url }}">link below</a></b> or by scanning QR code on your phone</p></center>
+            <center>
+                <h4><p>File <b>{{theFile.file.name}}</b> is being published</p></h4>
+            </center>
+            <center><p>Download it via <b><a ng-href="{{ theFile.download_url }}">link below</a></b> or by scanning QR
+                code on your phone</p></center>
 
             <div class="row">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
                     <center>
-                        <input type="url" id="the_url" class="form-control" readonly value='{{ theFile.download_url }}' onfocus="this.select();" onmouseup="return false;"></input>
+                        <input type="url" id="the_url" class="form-control" readonly value='{{ theFile.download_url }}'
+                               onfocus="this.select();" onmouseup="return false;"></input>
                         <br/>
-                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'" text="theFile.download_url" image="true"></qr>
-                        <br/>
+                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                            text="theFile.download_url" image="true"></qr>
                         <br/>
 
                         File ID: <b>{{theFile.metadata.file_uuid}}</b>
@@ -64,24 +71,30 @@
                             Directory ID: none
                         </div>
 
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <span class="glyphicon glyphicon-share"></span>
                             Change Directory ...
                             <span class="caret"></span>
                         </button>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); " href>Remove Directory Information</a></li>
-                            <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); " href>Directory 'public'</a></li>
+                            <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); " href>Remove
+                                Directory Information</a></li>
+                            <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); " href>Directory
+                                'public'</a></li>
                             <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
-                                <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); " href>Directory '{{theFile.original_dir_uuid}}'</a>
+                                <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
+                                   href>Directory '{{theFile.original_dir_uuid}}'</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="change_dir_manual" placeholder="Type...">
+                                    <input type="text" class="form-control" ng-model="change_dir_manual"
+                                           placeholder="Type...">
                                     <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="theFile.metadata.dir_uuid=change_dir_manual; theFile.chnage_dir_uuid();" >Apply</button>
+                                        <button type="button" class="btn btn-default"
+                                                ng-click="theFile.metadata.dir_uuid=change_dir_manual; theFile.chnage_dir_uuid();">Apply</button>
                                     </span>
                                 </div>
                             </li>
@@ -124,9 +137,10 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ instance.total_received  | bytes }}</td>
+                        <td>{{ instance.total_received | bytes }}</td>
                         <td>{{ instance.status }}
-                            <button ng-show="instance.status == 'Active'" type="button" class="btn btn-warning btn-xs" ng-click="instance.cancel()">
+                            <button ng-show="instance.status == 'Active'" type="button" class="btn btn-warning btn-xs"
+                                    ng-click="instance.cancel()">
                                 <span class="glyphicon"></span> Cancel
                             </button>
                         </td>
@@ -138,185 +152,217 @@
 
         </div>
 
-        <p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a ng-click="close_page()" href>close</a> this page</p>
+        <p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a
+                ng-click="close_page()" href>close</a> this page</p>
 
     </div>
 </div>
 
 <div ng-show="state==2">
 
-	<br>
-	<p>Select Directory below to browse or
-		<button class="btn btn-default" data-toggle="modal" data-target="#myModal1">
-			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach Directory
-		</button>
-	</p>
-	<ul class="nav nav-pills">
-		<li role="presentation" ng-repeat="item in you_streams">
-			<a ng-click="get_stream_data(item)" href><span ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}" aria-hidden="true"></span> {{ item }}</a>
-		</li>
-	</ul>
+    <br>
+    <p>Select Directory below to browse or
+        <button class="btn btn-default" data-toggle="modal" data-target="#myModal1">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach Directory
+        </button>
+    </p>
+    <ul class="nav nav-pills">
+        <li role="presentation" ng-repeat="item in you_streams">
+            <a ng-click="get_stream_data(item)" href><span
+                    ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
+                    aria-hidden="true"></span> {{ item }}</a>
+        </li>
+    </ul>
 
-	<div ng-show="curr_stream != ''">
+    <div ng-show="curr_stream != ''">
 
-		<table class="table table-hover">
-			<thead>
-				<th>
-                    Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host +"/#/dir/"+curr_stream}}</b></a>
+        <table class="table table-hover">
+            <thead>
+            <th>
+                Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host
+                +"/#/dir/"+curr_stream}}</b></a>
+                <br/>
+                Found {{curr_streams_data.length }} file(s) in Directory {{curr_stream}}
+                <br/>
+
+                <div ng-show="curr_stream == 'public'">
+                    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
+                        <span class="glyphicon glyphicon-refresh"></span> Refresh
+                    </button>
+                </div>
+
+                <div ng-show="curr_stream != 'public'">
+                    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
+                        <span class="glyphicon glyphicon-refresh"></span> Refresh
+                    </button>
+                    <button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()">
+                        <span class="glyphicon glyphicon-remove"></span> Detach
+                    </button>
+                </div>
+            </th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in curr_streams_data">
+                <td><b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b> of size <b>{{
+                    item.file_meta.size / 1024 | number:2 }} KB</b>
+                    <!--	<br/>
+                        <i>{{ item.desc }}</i>-->
                     <br/>
-                    Found {{curr_streams_data.length }} file(s) in Directory {{curr_stream}}
+                    <a ng-href="{{ host }}/d/{{ item.file_meta.file_uuid }}">{{ host }}/d/{{ item.file_meta.file_uuid
+                        }}</a>
                     <br/>
-
-                    <div ng-show="curr_stream == 'public'">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()" >
-                            <span class="glyphicon glyphicon-refresh"></span> Refresh
-                        </button>
-                    </div>
-
-                    <div ng-show="curr_stream != 'public'">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()" >
-                            <span class="glyphicon glyphicon-refresh"></span> Refresh
-                        </button>
-                        <button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()" >
-                            <span class="glyphicon glyphicon-remove"></span> Detach
-                        </button>
-                    </div>
-				</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="item in curr_streams_data">
-					<td><b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b> of size <b>{{ item.file_meta.size / 1024 | number:2 }} KB</b>
-					<!--	<br/>
-						<i>{{ item.desc }}</i>-->
-						<br/>
-						<a ng-href="{{ host }}/d/{{ item.file_meta.file_uuid }}">{{ host }}/d/{{ item.file_meta.file_uuid }}</a>
-						<br/>
-						Downloaded OK# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+                    Downloaded OK# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div ng-show="state==3">
-	<br/>
+    <br/>
 
-    <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage of your browser</p>
+    <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage of your
+        browser</p>
 
     <form class="form-horizontal">
-      <div class="form-group">
-        <label for="lb1" class="col-sm-4 control-label">Directory ID which your files will be automatically published with</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="lb1" placeholder="Directory ID" ng-model="bind_dir_uuid">
+        <div class="form-group">
+            <label for="lb1" class="col-sm-4 control-label">Directory ID which your files will be automatically
+                published with</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="lb1" placeholder="Directory ID" ng-model="bind_dir_uuid">
+            </div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-default" ng-click="generate_random_dir_uuid()">Generate</button>
+                <button type="button" class="btn btn-default" ng-click="bind_dir_uuid = ''">Clear</button>
+            </div>
         </div>
-        <div class="col-sm-4">
-          <button type="button" class="btn btn-default" ng-click="generate_random_dir_uuid()">Generate</button>
-          <button type="button" class="btn btn-default" ng-click="bind_dir_uuid = ''">Clear</button>
+        <div class="form-group">
+            <label for="lb2" class="col-sm-4 control-label">Publisher nickname</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="lb2" placeholder="Publisher nickname"
+                       ng-model="bind_author">
+            </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="lb2" class="col-sm-4 control-label">Publisher nickname</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="lb2" placeholder="Publisher nickname" ng-model="bind_author">
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="button" class="btn btn-success" ng-click="saveMySettings()">Save</button>
+            </div>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-4 col-sm-8">
-           <button type="button" class="btn btn-success" ng-click="saveMySettings()">Save</button>
-        </div>
-      </div>
     </form>
 
 </div>
 
 <div ng-show="state==4">
-	<h2>Intro</h2>
-	<p><b>StreamBIN</b> allows you to use WebBrowser to share a file in the Internet as long as web page is opened.
-	It was build as a pet project to remedy the typical problem I had which was to send file from one laptop to the other without USB sticks, emails or services like Dropbox where you need an account.
-	It differs from all these solution in a way that it does not persist any data - everything is done in-flight and no account is needed, you can start downloading in seconds !
-	This works, as long as your web page is active, when you close/reload it, connection is closed, downloading on the other side stops and information about availability is destroyed.</p>
+    <h2>Intro</h2>
+    <p><b>StreamBIN</b> allows you to use WebBrowser to share a file in the Internet as long as web page is opened.
+        It was build as a pet project to remedy the typical problem I had which was to send file from one laptop to the
+        other without USB sticks, emails or services like Dropbox where you need an account.
+        It differs from all these solution in a way that it does not persist any data - everything is done in-flight and
+        no account is needed, you can start downloading in seconds.
+        This works, as long as your web page is active, when you close/reload it, connection is closed, downloading on
+        the other side stops and information about availability is destroyed.</p>
 
-	<h2>Features</h2>
-	<ul>
-		<li>Allowing user to send, and the other parties to receive files. For each file, unique, not possible to guess ID is generated which is used as a part of URL.
-		This file is known only to the publisher, and he needs to inform receiver about that</li>
-		<li>File is not uploaded to the server but streamed, so downloading can start instantly as no buffering in required and no data is persisted on the server side</li>
-		<li>No buffering is done on a server side. Server passes only chunks of raw data from client to receiver</li>
-		<li>There is a possibility to upload multiple files and group them in the Directory</li>
-		<li>File is streamed no sooner than the receiver requests the file</li>
-	</ul>
+    <h2>Features</h2>
+    <ul>
+        <li>Allowing user to send, and the other parties to receive files. For each file, unique, not possible to guess
+            ID is generated which is used as a part of URL.
+            This file is known only to the publisher, and he needs to inform receiver about that
+        </li>
+        <li>File is not uploaded to the server but streamed, so downloading can start instantly as no buffering in
+            required and no data is persisted on the server side
+        </li>
+        <li>No buffering is done on a server side. Server passes only chunks of raw data from client to receiver</li>
+        <li>There is a possibility to upload multiple files and group them in the Directory</li>
+        <li>File is streamed no sooner than the receiver requests the file</li>
+    </ul>
 
-	<h2>Use cases</h2>
-	<p>There are several possibilities to use this, off the top of my head, you can:</p>
-	<ul>
-		<li>Send file to your different machine e.x. from laptop to phone or laptop to laptop</li>
-		<li>Send file to a friend</li>
-		<li>Send file to a person you don't know - in real life - publish the file on your phone and let him scan the QR code, you don't have to share email or facebook account to send some picture</li>
-		<li>Share a file in anonymous way, both parties anonymous for instance in chats, IRCs</li>
-		<li>Share file with lots of people on the spot, e.x. you may or may not know the people, but want to share a picture - publish and allow them to scan QR code</li>
-	</ul>
+    <h2>Use cases</h2>
+    <p>There are several possibilities to use this, off the top of my head, you can:</p>
+    <ul>
+        <li>Send file to your different machine e.x. from laptop to phone or laptop to laptop</li>
+        <li>Send file to a friend</li>
+        <li>Send file to a person you don't know - in real life - publish the file on your phone and let him scan the QR
+            code, you don't have to share email or facebook account to send some picture
+        </li>
+        <li>Share a file in anonymous way, both parties anonymous for instance in chats, IRCs</li>
+        <li>Share file with lots of people on the spot, e.x. you may or may not know the people, but want to share a
+            picture - publish and allow them to scan QR code
+        </li>
+    </ul>
 
-	<h2>Anonymity</h2>
-	<ul>
-		<li>At no point application keeps information about the publisher or receiver in permanent form. The data needed to set up connection is kept in RAM for the duration of file publishing</li>
-		<li>No data is persisted on client or server side</li>
-		<li>All information needed to set up sender with receiver is destroyed after publisher closes/reloads the web page</li>
-		<li>Secure SSL connection is used</li>
-		<li>It is possible to figure out from what machine certain downloaded/uploaded happened by looking at the access log (it logs accessed URLs, not content) at the Host server, so please, don't upload anything illegal to download from other unknown people. That can be mitigated, if you own the host server, or it is installed somewhere when access logs are not kept</li>
-	</ul>
+    <h2>Anonymity</h2>
+    <ul>
+        <li>At no point application keeps information about the publisher or receiver in permanent form. The data needed
+            to set up connection is kept in RAM for the duration of file publishing
+        </li>
+        <li>No data is persisted on client or server side</li>
+        <li>All information needed to set up sender with receiver is destroyed after publisher closes/reloads the web
+            page
+        </li>
+        <li>It is possible to figure out from what machine certain downloaded/uploaded happened by looking at the access
+            log (it logs accessed URLs, not content) at the Host server, so please, don't upload anything illegal to
+            download from other unknown people. That can be mitigated, if you own the host server, or it is installed
+            somewhere when access logs are not kept
+        </li>
+    </ul>
 
-	<h2>Limits</h2>
-	<ul>
-		<li>10 concurrent streams, this is because of server is hosted not owned</li>
-	</ul>
+    <h2>Limits</h2>
+    <ul>
+        <li>10 concurrent streams, this is because of server is hosted not owned</li>
+    </ul>
 
-	<h2>Contact</h2>
-	<p>Comments, questions ? send me an e-mail at <a href="mailto:witomyapps@gmail.com?Subject=StreamBIN%20question">witomyapps@gmail.com</a></p>
+    <h2>Contact</h2>
+    <p>Comments, questions ? send me an e-mail at <a href="mailto:admin@streambin.pl?Subject=StreamBIN%20question">admin@streambin.pl</a>
+    </p>
 </div>
 
 <div ng-show="state==5">
-	<h2>Stats</h2>
-	{{ stats }}
+    <h2>Stats</h2>
+    {{ stats }}
 </div>
 
 <hr/>
 
 <div class="pull-left">
-	<small>
-		&copy; 2016 <a href="http://streambin.pl">streambin.pl</a>
-	</small>
+    <small>
+        &copy; 2016 <a href="http://streambin.pl">streambin.pl</a>
+    </small>
 </div>
 
 <div class="pull-right">
-	<small>	<a ng-click="state = 4; " href>Learn more</a></small>
-	-
-	<small> <a ng-click="showStats()" href>Stats</a></small>
-	-
-	<small> <a ng-click="state = 4; " href>Contact</a></small>
-	-
-	<small><a href="https://github.com/witoza/streambin.pl">GitHub</a></small>
-	<a href="https://github.com/witoza/streambin.pl"><i class="fa fa-github" aria-hidden="true"></i></a>
+    <small><a ng-click="state = 4; " href>Learn more</a></small>
+    -
+    <small><a ng-click="showStats()" href>Stats</a></small>
+    -
+    <small><a ng-click="state = 4; " href>Contact</a></small>
+    -
+    <small><a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a></small>
+    <a href="https://github.com/witoza/streambin.pl" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
 </div>
 
+<div class="clearfix">
+
 <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel1">Attach Directory</h4>
-      </div>
-      <div class="modal-body">
-		<p>Enter ID of Directory to attach</p>
-		<div class="form-group">
-			<input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory ID">
-		</div>
-		<p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage of your browser</p>
-     </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		<button type="button" class="btn btn-success" ng-click="add_dir()" data-dismiss="modal">Attach</button>
-      </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel1">Attach Directory</h4>
+            </div>
+            <div class="modal-body">
+                <p>Enter ID of Directory to attach</p>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory ID">
+                </div>
+                <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage
+                    of your browser</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" ng-click="add_dir()" data-dismiss="modal">Attach</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
