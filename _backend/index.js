@@ -188,13 +188,13 @@ app.get('/d/:file_uuid', function (req, res) {
 });
 
 app.use(express.static(__dirname + '/../_frontend/app'));
-app.set('port', (process.env.PORT || 9001));
 
-const server = http.createServer(app).listen(app.get('port'), function () {
-    logger.info("StreamBin backend is running at: " + app.get('port'));
+const http_port = 9001;
+const server = http.createServer(app).listen(http_port, function () {
+    logger.info("StreamBin backend is running at: " + http_port);
 });
 
-var wss = new WebSocket.Server({server: server, path: '/binary-uploader-stream/sync'});
+const wss = new WebSocket.Server({server: server, path: '/binary-uploader-stream/sync'});
 wss.on('connection', function connection(ws) {
 
     logger.info("new ws client connected");
