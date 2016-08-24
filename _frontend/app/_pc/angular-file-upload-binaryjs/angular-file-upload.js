@@ -140,7 +140,7 @@ module
                 var item = this.queue[index];
 
                 item._prepareToUploading();
-				
+
                 this.isUploading = true;
                 this.stream(item);
 
@@ -389,7 +389,7 @@ module
             };
 
 			/********************************************************************************************************************************/
-			
+
 			FileUploader.prototype.get_item_by_uuid = function (file_uuid) {
 				for (var i = 0; i < this.queue.length; i++) {
 					var item = this.queue[i];
@@ -399,12 +399,12 @@ module
 				}
 				return null;
 			};
-			
+
 			FileUploader.prototype.open_bjs_and_stream = function (item, did) {
 				console.log("opening bjs to stream for", item.metadata.file_uuid, did);
-				
+
 				var that = this;
-									
+
 				var W = {
 					did : did,
 					total_received : 0,
@@ -421,30 +421,30 @@ module
 						that.close_bjs(item, did, 'cancelled');
 					}
 				};
-				
+
 				item.instances.unshift(W);
-				
+
 				W.binaryJsClient = new BinaryClient(that.binaryJsClient_ulr);
 				W.binaryJsClient.on('error', function (e){
 					console.log("binaryJsClient error", e);
 					W.status = 'Error';
-					that._render();	
+					that._render();
 				});
-				
+
 				W.binaryJsClient.on('close', function (e){
 					console.log("binaryJsClient close", e);
-					that._render();	
+					that._render();
 				});
-				
+
 				W.binaryJsClient.on('open', function() {
 					console.log("streaming");
-					
+
 					var m = angular.extend({}, {did : W.did}, item.metadata);
-					
+
 					const stream = W.binaryJsClient.send(item._file, m);
 					stream.on('data', function(data) {
 						console.log("progress report", data);
-						
+
 						W.total_received = data.total_received;
 						W.progress = Math.round( (W.total_received / item.metadata.size) * 100);
 
@@ -454,11 +454,11 @@ module
 							that._onCompleteItem(item);
 						}
 
-						that._render();	
+						that._render();
 					});
 				});
 			}
-				
+
 			FileUploader.prototype.close_bjs = function (item, did, reason) {
 				console.log("closing bjs", item.metadata.file_uuid, did, reason);
 
@@ -466,15 +466,17 @@ module
 					if (item.instances[i].did === did) {
 						var W = item.instances[i];
 						W.status = 'Closed: ' + reason;
-						//W.binaryJsClient.destroy();
-						W.binaryJsClient = null;
+                        setTimeout(function () {
+                            W.binaryJsClient.close();
+                            W.binaryJsClient = null;
+                        },0);
 						break;
 					}
 				}
-				
+
 				this._render();
 			}
-				
+
 			FileUploader.prototype.send_availability = function(item) {
 				console.log("sending availability", item.metadata.file_uuid);
 				var S = {
@@ -484,7 +486,7 @@ module
 				this.socket.send(JSON.stringify(S));
 				this._render();
 			}
-			
+
 			function waitForSocketConnection(socket, callback){
 				setTimeout(
 					function () {
@@ -500,17 +502,17 @@ module
 						}
 					}, 100);
 			}
-			
+
             FileUploader.prototype.stream = function(item) {
 				if (item.isStreaming) {
 					throw "invalid state: item is being streamed";
 				}
 				item.isStreaming = true;
 				var that = this;
-				
+
 				if (that.socket == null) {
 					that.socket = new WebSocket(that.binaryJsClient_ulr+"/sync");
-					that.socket.onopen = function(evt) { 					
+					that.socket.onopen = function(evt) {
 						function send_ping() {
 							console.log("sending ping");
 							var S = {
@@ -526,18 +528,18 @@ module
 					};
 					that.socket.onmessage = function(evt) {
 						var cmd = JSON.parse(evt.data);
-						console.log("msg received", cmd);	
-						
+						console.log("msg received", cmd);
+
 						if (cmd.action == "do_stream") {
-							
+
 							var item = that.get_item_by_uuid(cmd.file_uuid);
-							that.open_bjs_and_stream(item, cmd.did);			
-							
+							that.open_bjs_and_stream(item, cmd.did);
+
 						} else if (cmd.action == "do_close") {
-							
+
 							var item = that.get_item_by_uuid(cmd.file_uuid);
 							that.close_bjs(item, cmd.did, cmd.reason);
-							
+
 						} else if (cmd.action == "do_error") {
 							console.log("error on backend");
 							alert("there is a backend problem: " + cmd.reason);
@@ -547,13 +549,13 @@ module
 					that.socket.onclose = function(evt) {
 						alert("connection to server has been broken");
 						location.reload();
-					}		
+					}
 				}
-				
+
 				waitForSocketConnection(that.socket, function() {
-					that.send_availability(item);	
+					that.send_availability(item);
 				});
-				
+
 				item.chnage_dir_uuid = function() {
 					var S = {
 						action: 'chnage_dir_uuid',
@@ -563,7 +565,7 @@ module
 					console.log("chnage dir_uuid", S);
 					that.socket.send(JSON.stringify(S));
 				};
-				
+
             }
 
             /**
