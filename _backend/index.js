@@ -96,7 +96,7 @@ app.get('/status', function (req, res) {
     if (dir_uuid == null) {
         dir_uuid = 'public';
     }
-    logger.log("get status for Directory", dir_uuid);
+    logger.info("get status for directory", dir_uuid);
 
     var R = [];
     var k = Object.keys(writers);
@@ -113,10 +113,10 @@ app.get('/status', function (req, res) {
 });
 
 app.get('/stats', function (req, res) {
-    logger.log("get server stats");
+    logger.info("get server stats");
     const R = {
-        'current_streams': Object.keys(writers).length
-    }
+        current_streams: Object.keys(writers).length
+    };
     res.json(R);
 });
 
@@ -134,7 +134,7 @@ app.get('/d/:file_uuid', function (req, res) {
         return;
     }
 
-    var R = {
+    const R = {
         download_start: Date.now(),
         id: did,
         req: req,
@@ -146,16 +146,16 @@ app.get('/d/:file_uuid', function (req, res) {
                 return;
             }
             R.closed = true;
-            console.log(file_uuid, did, ": closing downloader");
+            logger.info(file_uuid, did, ": closing downloader");
             var reason = null;
             if (D.data.file_meta.size == R.total_received) {
                 D.data.num_of_download_ok++;
-                console.log(file_uuid, did, ": gentle close reader - all data received");
+                logger.info(file_uuid, did, ": gentle close reader - all data received");
                 reason = 'download completed';
                 R.res.end();
             } else {
                 D.data.num_of_download_fail++;
-                console.log(file_uuid, did, ": connection broke");
+                logger.info(file_uuid, did, ": connection broke");
                 reason = 'client cancelled';
                 R.res.destroy();
             }
@@ -163,18 +163,18 @@ app.get('/d/:file_uuid', function (req, res) {
                 try {
                     D.func.do_close(did, reason);
                 } catch (err) {
-                    console.log(file_uuid, did, ": can't send info to client about that event: ", err);
+                    logger.info(file_uuid, did, ": can't send info to client about that event: ", err);
                 }
             }
-            console.log(file_uuid, did, ": removing downloader from registry");
+            logger.info(file_uuid, did, ": removing downloader from registry");
             delete D.downloaders[did];
         }
     };
 
     D.downloaders[did] = R;
 
-    var file = D.data.file_meta.name;
-    var filename = path.basename(file);
+    const file = D.data.file_meta.name;
+    const filename = path.basename(file);
 
     res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', 'attachment; filename=\"' + filename + '\"');
@@ -183,29 +183,30 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Content-length', D.data.file_meta.size);
 
-    console.log(file_uuid, did, ": ready to download");
+    logger.info(file_uuid, did, ": ready to download");
     D.func.do_stream(did);
 });
 
 app.use(express.static(__dirname + '/../_frontend/app'));
 app.set('port', (process.env.PORT || 9001));
-var server = http.createServer(app).listen(app.get('port'), function () {
-    console.log("StreamBin backend is running at: " + app.get('port'));
+
+const server = http.createServer(app).listen(app.get('port'), function () {
+    logger.info("StreamBin backend is running at: " + app.get('port'));
 });
 
 var wss = new WebSocket.Server({server: server, path: '/binary-uploader-stream/sync'});
 wss.on('connection', function connection(ws) {
 
-    console.log("new ws client connected");
+    logger.info("new ws client connected");
 
     ws.on('message', function incoming(message) {
         var S = JSON.parse(message);
         var file_uuid = S.meta.file_uuid;
 
         if (S.action == 'register') {
-            console.log(file_uuid, ": registering file with meta", message);
+            logger.info(file_uuid, ": registering file with meta", message);
             if (writers[file_uuid] != null) {
-                console.log(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
+                logger.info(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
                 return;
             }
             //throttling
@@ -215,7 +216,7 @@ wss.on('connection', function connection(ws) {
                     reason: 'too many concurrent clients. come back later',
                 }
                 var str = JSON.stringify(cmd);
-                console.log(file_uuid, ": sending", str);
+                logger.info(file_uuid, ": sending", str);
                 ws.send(str);
                 return;
             }
@@ -232,7 +233,7 @@ wss.on('connection', function connection(ws) {
                     _send: function (cmd) {
                         cmd.file_uuid = file_uuid;
                         var str = JSON.stringify(cmd);
-                        console.log(file_uuid, ": sending", str);
+                        logger.info(file_uuid, ": sending", str);
                         ws.send(str);
                     },
                     do_stream: function (did) {
@@ -259,22 +260,22 @@ wss.on('connection', function connection(ws) {
                 reason: 'ping',
             }
             var str = JSON.stringify(cmd);
-            console.log(file_uuid, ": sending", str);
+            logger.info(file_uuid, ": sending", str);
             ws.send(str);
         } else if (S.action == 'cancel') {
-            console.log(file_uuid, ": cancelling by user");
+            logger.info(file_uuid, ": cancelling by user");
             writers[file_uuid].downloaders[S.did].close(false);
         } else if (S.action == 'chnage_dir_uuid') {
-            console.log(file_uuid, ": changing dir_uuid", S);
+            logger.info(file_uuid, ": changing dir_uuid", S);
             writers[file_uuid].data.desc = S.desc;
             writers[file_uuid].data.file_meta.dir_uuid = S.meta.dir_uuid;
         } else {
-            console.log("unknovn WS command:", S.action)
+            logger.info("unknovn WS command:", S.action)
         }
     });
 
     function closeAllConnections() {
-        console.log("ending all connected to that ws");
+        logger.info("ending all connected to that ws");
         var k = Object.keys(writers);
         for (var i in k) {
             var D = writers[k[i]];
@@ -284,19 +285,19 @@ wss.on('connection', function connection(ws) {
                     var D2 = D.downloaders[k2[i2]];
                     D2.close(true);
                 }
-                console.log(k[i], "removing info about availability");
+                logger.info(k[i], "removing info about availability");
                 delete writers[k[i]];
             }
         }
     };
 
     ws.on('close', function (e) {
-        console.log('ws socket closed', e);
+        logger.info('ws socket closed', e);
         closeAllConnections();
     });
 
     ws.on('error', function (e) {
-        console.log('ws socket error', e);
+        logger.info('ws socket error', e);
         closeAllConnections();
     });
 
@@ -305,20 +306,20 @@ wss.on('connection', function connection(ws) {
 var bs = new BinaryServer({server: server, path: '/binary-uploader-stream'});
 bs.on('connection', function (client) {
 
-    console.log("new stream client connected");
+    logger.info("new stream client connected");
 
     client.on('error', function (msg) {
-        console.log("client Error:", msg);
+        logger.info("client Error:", msg);
     });
 
     client.on('close', function (e) {
-        console.log("client Close:", e);
+        logger.info("client Close:", e);
     });
 
     client.on('stream', function (stream, meta) {
         var file_uuid = meta.file_uuid;
         var did = meta.did;
-        console.log(file_uuid, did, ': received stream');
+        logger.info(file_uuid, did, ': received stream');
 
         var M = writers[file_uuid].data.file_meta;
         var D = writers[file_uuid].downloaders[did];
@@ -329,13 +330,13 @@ bs.on('connection', function (client) {
                 return;
             }
             if (onFinished.isFinished(D.req)) {
-                console.log(file_uuid, did, ": reader has closed");
+                logger.info(file_uuid, did, ": reader has closed");
                 D.close(true);
                 return;
             }
 
             D.total_received += data.length;
-            console.log(file_uuid, did, ': rcv[b]:', data.length, '; total rcv[%]:', Math.round((D.total_received / M.size) * 100), "; missing[b]:", M.size - D.total_received);
+            logger.info(file_uuid, did, ': rcv[b]:', data.length, '; total rcv[%]:', Math.round((D.total_received / M.size) * 100), "; missing[b]:", M.size - D.total_received);
             D.res.write(data);
 
             var progress = {
@@ -349,7 +350,7 @@ bs.on('connection', function (client) {
             if (D.closed) {
                 return;
             }
-            console.log(file_uuid, did, ": end of input stream");
+            logger.info(file_uuid, did, ": end of input stream");
             D.close(true);
         });
 
