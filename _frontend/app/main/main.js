@@ -10,14 +10,9 @@ angular
 
             $scope.$storage = $localStorage;
 
-            var host = location.origin;
-            if (host.startsWith("file")) {
-                host = "http://localhost:9001"
-            }
-            console.log("Host is", host);
+            const host = location.origin;
 
             $scope.theFiles = [];
-            $scope.host = host;
             $scope.options = {
                 should_apply: false,
                 op1: false,

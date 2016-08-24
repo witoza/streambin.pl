@@ -14,13 +14,6 @@ angular
 			};
 		}
 
-		var host = location.origin;
-		if (host.startsWith("file")) {
-			host = "http://localhost:9001"
-		}
-		$scope.host = host;
-		console.log("Host is", host);
-		
 		$scope.curr_stream = $routeParams.directoryId;
 		$scope.curr_streams_data = [];
 		

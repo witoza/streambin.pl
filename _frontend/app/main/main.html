@@ -1,8 +1,8 @@
 <ul class="nav nav-tabs">
 	<li role="presentation" ng-class="{active: state==1}"><a ng-click="state = 1; " href><span class="glyphicon glyphicon-transfer" aria-hidden="true"></span> Share Files</a></li>
-	<li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore($event)" href><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> Directories</a></li>
-	<li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe($event)" href><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Me</a></li>
-	<li role="presentation" ng-class="{active: state==6}"><a ng-click="showChat($event)" href><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Chat</a></li>
+	<li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> Directories</a></li>
+	<li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Me</a></li>
+	<li role="presentation" ng-class="{active: state==6}"><a ng-click="showChat()" href><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Chat</a></li>
 </ul>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
@@ -155,7 +155,7 @@
 	</p>
 	<ul class="nav nav-pills">
 		<li role="presentation" ng-repeat="item in you_streams">
-			<a ng-click="get_stream_data($event, item)" href><span ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}" aria-hidden="true"></span> {{ item }}</a>
+			<a ng-click="get_stream_data(item)" href><span ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}" aria-hidden="true"></span> {{ item }}</a>
 		</li>
 	</ul>
 
@@ -170,13 +170,13 @@
 				<br/>
 
 					<div ng-show="curr_stream == 'public'">
-						<button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir($event)" >
+						<button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()" >
 							<span class="glyphicon glyphicon-refresh"></span> Refresh
 						</button>
 					</div>
 
 					<div ng-show="curr_stream != 'public'">
-						<button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir($event)" >
+						<button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()" >
 							<span class="glyphicon glyphicon-refresh"></span> Refresh
 						</button>
 						<button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()" >
@@ -312,7 +312,7 @@
 
 	<ul class="nav nav-pills">
 		<li role="presentation" ng-repeat="item in you_channels">
-			<a ng-click="get_channel_data($event, item)" href><span ng-class="{'glyphicon glyphicon-star' : item==curr_channel, 'glyphicon glyphicon-star-empty' : item!=curr_channel}" aria-hidden="true"></span> {{ item }}</a>
+			<a ng-click="get_channel_data(item)" href><span ng-class="{'glyphicon glyphicon-star' : item==curr_channel, 'glyphicon glyphicon-star-empty' : item!=curr_channel}" aria-hidden="true"></span> {{ item }}</a>
 		</li>
 	</ul>
 
@@ -431,7 +431,7 @@
 <div class="pull-right">
 	<small>	<a ng-click="state = 4; " href>Learn more</a></small>
 	-
-	<small> <a ng-click="showStats($event)" href>Stats</a></small>
+	<small> <a ng-click="showStats()" href>Stats</a></small>
 	-
 	<small> <a ng-click="state = 4; " href>Contact</a></small>
 	-

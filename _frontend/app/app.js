@@ -1,19 +1,19 @@
 function get_genid($scope, $http, callback) {
-    $http.get($scope.host + '/genid').then(function (data) {
+    $http.get('/genid').then(function (data) {
         console.log("generated uuid", data.data);
         callback(data.data);
     });
 }
 
 function get_genuuid($scope, $http, callback) {
-    $http.get($scope.host + '/genuuid').then(function (data) {
+    $http.get('/genuuid').then(function (data) {
         console.log("generated uuid", data.data);
         callback(data.data);
     });
 }
 
 function get_streams($scope, $http, dirId, callback) {
-    $http.get($scope.host + '/status', {
+    $http.get('/status', {
         params: {
             dir_uuid: dirId
         }
@@ -24,7 +24,7 @@ function get_streams($scope, $http, dirId, callback) {
 }
 
 function get_stats($scope, $http, callback) {
-    $http.get($scope.host + '/stats').then(function (data) {
+    $http.get('/stats').then(function (data) {
         console.log("get_stats", data.data);
         callback(data.data);
     });
@@ -39,9 +39,9 @@ angular
         'sb.main',
         'sb.dir'])
 
-    .service('anchorSmoothScroll', function(){
+    .service('anchorSmoothScroll', function () {
 
-        this.scrollTo = function(eID) {
+        this.scrollTo = function (eID) {
 
             // This scrolling function
             // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
@@ -50,7 +50,8 @@ angular
             var stopY = elmYPosition(eID);
             var distance = stopY > startY ? stopY - startY : startY - stopY;
             if (distance < 100) {
-                scrollTo(0, stopY); return;
+                scrollTo(0, stopY);
+                return;
             }
             var speed = Math.round(distance / 20);
             if (speed >= 20) speed = 20;
@@ -59,14 +60,19 @@ angular
             var timer = 0;
             var i;
             if (stopY > startY) {
-                for ( i=startY; i<stopY; i+=step ) {
-                    setTimeout("window.scrollTo(0, "+leapY+")", timer * speed);
-                    leapY += step; if (leapY > stopY) leapY = stopY; timer++;
-                } return;
+                for (i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
             }
-            for ( i=startY; i>stopY; i-=step ) {
-                setTimeout("window.scrollTo(0, "+leapY+")", timer * speed);
-                leapY -= step; if (leapY < stopY) leapY = stopY; timer++;
+            for (i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
             }
 
             function currentYPosition() {
@@ -87,7 +93,8 @@ angular
                 while (node.offsetParent && node.offsetParent != document.body) {
                     node = node.offsetParent;
                     y += node.offsetTop;
-                } return y;
+                }
+                return y;
             }
 
         };
