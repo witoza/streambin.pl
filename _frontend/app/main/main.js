@@ -4,9 +4,9 @@ angular
         'ja.qr',
         'ngStorage',
         'ngRoute'])
-    .controller('mainCtrl', ['$window', '$scope', '$localStorage', '$http', 'anchorSmoothScroll', '$location', 'FileUploader',
+    .controller('mainCtrl',
 
-        function ($window, $scope, $localStorage, $http, anchorSmoothScroll, $location, FileUploader) {
+        function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
             $scope.$storage = $localStorage;
 
@@ -82,7 +82,7 @@ angular
 
                 console.log("get_stream_data", sname);
                 $scope.curr_stream = sname;
-                get_streams($scope, $http, sname, function (data) {
+                get_streams($http, sname, function (data) {
                     $scope.curr_streams_data = data;
                 });
             };
@@ -121,7 +121,7 @@ angular
                 console.log("tab change");
                 $scope.state = 5;
 
-                get_stats($scope, $http, function (data) {
+                get_stats($http, function (data) {
                     $scope.stats = data;
                 });
             };
@@ -133,7 +133,7 @@ angular
             };
 
             $scope.generate_radom_dir_uuid = function () {
-                get_genuuid($scope, $http, function (data) {
+                get_genuuid($http, function (data) {
                     $scope.bind_dir_uuid = data;
                 });
             };
@@ -168,7 +168,7 @@ angular
             uploader.onAfterAddingFile = function (fileItem) {
                 console.info('onAfterAddingFile', fileItem);
 
-                get_genid($scope, $http, function f(data) {
+                get_genid($http, function f(data) {
 
                     fileItem.metadata = {
                         file_uuid: data,
@@ -224,5 +224,5 @@ angular
 
             console.info('uploader', uploader);
 
-        }]
+        }
     );
