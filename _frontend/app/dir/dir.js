@@ -6,14 +6,6 @@ angular
 
         function ($scope, $localStorage, $http, $routeParams) {
 
-            $scope.$storage = $localStorage;
-
-            if (typeof String.prototype.startsWith != 'function') {
-                String.prototype.startsWith = function (str) {
-                    return this.indexOf(str) === 0;
-                };
-            }
-
             $scope.curr_stream = $routeParams.directoryId;
             $scope.curr_streams_data = [];
 

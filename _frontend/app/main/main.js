@@ -9,11 +9,9 @@ angular
         function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
             $scope.close_page = function () {
-                console.log("closing the page");
+                console.log("close_page");
                 $window.location = 'about:blank';
-            }
-
-            $scope.$storage = $localStorage;
+            };
 
             const host = location.origin;
 
@@ -22,17 +20,6 @@ angular
             if ($localStorage.you_streams == null) {
                 $localStorage.you_streams = ['public'];
             }
-
-            if ($localStorage.you_channels == null) {
-                $localStorage.you_channels = [
-                    'public',
-                    '/dev/null',
-                ];
-            }
-
-            $scope.you_channels = $localStorage.you_channels;
-            $scope.curr_channel_data = null;
-            $scope.curr_channel = "";
 
             $scope.you_streams = $localStorage.you_streams;
             $scope.curr_streams_data = [];
@@ -45,24 +32,12 @@ angular
                 if (d === "") {
                     return;
                 }
-                if ($scope.you_streams.indexOf(d) > -1) {
+                if ($scope.you_streams.includes(d)) {
                     console.log("already exists");
                     return;
                 }
                 $scope.you_streams.push(d);
                 $scope.dir_to_add = "";
-            };
-            $scope.get_channel_data = function (sname) {
-
-                console.log("get_channel_data", sname);
-                $scope.curr_channel = sname;
-
-                $scope.curr_channel_data = {
-                    name: sname,
-                    users: ['jola_' + sname, 'ola_' + sname, 'pytong_' + sname],
-                    text: ['jola: abrakadabra']
-                };
-
             };
 
             $scope.get_stream_data = function (sname) {
@@ -73,14 +48,16 @@ angular
                     $scope.curr_streams_data = data;
                 });
             };
+
             $scope.refreshStreamDir = function () {
 
-                console.log("refreshStreamDir")
+                console.log("refreshStreamDir");
                 $scope.get_stream_data($scope.curr_stream);
             };
+
             $scope.removeStreamDir = function () {
                 var d = $scope.curr_stream;
-                console.log("removeStreamDir", d)
+                console.log("removeStreamDir", d);
                 var i = $scope.you_streams.indexOf(d);
                 if (i > -1) {
                     $scope.you_streams.splice(i, 1);
@@ -113,17 +90,12 @@ angular
                 });
             };
 
-            $scope.showChat = function () {
-
-                console.log("tab change");
-                $scope.state = 6;
-            };
-
-            $scope.generate_radom_dir_uuid = function () {
+            $scope.generate_random_dir_uuid = function () {
                 get_genuuid($http, function (data) {
                     $scope.bind_dir_uuid = data;
                 });
             };
+
             $scope.saveMySettings = function () {
                 console.log("saveMySettings");
                 $localStorage.dir_uuid = $scope.bind_dir_uuid;
@@ -135,9 +107,9 @@ angular
 
             $scope.state = 1;
 
-            var binaryJsClient_ulr = host.replace(/^http/, 'ws') + '/binary-uploader-stream';
+            const binaryJsClient_ulr = host.replace(/^http/, 'ws') + '/binary-uploader-stream';
 
-            var uploader = $scope.uploader = new FileUploader({
+            const uploader = $scope.uploader = new FileUploader({
                 binaryJsClient_ulr: binaryJsClient_ulr,
                 socket: null,
             });
@@ -159,16 +131,16 @@ angular
 
                     fileItem.metadata = {
                         file_uuid: data,
-                        dir_uuid: $scope.$storage.dir_uuid,
-                        author: $scope.$storage.author,
+                        dir_uuid: $localStorage.dir_uuid,
+                        author: $localStorage.author,
                         name: fileItem._file.name,
                         size: fileItem._file.size
-                    }
+                    };
                     fileItem.options = $scope.options;
                     fileItem.download_url = host + "/d/" + fileItem.metadata.file_uuid;
                     fileItem.isStreaming = false;
                     fileItem.instances = [];
-                    fileItem.original_dir_uuid = $scope.$storage.dir_uuid;
+                    fileItem.original_dir_uuid = $localStorage.dir_uuid;
 
                     fileItem.upload();
 
