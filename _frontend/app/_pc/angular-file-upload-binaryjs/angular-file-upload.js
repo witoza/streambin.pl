@@ -441,14 +441,14 @@ module
 					
 					var m = angular.extend({}, {did : W.did}, item.metadata);
 					
-					W.stream = W.binaryJsClient.send(item._file, m);
-					W.stream.on('data', function(data) {
+					const stream = W.binaryJsClient.send(item._file, m);
+					stream.on('data', function(data) {
 						console.log("progress report", data);
 						
 						W.total_received = data.total_received;
 						W.progress = Math.round( (W.total_received / item.metadata.size) * 100);
 
-						if (W.total_received == item.metadata.size) {
+						if (W.total_received === item.metadata.size) {
 							W.progress = 100;
 							that._onSuccessItem(item);
 							that._onCompleteItem(item);
@@ -461,14 +461,13 @@ module
 				
 			FileUploader.prototype.close_bjs = function (item, did, reason) {
 				console.log("closing bjs", item.metadata.file_uuid, did, reason);
-				
+
 				for (var i = 0; i < item.instances.length; i++) {
-					if (item.instances[i].did == did) {
+					if (item.instances[i].did === did) {
 						var W = item.instances[i];
 						W.status = 'Closed: ' + reason;
-						W.binaryJsClient.destroy();
+						//W.binaryJsClient.destroy();
 						W.binaryJsClient = null;
-						W.stream = null;
 						break;
 					}
 				}
