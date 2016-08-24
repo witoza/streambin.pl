@@ -130,7 +130,7 @@ app.get('/d/:file_uuid', function (req, res) {
     const D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
         logger.info("file " + file_uuid + "not found");
-        res.end("file " + file_uuid + " not found");
+        res.status(404).send("file not found");
         return;
     }
 
