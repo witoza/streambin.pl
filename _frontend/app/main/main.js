@@ -8,29 +8,16 @@ angular
 
         function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
+            $scope.close_page = function () {
+                console.log("closing the page");
+                $window.location = 'about:blank';
+            }
+
             $scope.$storage = $localStorage;
 
             const host = location.origin;
 
             $scope.theFiles = [];
-            $scope.options = {
-                should_apply: false,
-                op1: false,
-                op2: false,
-                op3: false,
-                op4: false,
-                op5: false,
-
-                close_page: function () {
-                    console.log("closing the page");
-                    $window.location = 'about:blank';
-                }
-
-            };
-            $scope.applyOptions = function () {
-                console.log("apply options");
-                $scope.options.should_apply = true;
-            };
 
             if ($localStorage.you_streams == null) {
                 $localStorage.you_streams = ['public'];

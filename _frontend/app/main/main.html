@@ -1,8 +1,8 @@
 <ul class="nav nav-tabs">
-	<li role="presentation" ng-class="{active: state==1}"><a ng-click="state = 1; " href><span class="glyphicon glyphicon-transfer" aria-hidden="true"></span> Share Files</a></li>
-	<li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span> Directories</a></li>
-	<li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Me</a></li>
-	<li role="presentation" ng-class="{active: state==6}"><a ng-click="showChat()" href><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Chat</a></li>
+	<li role="presentation" ng-class="{active: state==1}"><a ng-click="" href><i class="glyphicon glyphicon-transfer"></i> Share Files</a></li>
+	<li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
+	<li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i class="glyphicon glyphicon-user"></i> Me</a></li>
+	<li role="presentation" ng-class="{active: state==6}"><a ng-click="showChat()" href><i class="glyphicon glyphicon-comment"></i> Chat</a></li>
 </ul>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
@@ -67,11 +67,12 @@
 									Directory ID: none
 								</div>
 
-								<button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 									<span class="glyphicon glyphicon-share"></span>
 									Change Directory ...
 									<span class="caret"></span>
 								</button>
+
 								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 									<li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); " href>Remove Directory Information</a></li>
 									<li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); " href>Directory 'public'</a></li>
@@ -137,9 +138,7 @@
 				</div>
 			</div>
 
-			<button class="btn btn-default" data-toggle="modal" data-target="#myModal">
-				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Close Options</button>
-			<p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a ng-click="options.close_page()" href>close</a> this page</p>
+			<p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a ng-click="close_page()" href>close</a> this page</p>
 
 		</div>
 	</div>
@@ -437,57 +436,6 @@
 	-
 	<small><a href="https://github.com/witoza/streambin.pl">GitHub</a></small>
 	<a href="https://github.com/witoza/streambin.pl"><i class="fa fa-github" aria-hidden="true"></i></a>
-</div>
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Options</h4>
-      </div>
-
-		<div class="modal-body">
-
-			<p>Close StreamBIN page (that will result in closing further publishing and close connected clients) and remove entry in WebBrowser history about entering StreamBIN when: <i>(you can select multiple options, will work in OR semantic)</i></p>
-			<div class="checkbox">
-			<label>
-				<input type="checkbox" ng-model="options.op1">first client downloads successfully
-			</label>
-			</div>
-
-			<div class="checkbox">
-			<label>
-				<input type="checkbox" ng-model="options.op2">first client downloads successfully or aborts downloading
-			</label>
-			</div>
-
-			<div class="checkbox">
-			<label>
-				<input type="checkbox" ng-model="options.op3">when user activity is detected (on mouse move) on StreamBIN page
-			</label>
-			</div>
-
-			<div class="checkbox">
-			<label>
-				<input type="checkbox" ng-model="options.op4">after 5 minutes of applying that option
-			</label>
-			</div>
-
-			<div class="checkbox">
-			<label>
-				<input type="checkbox" ng-model="options.op5">make this page look and act like google.com, but keep streaming in stealth
-			</label>
-			</div>
-
-		</div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		<button type="button" class="btn btn-danger" ng-click="applyOptions()" data-dismiss="modal">Apply options</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
