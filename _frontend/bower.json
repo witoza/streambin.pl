@@ -14,16 +14,16 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.5",
+    "bootstrap": "~3.3.7",
     "binaryjs": "0.2.1",
-    "angular": "1.4.6",
-    "angular-file-upload": "2.1.3",
+    "angular": "1.5.8",
+    "angular-file-upload": "2.3.4",
     "angular-file-upload-binaryjs": "1.2.0",
-    "ngstorage": "0.3.9",
+    "ngstorage": "0.3.11",
     "angular-qr": "0.2.0",
-	"angular-route": "~1.4.0"
+	"angular-route": "~1.5.8"
   },
   "resolutions": {
-    "angular": "1.4.6"
+    "angular": "1.5.8"
   }
 }
