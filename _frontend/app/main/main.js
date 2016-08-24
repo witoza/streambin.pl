@@ -13,7 +13,7 @@ angular
                 $window.location = 'about:blank';
             };
 
-            const host = location.origin + "/" + location.pathname;
+            const host = location.origin + location.pathname;
             console.log("host", host);
 
             $scope.theFiles = [];
@@ -108,7 +108,7 @@ angular
 
             $scope.state = 1;
 
-            const binaryJsClient_ulr = host.replace(/^http/, 'ws') + '/binary-uploader-stream';
+            const binaryJsClient_ulr = host.replace(/^http/, 'ws') + 'binary-uploader-stream';
 
             const uploader = $scope.uploader = new FileUploader({
                 binaryJsClient_ulr: binaryJsClient_ulr,
@@ -138,7 +138,7 @@ angular
                         size: fileItem._file.size
                     };
                     fileItem.options = $scope.options;
-                    fileItem.download_url = host + "/d/" + fileItem.metadata.file_uuid;
+                    fileItem.download_url = host + "d/" + fileItem.metadata.file_uuid;
                     fileItem.isStreaming = false;
                     fileItem.instances = [];
                     fileItem.original_dir_uuid = $localStorage.dir_uuid;
