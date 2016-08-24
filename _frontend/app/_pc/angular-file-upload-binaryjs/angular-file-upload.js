@@ -452,10 +452,6 @@ module
 							W.progress = 100;
 							that._onSuccessItem(item);
 							that._onCompleteItem(item);
-							
-							if (item.options.should_apply && (item.options.op1 || item.options.op2)) {
-								item.options.close_page();
-							}
 						}
 
 						that._render();	
@@ -477,11 +473,7 @@ module
 					}
 				}
 				
-				if (item.options.should_apply && item.options.op2) {
-					item.options.close_page();
-				}
-				
-				this._render();	
+				this._render();
 			}
 				
 			FileUploader.prototype.send_availability = function(item) {
