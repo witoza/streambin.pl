@@ -16,12 +16,9 @@
         outgoing traffic.</p>
 
     <pre>
+
     $ npm i --global streambin
     $ streambin
-    [2016-08-25 12:29:24.397] [INFO] [default] - process args []
-    [2016-08-25 12:29:24.404] [INFO] [default] - Serving frontend from C:\Users\user\AppData\Roaming\npm\node_modules\streambin/dist
-    [2016-08-25 12:29:24.418] [INFO] [default] - StreamBin backend is running at: 9001
-    ...
     </pre>
     <p>Now open http://localhost:9001 and share your files !</p>
 </div>
@@ -72,7 +69,7 @@
 
 
                     <center>
-                        <h4><p>File <b>{{theFile.file.name}}</b> is being published under:</p></h4>
+                        <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under:</p></h4>
                     </center>
 
 
@@ -235,31 +232,20 @@
 <div ng-show="state==3">
     <br/>
 
-    <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage of your
+    <p><span class="label label-warning">Warning</span> This will persist data in the Local Storage of your
         browser</p>
 
     <form class="form-horizontal">
         <div class="form-group">
-            <label for="lb1" class="col-sm-4 control-label">Directory ID which your files will be automatically
+            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be automatically
                 published with</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" id="lb1" placeholder="Directory ID" ng-model="bind_dir_uuid">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="lb1" placeholder="Directory" ng-model="bind_dir_uuid">
             </div>
-            <div class="col-sm-4">
-                <button type="button" class="btn btn-default" ng-click="generate_random_dir_uuid()">Generate</button>
-                <button type="button" class="btn btn-default" ng-click="bind_dir_uuid = ''">Clear</button>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="lb2" class="col-sm-4 control-label">Publisher nickname</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" id="lb2" placeholder="Publisher nickname"
-                       ng-model="bind_author">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-                <button type="button" class="btn btn-success" ng-click="saveMySettings()">Save</button>
+            <div class="col-sm-3">
+                <button type="button" class="btn btn-default btn-block" ng-click="bind_dir_uuid = ''">Clear</button>
+                <button type="button" class="btn btn-default btn-block" ng-click="generate_random_dir_uuid()">Set random</button>
+                <button type="button" class="btn btn-success btn-block" ng-click="saveMySettings()">Save</button>
             </div>
         </div>
     </form>

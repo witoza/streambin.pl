@@ -1,6 +1,6 @@
 <div class="row" ng-show="curr_stream != ''">
 
-    <h1>Directory <code>{{curr_stream}}</code></h1>
+    <h2>Directory <code>{{curr_stream}}</code></h2>
     <p>Found <b>{{curr_streams_data.length }}</b> files</p>
     <p>Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a></p>
 
@@ -23,7 +23,7 @@
             <tbody>
             <tr ng-repeat="item in curr_streams_data">
                 <td>
-                    <b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b>
+                    <b>{{ item.file_meta.name }}</b>
                 </td>
                 <td>
                     {{ item.file_meta.size | bytes }}

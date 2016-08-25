@@ -76,7 +76,6 @@ angular
                 $scope.state = 3;
 
                 $scope.bind_dir_uuid = $localStorage.dir_uuid;
-                $scope.bind_author = $localStorage.author;
             };
             $scope.showStats = function () {
 
@@ -97,7 +96,6 @@ angular
             $scope.saveMySettings = function () {
                 console.log("saveMySettings");
                 $localStorage.dir_uuid = $scope.bind_dir_uuid;
-                $localStorage.author = $scope.bind_author;
 
                 $scope.dir_to_add = $localStorage.dir_uuid;
                 $scope.add_dir();
@@ -122,7 +120,7 @@ angular
                     fileItem.metadata = {
                         file_uuid: data,
                         dir_uuid: $localStorage.dir_uuid,
-                        author: $localStorage.author,
+                        author: "j",
                         name: fileItem._file.name,
                         size: fileItem._file.size
                     };
