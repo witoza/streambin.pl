@@ -444,12 +444,13 @@ module
             FileUploader.prototype.close_bjs = function (item, did, reason) {
                 console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-                item.instances.forEach(function (instance) {
-                    if (instance.did === did) {
-                        instance.status = 'Closed: ' + reason;
-                        instance.stream.destroy();
-                    }
+                const m = item.instances.find(function (instance) {
+                    return instance.did === did;
                 });
+
+                m.status = 'Closed: ' + reason;
+                m.stream.pause();
+                m.stream.destroy();
 
                 this._render();
             };
@@ -481,7 +482,7 @@ module
                 this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
 
                 setInterval(function(){
-                    console.log("that.binaryJsClient", that.binaryJsClient);
+                    console.log("that.binaryJsClient", that.binaryJsClient, that.binaryJsClient._socket.bufferedAmount);
                 }, 2000);
 
                 this.binaryJsClient.on('error', function (e) {
