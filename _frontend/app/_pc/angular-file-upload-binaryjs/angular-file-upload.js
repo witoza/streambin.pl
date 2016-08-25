@@ -479,6 +479,11 @@ module
                 }
 
                 this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
+
+                setInterval(function(){
+                    console.log("that.binaryJsClient", that.binaryJsClient);
+                }, 2000);
+
                 this.binaryJsClient.on('error', function (e) {
                     console.warn("binaryJsClient error", e);
                     that._render();
@@ -547,7 +552,7 @@ module
             };
 
             /********************************************************************************************************************************/
-            
+
             /**
              * Inner callback
              * @param {File|Object} item
