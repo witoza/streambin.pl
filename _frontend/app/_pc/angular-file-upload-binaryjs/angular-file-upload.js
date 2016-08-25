@@ -463,13 +463,25 @@ module
             };
 
             FileUploader.prototype.send_availability = function (item) {
-                console.log("sending availability", item.metadata);
-                var S = {
-                    action: 'register',
-                    meta: item.metadata
-                };
-                this.socket.send(JSON.stringify(S));
-                this._render();
+
+                var self = this;
+
+                (function fn() {
+
+                    if (self.socket.readyState != 1) {
+                        setTimeout(fn, 1000);
+                        return;
+                    }
+
+                    console.log("sending availability", item.metadata);
+                    var S = {
+                        action: 'register',
+                        meta: item.metadata
+                    };
+                    self.socket.send(JSON.stringify(S));
+                    self._render();
+                })();
+
             };
 
             FileUploader.prototype.stream = function (item) {

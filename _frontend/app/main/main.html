@@ -50,8 +50,11 @@
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <b>Now streaming files:</b>
-                <div ng-repeat="tfile in theFiles">
-                    <span>{{tfile.metadata.name | json}}</span>
+                <div ng-repeat="theFile in theFiles">
+                    <span><code>{{theFile.metadata.name}}
+                        <b><a ng-href="{{ theFile.download_url }}"
+                              target="_blank">{{ theFile.download_url }}</a></b></code>
+                    </span>
                 </div>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
@@ -64,133 +67,146 @@
 
         <div ng-repeat="theFile in theFiles">
 
-            <center>
-                <h4><p>File <b>{{theFile.file.name}}</b> is being published</p></h4>
-            </center>
-            <center><p>Download it via <b><a ng-href="{{ theFile.download_url }}" target="_blank">link below</a></b></p>
-            </center>
+            <div class="panel panel-default">
+                <div class="panel-body">
 
-            <div class="row">
-                <div class="col-md-3"></div>
-                <div class="col-md-6">
+
                     <center>
-                        <div>
-                            <input type="url" id="the_url" class="form-control" readonly
-                                   value='{{ theFile.download_url }}'
-                                   onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
-                                   onmouseup="return false;"></input>
-                        </div>
-                        <br/>
-                        <div>
-                            <input type="url" id="the_url" class="form-control" readonly
-                                   value='curl -J -O  {{ theFile.download_url }}'
-                                   onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
-                                   onmouseup="return false;"></input>
-                        </div>
-                        <br/>
+                        <h4><p>File <b>{{theFile.file.name}}</b> is being published under:</p></h4>
+                    </center>
 
-                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                            text="theFile.download_url" image="true"></qr>
 
-                        <br/>
-                        <br/>
-                        <div ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
-                            <b>Directory:</b>
-                            <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
-                        </div>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <center>
 
-                        <div ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
-                            Directory: none
-                        </div>
+                                <p><b><a ng-href="{{ theFile.download_url }}" target="_blank">{{ theFile.download_url
+                                    }}</a></b></p>
 
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="glyphicon glyphicon-folder-open"></span>
-                             Change Directory ...
-                            <span class="caret"></span>
-                        </button>
+                                <div>
+                                    <input type="url" id="the_url" class="form-control" readonly
+                                           value='{{ theFile.download_url }}'
+                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                           onmouseup="return false;"></input>
+                                </div>
+                                <br/>
+                                <div>
+                                    <input type="url" id="the_url" class="form-control" readonly
+                                           value='curl -J -O  {{ theFile.download_url }}'
+                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                           onmouseup="return false;"></input>
+                                </div>
+                                <br/>
 
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); " href>Remove
-                                Directory Information</a></li>
-                            <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); " href>Directory
-                                <b>public</b></a></li>
-                            <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
-                                <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
-                                   href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="change_dir_manual"
-                                           placeholder="Directory">
-                                    <span class="input-group-btn">
+                                <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                                    text="theFile.download_url" image="true"></qr>
+
+                                <br/>
+                                <br/>
+                                <div ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
+                                    <b>Directory:</b>
+                                    <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
+                                </div>
+
+                                <div ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
+                                    Directory: none
+                                </div>
+
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                    Change Directory ...
+                                    <span class="caret"></span>
+                                </button>
+
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); "
+                                           href>Remove
+                                        Directory Information</a></li>
+                                    <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); "
+                                           href>Directory
+                                        <b>public</b></a></li>
+                                    <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
+                                        <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
+                                           href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" ng-model="change_dir_manual"
+                                                   placeholder="Directory">
+                                            <span class="input-group-btn">
                                         <button type="button" class="btn btn-default"
                                                 ng-click="theFile.metadata.dir_uuid=change_dir_manual; theFile.chnage_dir_uuid();">Set</button>
                                     </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </center>
-                </div>
-                <div class="col-md-3"></div>
-            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </center>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
 
-            <div ng-show="theFile.instances.length == 0">
-                <br/>
-                <p><b>There are no clients yet connected - share the link or QR code</b></p>
-            </div>
+                    <div ng-show="theFile.instances.length == 0">
+                        <br/>
+                        <p><b>There are no clients yet connected - share the link or QR code</b></p>
+                    </div>
 
-            <div ng-show="theFile.instances.length > 0">
-                <b><p>Download status:</p></b>
+                    <div ng-show="theFile.instances.length > 0">
+                        <b><p>Download status:</p></b>
 
-                <table class="table">
-                    <colgroup>
-                        <col class="col-sm-2">
-                        <col class="col-sm-4">
-                        <col class="col-sm-2">
-                        <col class="col-sm-4">
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>Client ID</th>
-                        <th>Progress</th>
-                        <th>Downloaded</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="instance in theFile.instances">
-                        <td>{{ instance.did }}</td>
-                        <td>
-                            <div class="progress" style="margin-bottom: 0;">
-                                <div class="progress-bar" role="progressbar"
-                                     ng-style="{ 'width': instance.progress + '%' }">{{ instance.progress }} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ instance.total_received | bytes }}</td>
-                        <td>
+                        <table class="table">
+                            <colgroup>
+                                <col class="col-sm-2">
+                                <col class="col-sm-4">
+                                <col class="col-sm-2">
+                                <col class="col-sm-4">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>Client ID</th>
+                                <th>Progress</th>
+                                <th>Downloaded</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="instance in theFile.instances">
+                                <td>{{ instance.did }}</td>
+                                <td>
+                                    <div class="progress" style="margin-bottom: 0;">
+                                        <div class="progress-bar" role="progressbar"
+                                             ng-style="{ 'width': instance.progress + '%' }">{{ instance.progress }} %
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ instance.total_received | bytes }}</td>
+                                <td>
                             <span ng-show="instance.status_code === 200">
                                 <span class="label label-success">File received</span>
                             </span>
-                            <span ng-show="instance.status_code === -1">
+                                    <span ng-show="instance.status_code === -1">
                                 <span class="label label-warning">Error:</span> {{ instance.status }}
                             </span>
-                            <button ng-show="instance.status === 'Active'" type="button" class="btn btn-warning btn-xs"
-                                    ng-click="instance.cancel()">
-                                <span class="glyphicon"></span> Cancel
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                                    <button ng-show="instance.status === 'Active'" type="button"
+                                            class="btn btn-warning btn-xs"
+                                            ng-click="instance.cancel()">
+                                        <span class="glyphicon"></span> Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                <p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a
-                        ng-click="close_page()" href>close</a> this page</p>
+                        <p>To cancel publishing and close all the clients <a
+                                href="javascript:location.reload();">reload</a> or <a
+                                ng-click="close_page()" href>close</a> this page</p>
 
+                    </div>
+
+                </div>
             </div>
-
         </div>
 
     </div>
