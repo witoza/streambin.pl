@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "bin": {
-	  "run-streambin": "index.js \dist"
+	  "run-streambin": "index.js \\dist"
   },
   "dependencies": {
     "binaryjs": "0.2.1",
