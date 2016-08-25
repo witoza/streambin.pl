@@ -12,7 +12,8 @@
 
 <div ng-show="state=='tab_npm'">
     <br/>
-    <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and outgoing traffic.</p>
+    <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
+        outgoing traffic.</p>
 
     <pre>
     $ npm i --global streambin
@@ -66,8 +67,8 @@
             <center>
                 <h4><p>File <b>{{theFile.file.name}}</b> is being published</p></h4>
             </center>
-            <center><p>Download it via <b><a ng-href="{{ theFile.download_url }}" target="_blank">link below</a></b> or by scanning QR
-                code on your phone. Click on the link to copy it to clipboard</p></center>
+            <center><p>Download it via <b><a ng-href="{{ theFile.download_url }}" target="_blank">link below</a></b></p>
+            </center>
 
             <div class="row">
                 <div class="col-md-3"></div>
@@ -79,27 +80,33 @@
                                    onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
                                    onmouseup="return false;"></input>
                         </div>
-                        <p></p>
+                        <br/>
+                        <div>
+                            <input type="url" id="the_url" class="form-control" readonly
+                                   value='curl -J -O  {{ theFile.download_url }}'
+                                   onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                   onmouseup="return false;"></input>
+                        </div>
+                        <br/>
+
                         <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                             text="theFile.download_url" image="true"></qr>
-                        <br/>
 
-                        File ID: <b>{{theFile.metadata.file_uuid}}</b>
                         <br/>
-
+                        <br/>
                         <div ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
-                            Directory ID:
+                            <b>Directory:</b>
                             <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
                         </div>
 
                         <div ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
-                            Directory ID: none
+                            Directory: none
                         </div>
 
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="glyphicon glyphicon-share"></span>
-                            Change Directory ...
+                            <span class="glyphicon glyphicon-folder-open"></span>
+                             Change Directory ...
                             <span class="caret"></span>
                         </button>
 
@@ -107,16 +114,16 @@
                             <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); " href>Remove
                                 Directory Information</a></li>
                             <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); " href>Directory
-                                'public'</a></li>
+                                <b>public</b></a></li>
                             <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
                                 <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
-                                   href>Directory '{{theFile.original_dir_uuid}}'</a>
+                                   href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <div class="input-group">
                                     <input type="text" class="form-control" ng-model="change_dir_manual"
-                                           placeholder="Directory ID">
+                                           placeholder="Directory">
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default"
                                                 ng-click="theFile.metadata.dir_uuid=change_dir_manual; theFile.chnage_dir_uuid();">Set</button>
@@ -179,12 +186,12 @@
                     </tbody>
                 </table>
 
+                <p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a
+                        ng-click="close_page()" href>close</a> this page</p>
+
             </div>
 
         </div>
-
-        <p>To cancel publishing and close all the clients <a href="javascript:location.reload();">reload</a> or <a
-                ng-click="close_page()" href>close</a> this page</p>
 
     </div>
 </div>
