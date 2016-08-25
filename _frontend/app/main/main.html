@@ -165,7 +165,7 @@
                         <td>{{ instance.total_received | bytes }}</td>
                         <td>
                             <span ng-show="instance.status_code === 200">
-                                <span class="label label-success">OK</span>
+                                <span class="label label-success">File received</span>
                             </span>
                             <span ng-show="instance.status_code === -1">
                                 <span class="label label-warning">Error:</span> {{ instance.status }}

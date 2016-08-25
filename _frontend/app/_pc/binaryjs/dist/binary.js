@@ -1493,7 +1493,7 @@ BinaryClient.prototype.send = function(data, meta){
 
   var that = this;
   function ready_to_read_fn() {
-    return that._socket.bufferedAmount === 0;
+    return that._socket.bufferedAmount < 100000;
   };
 
   var stream = this.createStream(meta);
