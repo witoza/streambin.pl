@@ -6,7 +6,7 @@
     <li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i
             class="glyphicon glyphicon-user"></i> Me</a></li>
     <li role="presentation" ng-class="{active: state=='tab_npm'}"><a ng-click="state='tab_npm'" href><i
-            class="fa fa-code" aria-hidden="true"></i> npm</a></li>
+            class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
 </ul>
 
 
@@ -76,7 +76,7 @@
                         <div>
                             <input type="url" id="the_url" class="form-control" readonly
                                    value='{{ theFile.download_url }}'
-                                   onfocus="this.select();document.execCommand('copy');var cp = $('<p>Copied to clipboard</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                   onfocus="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
                                    onmouseup="return false;"></input>
                         </div>
                         <p></p>

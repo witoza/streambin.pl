@@ -116,7 +116,6 @@ angular
         };
 
     })
-
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.when('/', {
@@ -128,4 +127,14 @@ angular
             }).otherwise({
                 redirectTo: '/'
             });
-        }]);
+        }])
+
+    .run(function ($rootScope, $location, $timeout) {
+
+        console.log("Welcome to The Machine");
+
+        const host = location.origin + location.pathname;
+        console.log("host", host);
+
+        $rootScope.host = host;
+    });

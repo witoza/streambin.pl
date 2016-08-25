@@ -402,7 +402,7 @@ module
 
                 var that = this;
 
-                var W = {
+                var Instance = {
                     did: did,
                     total_received: 0,
                     progress: 0,
@@ -412,45 +412,50 @@ module
                         var S = {
                             action: 'cancel',
                             meta: item.metadata,
-                            did: W.did
+                            did: Instance.did
                         }
                         that.socket.send(JSON.stringify(S));
                         that.close_bjs(item, did, 'cancelled');
                     }
                 };
 
-                item.instances.unshift(W);
+                item.instances.unshift(Instance);
 
-                var m = angular.extend({}, {did: W.did}, item.metadata);
+                var m = angular.extend({}, {did: Instance.did}, item.metadata);
 
                 const stream = this.binaryJsClient.send(item._file, m);
                 stream.on('data', function (data) {
                     console.log("progress report", data);
 
-                    W.total_received = data.total_received;
-                    W.progress = Math.round((W.total_received / item.metadata.size) * 100);
+                    Instance.total_received = data.total_received;
+                    Instance.progress = Math.round((Instance.total_received / item.metadata.size) * 100);
 
-                    if (W.total_received === item.metadata.size) {
-                        W.progress = 100;
+                    if (Instance.total_received === item.metadata.size) {
+                        Instance.progress = 100;
                         that._onSuccessItem(item);
                         that._onCompleteItem(item);
                     }
 
                     that._render();
                 });
-                W.stream = stream;
+                Instance.stream = stream;
             };
 
             FileUploader.prototype.close_bjs = function (item, did, reason) {
                 console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-                const m = item.instances.find(function (instance) {
+                const Instance = item.instances.find(function (instance) {
                     return instance.did === did;
                 });
 
-                m.status = 'Closed: ' + reason;
-                m.stream.pause();
-                m.stream.destroy();
+                Instance.status = 'Closed: ' + reason;
+                Instance.stream.pause();
+                Instance.stream.destroy();
+
+                if (reason === "download completed") {
+                    Instance.progress = 100;
+                    Instance.status.code = 200;
+                }
 
                 this._render();
             };
