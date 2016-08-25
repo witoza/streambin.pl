@@ -480,8 +480,7 @@ module
 
                 this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
                 this.binaryJsClient.on('error', function (e) {
-                    console.log("binaryJsClient error", e);
-                    alert("there is a binaryJsClient problem");
+                    console.warn("binaryJsClient error", e);
                     that._render();
                 });
 
