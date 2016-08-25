@@ -1,10 +1,13 @@
 {
   "name": "streambin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "StreamBIN",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
+  },
+  "bin": {
+	  "run-streambin": "index.js"
   },
   "dependencies": {
     "binaryjs": "0.2.1",
