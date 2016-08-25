@@ -4,7 +4,7 @@
   "description": "StreamBIN",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js /../_frontend/app"
   },
   "bin": {
 	  "streambin": "index.js"
