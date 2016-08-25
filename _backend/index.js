@@ -190,8 +190,7 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', 'attachment; filename=\"' + filename + '\"');
     res.setHeader('Content-Transfer-Encoding', 'binary');
-    res.setHeader('Expires', '0');
-    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
 
     logger.info(file_uuid, did, ": ready to download");
