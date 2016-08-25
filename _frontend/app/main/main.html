@@ -76,7 +76,7 @@
                         <div>
                             <input type="url" id="the_url" class="form-control" readonly
                                    value='{{ theFile.download_url }}'
-                                   onfocus="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                   onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
                                    onmouseup="return false;"></input>
                         </div>
                         <p></p>
