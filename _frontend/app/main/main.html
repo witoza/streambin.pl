@@ -204,19 +204,18 @@
         <table class="table table-hover">
             <thead>
             <th>
-                Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host
-                +"/#/dir/"+curr_stream}}</b></a>
+                Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a>
                 <br/>
                 Found {{curr_streams_data.length }} file(s) in Directory {{curr_stream}}
                 <br/>
 
-                <div ng-show="curr_stream == 'public'">
+                <div ng-show="curr_stream === 'public'">
                     <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
                         <span class="glyphicon glyphicon-refresh"></span> Refresh
                     </button>
                 </div>
 
-                <div ng-show="curr_stream != 'public'">
+                <div ng-show="curr_stream !== 'public'">
                     <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
                         <span class="glyphicon glyphicon-refresh"></span> Refresh
                     </button>
@@ -233,7 +232,7 @@
                     <!--	<br/>
                         <i>{{ item.desc }}</i>-->
                     <br/>
-                    <a ng-href="{{ host }}/d/{{ item.file_meta.file_uuid }}">{{ host }}/d/{{ item.file_meta.file_uuid
+                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid
                         }}</a>
                     <br/>
                     Downloaded OK# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>

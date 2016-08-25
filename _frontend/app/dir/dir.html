@@ -11,9 +11,9 @@
         <tr ng-repeat="item in curr_streams_data">
             <td><b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b> of size <b>{{ item.file_meta.size | bytes }}</b>
                 <br/>
-                <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}/d/{{ item.file_meta.file_uuid }}</a>
+                <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid }}</a>
                 <br/>
-                Downloaded OK# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
+                Downloaded: Success# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
             </td>
         </tr>
         </tbody>
