@@ -193,6 +193,9 @@ var args = process.argv.slice(2);
 
 logger.info("process args", args);
 var app_dir = args[0];
+if (!app_dir) {
+    app_dir = "/dist"
+}
 
 app.use(express.static(__dirname + app_dir));
 logger.info("Serving frontend from", __dirname + app_dir);
