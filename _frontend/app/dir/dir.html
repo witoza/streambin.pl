@@ -1,21 +1,45 @@
-<div class="row-fluid" ng-show="curr_stream != ''">
-    <table class="table table-hover">
-        <thead>
-        <th>Found {{curr_streams_data.length }} file(s) in Directory {{curr_stream}}
-            <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
-                <span class="glyphicon glyphicon-refresh"></span> Refresh
-            </button>
-        </th>
-        </thead>
-        <tbody>
-        <tr ng-repeat="item in curr_streams_data">
-            <td><b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b> of size <b>{{ item.file_meta.size | bytes }}</b>
-                <br/>
-                <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid }}</a>
-                <br/>
-                Downloaded: Success# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="row" ng-show="curr_stream != ''">
+
+    <h1>Directory <code>{{curr_stream}}</code></h1>
+    <p>Found <b>{{curr_streams_data.length }}</b> files</p>
+    <p>Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a></p>
+
+    <div ng-show="curr_streams_data.length >0">
+
+        <p>Download URL (zip of all files): <b><a ng-href="{{ host }}d/{{ curr_stream }}.zip">{{ host }}d/{{ curr_stream }}.zip</a></b></p>
+
+        <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
+            <span class="glyphicon glyphicon-refresh"></span> Refresh
+        </button>
+        <br/>
+
+        <table class="table table-hover">
+            <thead>
+            <th>Name</th>
+            <th>Size</th>
+            <th>URL</th>
+            <th>Downloaded stats</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in curr_streams_data">
+                <td>
+                    <b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b>
+                </td>
+                <td>
+                    {{ item.file_meta.size | bytes }}
+                </td>
+                <td>
+                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid
+                        }}</a>
+                </td>
+                <td>
+                    Success# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <br/>
+    </div>
 </div>

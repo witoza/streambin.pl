@@ -228,48 +228,8 @@
         </li>
     </ul>
 
-    <div ng-show="curr_stream != ''">
+    <div ng-include="'dir/dir.html'"></div>
 
-        <table class="table table-hover">
-            <thead>
-            <th>
-                Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a>
-                <br/>
-                Found {{curr_streams_data.length }} file(s) in Directory {{curr_stream}}
-                <br/>
-
-                <div ng-show="curr_stream === 'public'">
-                    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
-                        <span class="glyphicon glyphicon-refresh"></span> Refresh
-                    </button>
-                </div>
-
-                <div ng-show="curr_stream !== 'public'">
-                    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
-                        <span class="glyphicon glyphicon-refresh"></span> Refresh
-                    </button>
-                    <button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()">
-                        <span class="glyphicon glyphicon-remove"></span> Detach
-                    </button>
-                </div>
-            </th>
-            </thead>
-            <tbody>
-            <tr ng-repeat="item in curr_streams_data">
-                <td><b>{{ item.file_meta.name }}</b> by <b>{{ item.file_meta.author }}</b> of size <b>{{
-                    item.file_meta.size / 1024 | number:2 }} KB</b>
-                    <!--	<br/>
-                        <i>{{ item.desc }}</i>-->
-                    <br/>
-                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid
-                        }}</a>
-                    <br/>
-                    Downloaded OK# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
 
 <div ng-show="state==3">
