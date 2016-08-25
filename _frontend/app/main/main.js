@@ -114,13 +114,6 @@ angular
                 binaryJsClient_ulr: binaryJsClient_ulr
             });
 
-            uploader.filters.push({
-                name: 'customFilter',
-                fn: function (item /*{File|FileLikeObject}*/, options) {
-                    return this.queue.length < 4;
-                }
-            });
-
             uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
                 console.info('onWhenAddingFileFailed', item, filter, options);
             };
@@ -145,6 +138,7 @@ angular
                     fileItem.upload();
 
                     $scope.theFiles.push(fileItem);
+
                     setTimeout(function () {
                         anchorSmoothScroll.scrollTo("step2");
                     }, 50);

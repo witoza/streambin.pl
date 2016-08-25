@@ -472,79 +472,79 @@ module
                 item.isStreaming = true;
                 var that = this;
 
-                if (this.binaryJsClient != null) {
-                    throw new Error("binaryJsClient already created");
+
+                if (this.binaryJsClient == null) {
+                    this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
+
+                    this.binaryJsClient.on('error', function (e) {
+                        console.warn("binaryJsClient error", e);
+                        that._render();
+                    });
+
+                    this.binaryJsClient.on('close', function (e) {
+                        console.log("binaryJsClient close", e);
+                        that._render();
+                    });
                 }
-                if (this.socket != null) {
-                    throw new Error("socket already created");
-                }
 
-                this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
+                if (this.socket == null) {
+                    this.socket = new WebSocket(that.binaryJsClient_ulr + "/sync");
+                    this.socket.onopen = function (evt) {
+                        console.log("connection has been opened");
+                        that.send_availability(item);
 
-                this.binaryJsClient.on('error', function (e) {
-                    console.warn("binaryJsClient error", e);
-                    that._render();
-                });
-
-                this.binaryJsClient.on('close', function (e) {
-                    console.log("binaryJsClient close", e);
-                    that._render();
-                });
-
-                this.socket = new WebSocket(that.binaryJsClient_ulr + "/sync");
-                this.socket.onopen = function (evt) {
-                    console.log("connection has been opened");
-                    that.send_availability(item);
-
-                    function send_ping() {
-                        console.log("sending ping");
-                        var S = {
-                            action: 'ping',
-                            meta: {
-                                file_uuid: 'ping'
+                        function send_ping() {
+                            console.log("sending ping");
+                            var S = {
+                                action: 'ping',
+                                meta: {
+                                    file_uuid: 'ping'
+                                }
                             }
+                            that.socket.send(JSON.stringify(S));
                         }
-                        that.socket.send(JSON.stringify(S));
-                    }
 
-                    //every 10 sec ping
-                    that.socket.ping_timer = setInterval(send_ping, 15000);
-                };
-                this.socket.onmessage = function (evt) {
-                    var cmd = JSON.parse(evt.data);
-                    console.log("command received", cmd);
-
-                    if (cmd.action === "do_stream") {
-
-                        var item = that.get_item_by_uuid(cmd.file_uuid);
-                        that.open_bjs_and_stream(item, cmd.did);
-
-                    } else if (cmd.action === "do_close") {
-
-                        var item = that.get_item_by_uuid(cmd.file_uuid);
-                        that.close_bjs(item, cmd.did, cmd.reason);
-
-                    } else if (cmd.action === "do_error") {
-                        console.log("error on backend", cmd);
-                        alert("there is a backend problem: " + cmd.reason);
-                        location.reload();
-                    }
-                };
-                this.socket.onclose = function (evt) {
-                    console.log("onclose", evt);
-                    alert("sync connection to server has been closed");
-                    location.reload();
-                };
-
-                item.chnage_dir_uuid = function () {
-                    var S = {
-                        action: 'chnage_dir_uuid',
-                        meta: item.metadata,
-                        desc: "very interesting file sir"
+                        //every 10 sec ping
+                        that.socket.ping_timer = setInterval(send_ping, 15000);
                     };
-                    console.log("chnage dir_uuid", S);
-                    that.socket.send(JSON.stringify(S));
-                };
+                    this.socket.onmessage = function (evt) {
+                        var cmd = JSON.parse(evt.data);
+                        console.log("command received", cmd);
+
+                        if (cmd.action === "do_stream") {
+
+                            var item = that.get_item_by_uuid(cmd.file_uuid);
+                            that.open_bjs_and_stream(item, cmd.did);
+
+                        } else if (cmd.action === "do_close") {
+
+                            var item = that.get_item_by_uuid(cmd.file_uuid);
+                            that.close_bjs(item, cmd.did, cmd.reason);
+
+                        } else if (cmd.action === "do_error") {
+                            console.log("error on backend", cmd);
+                            alert("there is a backend problem: " + cmd.reason);
+                            location.reload();
+                        }
+                    };
+                    this.socket.onclose = function (evt) {
+                        console.log("onclose", evt);
+                        alert("sync connection to server has been closed");
+                        location.reload();
+                    };
+
+                    item.chnage_dir_uuid = function () {
+                        var S = {
+                            action: 'chnage_dir_uuid',
+                            meta: item.metadata,
+                            desc: "very interesting file sir"
+                        };
+                        console.log("chnage dir_uuid", S);
+                        that.socket.send(JSON.stringify(S));
+                    };
+                } else {
+                    that.send_availability(item);
+                }
 
             };
 
