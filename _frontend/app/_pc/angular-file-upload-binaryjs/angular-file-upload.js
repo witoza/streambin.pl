@@ -447,7 +447,7 @@ module
                 item.instances.forEach(function (instance) {
                     if (instance.did === did) {
                         instance.status = 'Closed: ' + reason;
-                        instance.stream = null;
+                        instance.stream.destroy();
                     }
                 });
 
