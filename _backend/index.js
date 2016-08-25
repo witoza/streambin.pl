@@ -21,6 +21,10 @@ const writers = {};
 
 const logger = log4js.getLogger();
 
+const stats = {
+    total_files_streamed: 0,
+};
+
 String.prototype.startsWithAny = function () {
     return Array.prototype.some.call(arguments, arg => this.startsWith(arg));
 };
@@ -117,12 +121,17 @@ app.get('/status', function (req, res) {
 app.get('/stats', function (req, res) {
     logger.info("get server stats");
     const R = {
-        current_streams: Object.keys(writers).length
+        curr: {
+            current_streams: Object.keys(writers).length
+        },
+        stats: stats
     };
     res.json(R);
 });
 
 app.get('/d/:file_uuid', function (req, res) {
+
+    stats.total_files_streamed++;
 
     const did = chance.word({length: 5});
     const file_uuid = req.params.file_uuid;
