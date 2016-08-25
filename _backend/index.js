@@ -129,6 +129,8 @@ app.get('/stats', function (req, res) {
     res.json(R);
 });
 
+var archiver = require('archiver');
+
 app.get('/d/:file_uuid', function (req, res) {
 
     const did = chance.word({length: 5});
@@ -148,7 +150,26 @@ app.get('/d/:file_uuid', function (req, res) {
         }
 
         if (files.length > 0) {
+            res.setHeader('Content-type', 'application/zip');
+            res.setHeader('Content-disposition', 'attachment; filename=\"' + file_uuid + '.zip\"');
             logger.info("looks like this is a dir, files belonged", files);
+
+            var arch = archiver('zip');
+
+            // Send the file to the page output.
+            arch.pipe(res);
+
+            // Create zip with some files. Two dynamic, one static. Put #2 in a sub folder.
+            arch.append('Some text to go in file 1.', {name: '1.txt'})
+                .append('Some text to go in file 2. I go in a folder!', {name: 'somefolder/2.txt'})
+
+            arch.finalize(function (err, bytes) {
+                if (err) {
+                    throw err;
+                }
+                logger.info(bytes + ' total bytes');
+            });
+            return;
         }
 
         res.status(404).send("file not found");

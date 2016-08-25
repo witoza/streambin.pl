@@ -7,9 +7,10 @@
     "start": "node index.js /../_frontend/app"
   },
   "bin": {
-	  "streambin": "index.js"
+    "streambin": "index.js"
   },
   "dependencies": {
+    "archiver": "^1.0.1",
     "binaryjs": "0.2.1",
     "body-parser": "^1.15.2",
     "chance": "1.0.4",
