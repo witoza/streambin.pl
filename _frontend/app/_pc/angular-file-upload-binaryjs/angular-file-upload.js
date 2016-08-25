@@ -388,186 +388,167 @@ module
                 }, this);
             };
 
-			/********************************************************************************************************************************/
+            /********************************************************************************************************************************/
 
-			FileUploader.prototype.get_item_by_uuid = function (file_uuid) {
-				for (var i = 0; i < this.queue.length; i++) {
-					var item = this.queue[i];
-					if (item.metadata.file_uuid == file_uuid) {
-						return item;
-					}
-				}
-				return null;
-			};
+            FileUploader.prototype.get_item_by_uuid = function (file_uuid) {
+                return this.queue.find(function (item) {
+                    return item.metadata.file_uuid === file_uuid;
 
-			FileUploader.prototype.open_bjs_and_stream = function (item, did) {
-				console.log("opening bjs to stream for", item.metadata.file_uuid, did);
+                });
+            };
 
-				var that = this;
+            FileUploader.prototype.open_bjs_and_stream = function (item, did) {
+                console.log("opening stream for, file:", item.metadata.file_uuid, "client:", did);
 
-				var W = {
-					did : did,
-					total_received : 0,
-					progress : 0,
-					status : 'Active',
-					cancel : function() {
-						console.log("cancelling", item.metadata.file_uuid, W.did);
-						var S = {
-							action: 'cancel',
-							meta: item.metadata,
-							did: W.did
-						}
-						that.socket.send(JSON.stringify(S));
-						that.close_bjs(item, did, 'cancelled');
-					}
-				};
+                var that = this;
 
-				item.instances.unshift(W);
+                var W = {
+                    did: did,
+                    total_received: 0,
+                    progress: 0,
+                    status: 'Active',
+                    cancel: function () {
+                        console.log("cancelling, file:", item.metadata.file_uuid, "client:", did);
+                        var S = {
+                            action: 'cancel',
+                            meta: item.metadata,
+                            did: W.did
+                        }
+                        that.socket.send(JSON.stringify(S));
+                        that.close_bjs(item, did, 'cancelled');
+                    }
+                };
 
-				W.binaryJsClient = new BinaryClient(that.binaryJsClient_ulr);
-				W.binaryJsClient.on('error', function (e){
-					console.log("binaryJsClient error", e);
-					W.status = 'Error';
-					that._render();
-				});
+                item.instances.unshift(W);
 
-				W.binaryJsClient.on('close', function (e){
-					console.log("binaryJsClient close", e);
-					that._render();
-				});
+                var m = angular.extend({}, {did: W.did}, item.metadata);
 
-				W.binaryJsClient.on('open', function() {
-					console.log("streaming");
+                const stream = this.binaryJsClient.send(item._file, m);
+                stream.on('data', function (data) {
+                    console.log("progress report", data);
 
-					var m = angular.extend({}, {did : W.did}, item.metadata);
+                    W.total_received = data.total_received;
+                    W.progress = Math.round((W.total_received / item.metadata.size) * 100);
 
-					const stream = W.binaryJsClient.send(item._file, m);
-					stream.on('data', function(data) {
-						console.log("progress report", data);
+                    if (W.total_received === item.metadata.size) {
+                        W.progress = 100;
+                        that._onSuccessItem(item);
+                        that._onCompleteItem(item);
+                    }
 
-						W.total_received = data.total_received;
-						W.progress = Math.round( (W.total_received / item.metadata.size) * 100);
+                    that._render();
+                });
+                W.stream = stream;
+            };
 
-						if (W.total_received === item.metadata.size) {
-							W.progress = 100;
-							that._onSuccessItem(item);
-							that._onCompleteItem(item);
-						}
+            FileUploader.prototype.close_bjs = function (item, did, reason) {
+                console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-						that._render();
-					});
-				});
-			}
+                item.instances.forEach(function (instance) {
+                    if (instance.did === did) {
+                        instance.status = 'Closed: ' + reason;
+                        instance.stream = null;
+                    }
+                });
 
-			FileUploader.prototype.close_bjs = function (item, did, reason) {
-				console.log("closing bjs", item.metadata.file_uuid, did, reason);
+                this._render();
+            };
 
-				for (var i = 0; i < item.instances.length; i++) {
-					if (item.instances[i].did === did) {
-						var W = item.instances[i];
-						W.status = 'Closed: ' + reason;
-                        setTimeout(function () {
-                            W.binaryJsClient.close();
-                            W.binaryJsClient = null;
-                        },0);
-						break;
-					}
-				}
+            FileUploader.prototype.send_availability = function (item) {
+                console.log("sending availability", item.metadata);
+                var S = {
+                    action: 'register',
+                    meta: item.metadata
+                };
+                this.socket.send(JSON.stringify(S));
+                this._render();
+            };
 
-				this._render();
-			}
+            FileUploader.prototype.stream = function (item) {
+                if (item.isStreaming) {
+                    throw "invalid state: item is being streamed";
+                }
+                item.isStreaming = true;
+                var that = this;
 
-			FileUploader.prototype.send_availability = function(item) {
-				console.log("sending availability", item.metadata.file_uuid);
-				var S = {
-					action: 'register',
-					meta: item.metadata
-				}
-				this.socket.send(JSON.stringify(S));
-				this._render();
-			}
+                if (this.binaryJsClient != null) {
+                    throw new Error("binaryJsClient already created");
+                }
+                if (this.socket != null) {
+                    throw new Error("socket already created");
+                }
 
-			function waitForSocketConnection(socket, callback){
-				setTimeout(
-					function () {
-						if (socket.readyState === 1) {
-							console.log("Connection is made")
-							if(callback != null){
-								callback();
-							}
-							return;
-						} else {
-							console.log("wait for connection...")
-							waitForSocketConnection(socket, callback);
-						}
-					}, 100);
-			}
+                this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
+                this.binaryJsClient.on('error', function (e) {
+                    console.log("binaryJsClient error", e);
+                    alert("there is a binaryJsClient problem");
+                    that._render();
+                });
 
-            FileUploader.prototype.stream = function(item) {
-				if (item.isStreaming) {
-					throw "invalid state: item is being streamed";
-				}
-				item.isStreaming = true;
-				var that = this;
+                this.binaryJsClient.on('close', function (e) {
+                    console.log("binaryJsClient close", e);
+                    that._render();
+                });
 
-				if (that.socket == null) {
-					that.socket = new WebSocket(that.binaryJsClient_ulr+"/sync");
-					that.socket.onopen = function(evt) {
-						function send_ping() {
-							console.log("sending ping");
-							var S = {
-								action: 'ping',
-								meta: {
-									file_uuid : 'ping'
-								}
-							}
-							that.socket.send(JSON.stringify(S));
-						}
-						//every 10 sec ping
-						that.socket.ping_timer = setInterval(send_ping, 10000);
-					};
-					that.socket.onmessage = function(evt) {
-						var cmd = JSON.parse(evt.data);
-						console.log("msg received", cmd);
+                this.socket = new WebSocket(that.binaryJsClient_ulr + "/sync");
+                this.socket.onopen = function (evt) {
+                    console.log("connection has been opened");
+                    that.send_availability(item);
 
-						if (cmd.action == "do_stream") {
+                    function send_ping() {
+                        console.log("sending ping");
+                        var S = {
+                            action: 'ping',
+                            meta: {
+                                file_uuid: 'ping'
+                            }
+                        }
+                        that.socket.send(JSON.stringify(S));
+                    }
 
-							var item = that.get_item_by_uuid(cmd.file_uuid);
-							that.open_bjs_and_stream(item, cmd.did);
+                    //every 10 sec ping
+                    that.socket.ping_timer = setInterval(send_ping, 15000);
+                };
+                this.socket.onmessage = function (evt) {
+                    var cmd = JSON.parse(evt.data);
+                    console.log("command received", cmd);
 
-						} else if (cmd.action == "do_close") {
+                    if (cmd.action === "do_stream") {
 
-							var item = that.get_item_by_uuid(cmd.file_uuid);
-							that.close_bjs(item, cmd.did, cmd.reason);
+                        var item = that.get_item_by_uuid(cmd.file_uuid);
+                        that.open_bjs_and_stream(item, cmd.did);
 
-						} else if (cmd.action == "do_error") {
-							console.log("error on backend");
-							alert("there is a backend problem: " + cmd.reason);
-							location.reload();
-						}
-					};
-					that.socket.onclose = function(evt) {
-						alert("connection to server has been broken");
-						location.reload();
-					}
-				}
+                    } else if (cmd.action === "do_close") {
 
-				waitForSocketConnection(that.socket, function() {
-					that.send_availability(item);
-				});
+                        var item = that.get_item_by_uuid(cmd.file_uuid);
+                        that.close_bjs(item, cmd.did, cmd.reason);
 
-				item.chnage_dir_uuid = function() {
-					var S = {
-						action: 'chnage_dir_uuid',
-						meta: item.metadata,
-						desc : "very interesting file sir"
-					}
-					console.log("chnage dir_uuid", S);
-					that.socket.send(JSON.stringify(S));
-				};
+                    } else if (cmd.action === "do_error") {
+                        console.log("error on backend", cmd);
+                        alert("there is a backend problem: " + cmd.reason);
+                        location.reload();
+                    }
+                };
+                this.socket.onclose = function (evt) {
+                    console.log("onclose", evt);
+                    alert("sync connection to server has been closed");
+                    location.reload();
+                };
 
-            }
+                item.chnage_dir_uuid = function () {
+                    var S = {
+                        action: 'chnage_dir_uuid',
+                        meta: item.metadata,
+                        desc: "very interesting file sir"
+                    };
+                    console.log("chnage dir_uuid", S);
+                    that.socket.send(JSON.stringify(S));
+                };
 
+            };
+
+            /********************************************************************************************************************************/
+            
             /**
              * Inner callback
              * @param {File|Object} item
