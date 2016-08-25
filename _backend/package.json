@@ -1,5 +1,5 @@
 {
-  "name": "streambin-backend",
+  "name": "streambin",
   "version": "1.0.0",
   "description": "StreamBIN",
   "main": "index.js",
@@ -22,12 +22,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/witoza/streambin"
+    "url": "https://github.com/witoza/streambin.pl"
   },
   "author": "witoza",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/witoza/streambin/issues"
+    "url": "https://github.com/witoza/streambin.pl/issues"
   },
-  "homepage": "https://github.com/witoza/streambin"
+  "homepage": "https://github.com/witoza/streambin.pl"
 }
