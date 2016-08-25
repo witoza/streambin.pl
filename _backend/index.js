@@ -158,7 +158,7 @@ app.get('/d/:file_uuid', function (req, res) {
             } else {
                 D.data.num_of_download_fail++;
                 logger.info(file_uuid, did, ": connection broke");
-                reason = 'client cancelled';
+                reason = 'sender cancelled';
                 R.res.destroy();
             }
             if (send_ack) {

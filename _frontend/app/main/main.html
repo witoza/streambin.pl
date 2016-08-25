@@ -163,8 +163,14 @@
                             </div>
                         </td>
                         <td>{{ instance.total_received | bytes }}</td>
-                        <td>{{ instance.status }}
-                            <button ng-show="instance.status == 'Active'" type="button" class="btn btn-warning btn-xs"
+                        <td>
+                            <span ng-show="instance.status_code === 200">
+                                <span class="label label-success">OK !</span>
+                            </span>
+                            <span ng-show="instance.status_code === -1">
+                                <span class="label label-warning">Error:</span> {{ instance.status }}
+                            </span>
+                            <button ng-show="instance.status === 'Active'" type="button" class="btn btn-warning btn-xs"
                                     ng-click="instance.cancel()">
                                 <span class="glyphicon"></span> Cancel
                             </button>

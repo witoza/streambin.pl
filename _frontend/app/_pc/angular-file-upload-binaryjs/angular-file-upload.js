@@ -448,13 +448,15 @@ module
                     return instance.did === did;
                 });
 
-                Instance.status = 'Closed: ' + reason;
+                Instance.status = reason;
                 Instance.stream.pause();
                 Instance.stream.destroy();
 
                 if (reason === "download completed") {
                     Instance.progress = 100;
-                    Instance.status.code = 200;
+                    Instance.status_code = 200;
+                } else {
+                    Instance.status_code = -1;
                 }
 
                 this._render();
