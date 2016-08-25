@@ -6,7 +6,7 @@
 
     <div ng-show="curr_streams_data.length >0">
 
-        <p>Download URL (zip of all files): <b><a ng-href="{{ host }}d/{{ curr_stream }}.zip">{{ host }}d/{{ curr_stream }}.zip</a></b></p>
+        <p>Download URL (zip of all files): <b><a ng-href="{{ host }}d/{{ curr_stream }}">{{ host }}d/{{ curr_stream }}</a></b></p>
 
         <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
             <span class="glyphicon glyphicon-refresh"></span> Refresh

@@ -133,14 +133,16 @@ var archiver = require('archiver');
 
 app.get('/d/:file_uuid', function (req, res) {
 
-    const did = chance.word({length: 5});
-    const file_uuid = req.params.file_uuid;
+    const rid = req.req_id;
 
-    logger.info(file_uuid, did, ": new downloading request");
+    var did = chance.word({length: 5});
+    var file_uuid = req.params.file_uuid;
 
-    const D = writers[file_uuid];
+    logger.info(rid, file_uuid, did, ": new downloading request");
+
+    var D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
-        logger.info("file " + file_uuid + "not found");
+        logger.info(rid, "file " + file_uuid + "not found");
 
         const files = [];
         for (let uuid in writers) {
@@ -148,35 +150,85 @@ app.get('/d/:file_uuid', function (req, res) {
                 files.push(uuid);
             }
         }
-
-        if (files.length > 0) {
-            res.setHeader('Content-type', 'application/zip');
-            res.setHeader('Content-disposition', 'attachment; filename=\"' + file_uuid + '.zip\"');
-            logger.info("looks like this is a dir, files belonged", files);
-
-            var arch = archiver('zip');
-
-            // Send the file to the page output.
-            arch.pipe(res);
-
-            // Create zip with some files. Two dynamic, one static. Put #2 in a sub folder.
-            arch.append('Some text to go in file 1.', {name: '1.txt'})
-                .append('Some text to go in file 2. I go in a folder!', {name: 'somefolder/2.txt'})
-
-            arch.finalize(function (err, bytes) {
-                if (err) {
-                    throw err;
-                }
-                logger.info(bytes + ' total bytes');
-            });
+        if (files.length == 0) {
+            res.status(404).send("file not found");
             return;
         }
 
-        res.status(404).send("file not found");
+        logger.info(rid, "looks like this is a dir, files belonged", files);
+
+        res.setHeader('Content-type', 'application/zip');
+        res.setHeader('Content-disposition', 'attachment; filename=\"' + file_uuid + '.zip\"');
+
+        var arch = archiver('zip');
+        arch.pipe(res);
+
+        for (var file_uuid of files) {
+
+            var T = files.length;
+
+            (function (file_uuid, did) {
+
+                const D = writers[file_uuid];
+                const R = {
+                    download_start: Date.now(),
+                    id: did,
+                    req: req,
+                    total_received: 0,
+                    closed: false,
+                    onstream: function (input) {
+                        arch.append(input, {name: D.data.file_meta.name})
+                    },
+                    close: function (send_ack) {
+                        if (R.closed) {
+                            return;
+                        }
+                        R.closed = true;
+                        stats.total_files_streamed++;
+                        logger.info(rid, file_uuid, did, ": closing downloader");
+                        var reason = null;
+                        if (D.data.file_meta.size == R.total_received) {
+                            D.data.num_of_download_ok++;
+                            logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
+                            reason = 'download completed';
+                        } else {
+                            D.data.num_of_download_fail++;
+                            logger.info(rid, file_uuid, did, ": connection broke");
+                            reason = 'downloader cancelled';
+                        }
+                        if (send_ack) {
+                            try {
+                                D.func.do_close(did, reason);
+                            } catch (err) {
+                                logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
+                            }
+                        }
+                        logger.info(rid, file_uuid, did, ": removing downloader from registry");
+                        delete D.downloaders[did];
+                        T -= 1;
+                        logger.info(rid, "still waiting for remaining", T, "files");
+                        if (T == 0) {
+                            logger.info(rid, "all files has been compleated");
+                            arch.finalize(function (err, bytes) {
+                                if (err) {
+                                    throw err;
+                                }
+                                logger.info(bytes + ' total bytes');
+                            });
+                        }
+                    }
+                };
+                D.downloaders[did] = R;
+
+                logger.info(rid, file_uuid, did, ": ready to download");
+                D.func.do_stream(did);
+
+            })(file_uuid, chance.word({length: 5}));
+
+        }
+
         return;
     }
-
-    stats.total_files_streamed++;
 
     const R = {
         download_start: Date.now(),
@@ -190,16 +242,17 @@ app.get('/d/:file_uuid', function (req, res) {
                 return;
             }
             R.closed = true;
-            logger.info(file_uuid, did, ": closing downloader");
+            stats.total_files_streamed++;
+            logger.info(rid, file_uuid, did, ": closing downloader");
             var reason = null;
             if (D.data.file_meta.size == R.total_received) {
                 D.data.num_of_download_ok++;
-                logger.info(file_uuid, did, ": gentle close reader - all data received");
+                logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                 reason = 'download completed';
                 R.res.end();
             } else {
                 D.data.num_of_download_fail++;
-                logger.info(file_uuid, did, ": connection broke");
+                logger.info(rid, file_uuid, did, ": connection broke");
                 reason = 'downloader cancelled';
                 R.res.destroy();
             }
@@ -207,10 +260,10 @@ app.get('/d/:file_uuid', function (req, res) {
                 try {
                     D.func.do_close(did, reason);
                 } catch (err) {
-                    logger.info(file_uuid, did, ": can't send info to client about that event: ", err);
+                    logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
                 }
             }
-            logger.info(file_uuid, did, ": removing downloader from registry");
+            logger.info(rid, file_uuid, did, ": removing downloader from registry");
             delete D.downloaders[did];
         }
     };
@@ -226,7 +279,7 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
 
-    logger.info(file_uuid, did, ": ready to download");
+    logger.info(rid, file_uuid, did, ": ready to download");
     D.func.do_stream(did);
 });
 
@@ -377,6 +430,10 @@ bs.on('connection', function (client) {
         var D = writers[file_uuid].downloaders[did];
         D.stream_time = Date.now();
 
+        if (D.onstream != null) {
+            D.onstream(stream);
+        }
+
         stream.on('data', function (data) {
             if (D.closed) {
                 return;
@@ -389,7 +446,10 @@ bs.on('connection', function (client) {
 
             D.total_received += data.length;
             logger.info(file_uuid, did, ': rcv[b]:', data.length, '; total rcv[%]:', Math.round((D.total_received / M.size) * 100), "; missing[b]:", M.size - D.total_received);
-            D.res.write(data);
+
+            if (D.res) {
+                D.res.write(data);
+            }
 
             var progress = {
                 total_received: D.total_received,
