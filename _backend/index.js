@@ -131,8 +131,6 @@ app.get('/stats', function (req, res) {
 
 app.get('/d/:file_uuid', function (req, res) {
 
-    stats.total_files_streamed++;
-
     const did = chance.word({length: 5});
     const file_uuid = req.params.file_uuid;
 
@@ -141,9 +139,23 @@ app.get('/d/:file_uuid', function (req, res) {
     const D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
         logger.info("file " + file_uuid + "not found");
+
+        const files = [];
+        for (let uuid in writers) {
+            if (writers[uuid].data.file_meta.dir_uuid === file_uuid) {
+                files.push(uuid);
+            }
+        }
+
+        if (files.length > 0) {
+            logger.info("looks like this is a dir, files belonged", files);
+        }
+
         res.status(404).send("file not found");
         return;
     }
+
+    stats.total_files_streamed++;
 
     const R = {
         download_start: Date.now(),
