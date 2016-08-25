@@ -146,7 +146,6 @@ angular
 
                     $scope.theFiles.push(fileItem);
                     setTimeout(function () {
-                        angular.element(document.querySelector('#the_url')).focus();
                         anchorSmoothScroll.scrollTo("step2");
                     }, 50);
 

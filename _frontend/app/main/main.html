@@ -53,8 +53,8 @@
                 <div class="col-md-6">
                     <center>
                         <input type="url" id="the_url" class="form-control" readonly value='{{ theFile.download_url }}'
-                               onfocus="this.select();" onmouseup="return false;"></input>
-                        <br/>
+                               onfocus="this.select();document.execCommand('copy');$('#ctc').html('<p>Copied !</p>')" onmouseup="return false;"></input>
+<p id="ctc">Click on link above to copy it to clipboard</p>
                         <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                             text="theFile.download_url" image="true"></qr>
                         <br/>
