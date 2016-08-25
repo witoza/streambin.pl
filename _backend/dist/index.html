@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html ng-app="sbApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StreamBIN</title>
+
+    <link href="favicon.ico" rel="icon" type="image/x-icon"/>
+
+    <script type="text/javascript" src="_bc/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="_bc/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_pc/binaryjs/dist/binary.js"></script>
+    <script type="text/javascript" src="_bc/es5-shim/es5-sham.min.js"></script>
+    <script type="text/javascript" src="_bc/angular/angular.min.js"></script>
+    <script type="text/javascript" src="_pc/angular-file-upload-binaryjs/angular-file-upload.js"></script>
+    <script type="text/javascript" src="_bc/qrcode/lib/qrcode.min.js"></script>
+    <script type="text/javascript" src="_bc/angular-qr/angular-qr.min.js"></script>
+    <script type="text/javascript" src="_bc/ngstorage/ngStorage.min.js"></script>
+    <script type="text/javascript" src="_bc/angular-route/angular-route.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="_bc/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="_bc/bootstrap/dist/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="_bc/components-font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="streambin.css"/>
+
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="dir/dir.js"></script>
+    <script type="text/javascript" src="main/main.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <center>
+        <h1>Stream<font color="navy">BIN</font>
+            <small><br/>Transfer a file by a Web Browser with two steps</small>
+        </h1>
+    </center>
+
+    <div ng-view></div>
+
+    <br/>
+
+</div>
+
+</body>
+
+</html>

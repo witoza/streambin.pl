@@ -1,0 +1,1 @@
+angular.module("sb.dir",["ngStorage","ngRoute"]).controller("dirCtrl",["$scope","$localStorage","$http","$routeParams",function(r,t,a,e){r.curr_stream=e.directoryId,r.curr_streams_data=[],r.get_stream_data=function(t){r.curr_stream=t,get_streams(a,t,function(t){r.curr_streams_data=t})},r.refreshStreamDir=function(){r.get_stream_data(r.curr_stream)},r.refreshStreamDir()}]);

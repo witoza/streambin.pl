@@ -189,7 +189,13 @@ app.get('/d/:file_uuid', function (req, res) {
     D.func.do_stream(did);
 });
 
-app.use(express.static(__dirname + '/../_frontend/app'));
+var args = process.argv.slice(2);
+
+logger.info("process args", args);
+var app_dir = args[0];
+
+app.use(express.static(__dirname + app_dir));
+logger.info("Serving frontend from", __dirname + app_dir);
 
 const http_port = 9001;
 const server = http.createServer(app).listen(http_port, function () {
