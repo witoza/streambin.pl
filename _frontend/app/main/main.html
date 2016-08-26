@@ -117,38 +117,35 @@
                                         none
                                     </span>
 
-                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    <button class="btn btn-default dropdown-toggle" type="button"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                         <span class="glyphicon glyphicon-folder-open"></span>
                                         Change ...
                                         <span class="caret"></span>
                                     </button>
 
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <ul class="dropdown-menu" >
                                         <li>
                                             <div class="input-group" style="padding-top: 3px; padding-left: 20px;padding-right: 20px;">
-                                                <input type="text" class="form-control" ng-model="theFile.change_dir_manual"
-                                                       placeholder="Directory">
+                                                <input type="text" class="form-control" ng-model="theFile.change_dir_manual" placeholder="Directory">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-default"
-                                                            ng-click="theFile.metadata.dir_uuid=theFile.change_dir_manual; theFile.chnage_dir_uuid();">Set</button>
+                                                            ng-click="theFile.chnage_dir_uuid(theFile.change_dir_manual);">Set</button>
                                                 </span>
                                             </div>
                                         </li>
 
                                         <li role="separator" class="divider"></li>
 
-                                            <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); "
+                                            <li><a ng-click="theFile.chnage_dir_uuid('public'); "
                                                href>Directory
                                             <b>public</b></a></li>
                                         <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
-                                            <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
+                                            <a ng-click="theFile.chnage_dir_uuid(theFile.original_dir_uuid); "
                                                href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
                                         </li>
 
-                                        <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); "
-                                               href>Remove
-                                            Directory name</a></li>
+                                        <li><a ng-click="theFile.chnage_dir_uuid(null); " href>Remove Directory name</a></li>
 
                                     </ul>
 

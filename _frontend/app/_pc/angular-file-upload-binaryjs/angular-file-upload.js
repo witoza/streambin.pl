@@ -552,12 +552,15 @@ module
                         location.reload();
                     };
 
-                    item.chnage_dir_uuid = function () {
+                    item.chnage_dir_uuid = function (new_dir) {
                         var S = {
                             action: 'chnage_dir_uuid',
                             meta: item.metadata,
                             desc: "very interesting file sir"
                         };
+                        if (new_dir !== undefined) {
+                            item.metadata.dir_uuid = new_dir;
+                        }
                         console.log("chnage dir_uuid", S);
                         that.socket.send(JSON.stringify(S));
                     };
