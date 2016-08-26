@@ -8,6 +8,18 @@ angular
 
         function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
+            document.getElementById('dir_input').onchange = function (e) {
+                console.log('onchange called with e=' + e);
+                var fileList = document.getElementById('dir_input').files;
+                if (Object.keys(fileList).length > 10) {
+                    alert("too many files");
+                    return;
+                }
+                for (var k in Object.keys(fileList)) {
+                    uploader.addToQueue(fileList[k]);
+                }
+            };
+
             $scope.close_page = function () {
                 console.log("close_page");
                 $window.location = 'about:blank';

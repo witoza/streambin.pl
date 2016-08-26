@@ -33,8 +33,12 @@
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
-                    <input type="file" nv-file-select="" uploader="uploader" multiple> select from disc
+                    <input type="file" nv-file-select="" uploader="uploader" multiple> select files
                 </span>
+
+                <span class="btn btn-default btn-file">
+                    <input id="dir_input" type="file" webkitdirectory directory multiple> select directory
+               </span>
             </center>
         </div>
         <h1 class="h_nactive">Step 2: Download the files on the remote machine</h1>
@@ -55,7 +59,7 @@
                 </div>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
-                    <input type="file" nv-file-select="" uploader="uploader" multiple> add more...
+                    <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
             </center>
         </div>
@@ -78,18 +82,18 @@
                         <div class="col-md-6">
                             <center>
 
-                                <p><b><a ng-href="{{ theFile.download_url }}" target="_blank">{{ theFile.download_url
-                                    }}</a></b></p>
+                                <p><b><a ng-href="{{ theFile.download_url }}" target="_blank">
+                                    {{ theFile.download_url}}</a></b></p>
 
                                 <div>
-                                    <input type="url" id="the_url" class="form-control" readonly
+                                    <input type="url" class="form-control urls" readonly
                                            value='{{ theFile.download_url }}'
                                            onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
                                            onmouseup="return false;"></input>
                                 </div>
                                 <br/>
                                 <div>
-                                    <input type="url" id="the_url" class="form-control" readonly
+                                    <input type="url" class="form-control urls" readonly
                                            value='curl -J -O  {{ theFile.download_url }}'
                                            onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
                                            onmouseup="return false;"></input>
@@ -101,45 +105,55 @@
 
                                 <br/>
                                 <br/>
-                                <div ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
-                                    <b>Directory:</b>
-                                    <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
-                                </div>
 
-                                <div ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
-                                    Directory: none
-                                </div>
-
-                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <span class="glyphicon glyphicon-folder-open"></span>
-                                    Change Directory ...
-                                    <span class="caret"></span>
-                                </button>
-
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); "
-                                           href>Remove
-                                        Directory Information</a></li>
-                                    <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); "
-                                           href>Directory
-                                        <b>public</b></a></li>
-                                    <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
-                                        <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
-                                           href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
-                                    </li>
-                                    <li role="separator" class="divider"></li>
-                                    <li>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" ng-model="change_dir_manual"
-                                                   placeholder="Directory">
-                                            <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default"
-                                                ng-click="theFile.metadata.dir_uuid=change_dir_manual; theFile.chnage_dir_uuid();">Set</button>
+                                <div>
+                                    <b>Directory name:</b>
+                                    <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
+                                        <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
+                                        <a ng-href="{{ host }}d/{{ theFile.metadata.dir_uuid  }}"><span class="glyphicon glyphicon-download"></span></a>
                                     </span>
-                                        </div>
-                                    </li>
-                                </ul>
+
+                                    <span ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
+                                        none
+                                    </span>
+
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <span class="glyphicon glyphicon-folder-open"></span>
+                                        Change ...
+                                        <span class="caret"></span>
+                                    </button>
+
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        <li>
+                                            <div class="input-group" style="padding-top: 3px; padding-left: 20px;padding-right: 20px;">
+                                                <input type="text" class="form-control" ng-model="theFile.change_dir_manual"
+                                                       placeholder="Directory">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default"
+                                                            ng-click="theFile.metadata.dir_uuid=theFile.change_dir_manual; theFile.chnage_dir_uuid();">Set</button>
+                                                </span>
+                                            </div>
+                                        </li>
+
+                                        <li role="separator" class="divider"></li>
+
+                                            <li><a ng-click="theFile.metadata.dir_uuid = 'public'; theFile.chnage_dir_uuid(); "
+                                               href>Directory
+                                            <b>public</b></a></li>
+                                        <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
+                                            <a ng-click="theFile.metadata.dir_uuid = theFile.original_dir_uuid; theFile.chnage_dir_uuid(); "
+                                               href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
+                                        </li>
+
+                                        <li><a ng-click="theFile.metadata.dir_uuid = null; theFile.chnage_dir_uuid(); "
+                                               href>Remove
+                                            Directory name</a></li>
+
+                                    </ul>
+
+                                </div>
+
                             </center>
                         </div>
                         <div class="col-md-3"></div>
