@@ -9,12 +9,10 @@
             class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
 </ul>
 
-
 <div ng-show="state=='tab_npm'">
     <br/>
     <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
         outgoing traffic.</p>
-
     <pre>
 
     $ npm i --global streambin
@@ -30,10 +28,10 @@
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true" ></span><br>
                 Drag and drop here or
-                <span class="btn btn-default btn-file">
-                    <input type="file" nv-file-select="" uploader="uploader" multiple> select files
+                <span class="btn btn-default btn-file"  >
+                    <input type="file" nv-file-select="" uploader="uploader" multiple > select files
                 </span>
 
                 <span class="btn btn-default btn-file">
@@ -52,11 +50,11 @@
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <b>Now streaming files:</b>
                 <div ng-repeat="theFile in theFiles">
-                    <span><code>{{theFile.metadata.name}}
-                        <b><a ng-href="{{ theFile.download_url }}"
-                              target="_blank">{{ theFile.download_url }}</a></b></code>
-                    </span>
+                    <code>
+                        <b><a href ng-click="scrollto(theFile)"
+                              >{{ theFile.metadata.name }}</a></b></code>
                 </div>
+                <br/>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
@@ -68,30 +66,43 @@
 
         <div ng-repeat="theFile in theFiles">
 
-
-            <div class="panel panel-default">
+            <div class="panel panel-default" id="panel_{{ theFile.metadata.file_uuid }}">
                 <div class="panel-body">
 
                     <center>
-                        <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under:</p></h4>
+                        <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under:
+
+                            <b><a ng-href="{{ theFile.download_url }}" target="_blank">
+                                {{ theFile.download_url}}</a></b>
+
+                        </p></h4>
                     </center>
 
                     <div class="row">
                         <div class="col-md-3"></div>
                         <div class="col-md-6">
                             <center>
-
-                                <p><b><a ng-href="{{ theFile.download_url }}" target="_blank">
-                                    {{ theFile.download_url}}</a></b></p>
-
+                                <p></p>
                                 <div>
-
-                                    <b>Directory name:</b>
+                                    <input type="url" class="form-control urls" readonly
+                                           value='{{ theFile.download_url }}'
+                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                           onmouseup="return false;"></input>
+                                </div>
+                                <p></p>
+                                <div>
+                                    <input type="url" class="form-control urls" readonly
+                                           value='curl -J -O  {{ theFile.download_url }}'
+                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
+                                           onmouseup="return false;"></input>
+                                </div>
+                                <p></p>
+                                <div>
+                                    Directory name:<b>
                                     <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
                                         <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
-                                        <a ng-href="{{ host }}d/{{ theFile.metadata.dir_uuid  }}"><span
-                                                class="glyphicon glyphicon-download"></span></a>
                                     </span>
+                                </b>
 
                                     <span ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
                                         none
@@ -133,24 +144,7 @@
                                     </div>
 
                                 </div>
-
-                                <br/>
-
-                                <div>
-                                    <input type="url" class="form-control urls" readonly
-                                           value='{{ theFile.download_url }}'
-                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
-                                           onmouseup="return false;"></input>
-                                </div>
-                                <br/>
-                                <div>
-                                    <input type="url" class="form-control urls" readonly
-                                           value='curl -J -O  {{ theFile.download_url }}'
-                                           onclick="this.select();document.execCommand('copy');var cp = $('<p>Link has been copied</p>');cp.fadeOut(2000);$(this).parent().append(cp);"
-                                           onmouseup="return false;"></input>
-                                </div>
-                                <br/>
-
+<br/>
                                 <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                                     text="theFile.download_url" image="true"></qr>
 
@@ -247,9 +241,6 @@
 
 <div ng-show="state==3">
     <br/>
-
-    <p><span class="label label-warning">Warning</span> This will persist data in the Local Storage of your
-        browser</p>
 
     <form class="form-horizontal">
         <div class="form-group">

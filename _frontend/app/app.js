@@ -116,6 +116,23 @@ angular
         };
 
     })
+    .directive('toggle', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                if (attrs.toggle == "tooltip") {
+                    $(element).tooltip({
+                        delay: {"show": 750, "hide": 10},
+                        placement: 'bottom',
+                        trigger: 'hover'
+                    });
+                }
+                if (attrs.toggle == "popover") {
+                    $(element).popover();
+                }
+            }
+        };
+    })
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.when('/', {

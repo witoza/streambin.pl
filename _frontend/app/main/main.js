@@ -146,13 +146,18 @@ angular
 
                     $scope.theFiles.push(fileItem);
 
-                    setTimeout(function () {
-                        anchorSmoothScroll.scrollTo("step2");
-                    }, 50);
+                    $scope.scrollto(fileItem);
 
                 });
 
             };
+
+            $scope.scrollto = function(fileItem){
+                setTimeout(function () {
+                    anchorSmoothScroll.scrollTo("panel_"+fileItem.metadata.file_uuid);
+                }, 50);
+            };
+
             uploader.onAfterAddingAll = function (addedFileItems) {
                 console.info('onAfterAddingAll', addedFileItems);
             };
