@@ -179,7 +179,7 @@ app.get('/d/:file_uuid', function (req, res) {
                     onstream: function (input) {
                         arch.append(input, {name: D.data.file_meta.name})
                     },
-                    close: function (send_ack) {
+                    close: function () {
                         if (R.closed) {
                             return;
                         }
@@ -193,15 +193,14 @@ app.get('/d/:file_uuid', function (req, res) {
                             reason = 'download completed';
                         } else {
                             D.data.num_of_download_fail++;
-                            logger.info(rid, file_uuid, did, ": connection broke");
-                            reason = 'downloader cancelled';
+                            const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
+                            logger.info(rid, file_uuid, did, msg);
+                            reason = msg;
                         }
-                        if (send_ack) {
-                            try {
-                                D.func.do_close(did, reason);
-                            } catch (err) {
-                                logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
-                            }
+                        try {
+                            D.func.do_close(did, reason);
+                        } catch (err) {
+                            logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
                         }
                         logger.info(rid, file_uuid, did, ": removing downloader from registry");
                         delete D.downloaders[did];
@@ -237,7 +236,7 @@ app.get('/d/:file_uuid', function (req, res) {
         res: res,
         total_received: 0,
         closed: false,
-        close: function (send_ack) {
+        close: function () {
             if (R.closed) {
                 return;
             }
@@ -252,16 +251,14 @@ app.get('/d/:file_uuid', function (req, res) {
                 R.res.end();
             } else {
                 D.data.num_of_download_fail++;
-                logger.info(rid, file_uuid, did, ": connection broke");
-                reason = 'downloader cancelled';
-                R.res.destroy();
+                const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
+                logger.info(rid, file_uuid, did, msg);
+                reason = msg;
             }
-            if (send_ack) {
-                try {
-                    D.func.do_close(did, reason);
-                } catch (err) {
-                    logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
-                }
+            try {
+                D.func.do_close(did, reason);
+            } catch (err) {
+                logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
             }
             logger.info(rid, file_uuid, did, ": removing downloader from registry");
             delete D.downloaders[did];
@@ -369,7 +366,7 @@ wss.on('connection', function connection(ws) {
             ws.send(str);
         } else if (S.action == 'cancel') {
             logger.info(file_uuid, ": cancelling by user");
-            writers[file_uuid].downloaders[S.did].close(false);
+            writers[file_uuid].downloaders[S.did].close();
         } else if (S.action == 'chnage_dir_uuid') {
             logger.info(file_uuid, ": changing dir_uuid", S);
             writers[file_uuid].data.desc = S.desc;
@@ -388,7 +385,7 @@ wss.on('connection', function connection(ws) {
                 var k2 = Object.keys(D.downloaders);
                 for (var i2 in k2) {
                     var D2 = D.downloaders[k2[i2]];
-                    D2.close(true);
+                    D2.close();
                 }
                 logger.info(k[i], "removing info about availability");
                 delete writers[k[i]];
@@ -440,7 +437,7 @@ bs.on('connection', function (client) {
             }
             if (onFinished.isFinished(D.req)) {
                 logger.info(file_uuid, did, ": reader has closed");
-                D.close(true);
+                D.close();
                 return;
             }
 
@@ -463,7 +460,7 @@ bs.on('connection', function (client) {
                 return;
             }
             logger.info(file_uuid, did, ": end of input stream");
-            D.close(true);
+            D.close();
         });
 
     });

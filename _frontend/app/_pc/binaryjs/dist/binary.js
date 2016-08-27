@@ -923,6 +923,7 @@ util.inherits(BlobReadStream, Stream);
 
 BlobReadStream.prototype.pause = function(){
   this.paused = true;
+  console.log("paused");
 };
 
 BlobReadStream.prototype.resume = function(){
@@ -933,38 +934,33 @@ BlobReadStream.prototype.resume = function(){
 BlobReadStream.prototype.destroy = function(){
   this.readable = false;
   clearTimeout(this._timeoutId);
+  console.log("destroyed");
 };
 
-BlobReadStream.prototype._read = function(){
-    
-  var self = this;
-  
-  function emitReadChunk(){
-    self._emitReadChunk();
-  }
+  BlobReadStream.prototype._read = function () {
 
-  function do_read() {
-    if (!self.ready_to_read_fn()) {
+    var self = this;
+
+    function emitReadChunk() {
+      self._emitReadChunk();
+    }
+
+    if (!this.ready_to_read_fn()) {
       console.log("not yet ready to send to the socket");
-      setTimeout(do_read, 100);
-      return false;
-    }
-
-    var readDelay = this._readDelay;
-    if (readDelay !== 0) {
-      this._timeoutId = setTimeout(emitReadChunk, readDelay);
+      this._timeoutId = setTimeout(emitReadChunk, 100);
     } else {
-      util.setZeroTimeout(emitReadChunk);
+      var readDelay = this._readDelay;
+      if (readDelay !== 0) {
+        this._timeoutId = setTimeout(emitReadChunk, readDelay);
+      } else {
+        util.setZeroTimeout(emitReadChunk);
+      }
     }
-  }
-  do_read();
-
-};
+  };
 
 BlobReadStream.prototype._emitReadChunk = function(){
     
   if(this.paused || !this.readable) return;
-  
   var chunkSize = Math.min(this._source.size - this._start, this._readChunkSize);
   
   if(chunkSize === 0){
@@ -1492,54 +1488,22 @@ util.inherits(BinaryClient, EventEmitter);
 BinaryClient.prototype.send = function(data, meta){
 
   var that = this;
+
   function ready_to_read_fn() {
     return that._socket.bufferedAmount < 100000;
-  };
-
-  var stream = this.createStream(meta);
-  if(data instanceof Stream) {
-    data.pipe(stream);
-  } else if (util.isNode === true) {
-    if(Buffer.isBuffer(data)) {
-      (new BufferReadStream(data, {chunkSize: this._options.chunkSize})).pipe(stream);
-    } else {
-      stream.write(data);
-    } 
-  } else if (util.isNode !== true) {
-    if(data.constructor == Blob || data.constructor == File) {
-      (new BlobReadStream(data, {chunkSize: this._options.chunkSize, 'ready_to_read_fn' : ready_to_read_fn})).pipe(stream);
-    } else if (data.constructor == ArrayBuffer) {
-      var blob;
-      if(binaryFeatures.useArrayBufferView) {
-        data = new Uint8Array(data);
-      }
-      if(binaryFeatures.useBlobBuilder) {
-        var builder = new BlobBuilder();
-        builder.append(data);
-        blob = builder.getBlob()
-      } else {
-        blob = new Blob([data]);
-      }
-      (new BlobReadStream(blob, {chunkSize: this._options.chunkSize, 'ready_to_read_fn' : ready_to_read_fn})).pipe(stream);
-    } else if (typeof data === 'object' && 'BYTES_PER_ELEMENT' in data) {
-      var blob;
-      if(!binaryFeatures.useArrayBufferView) {
-        // Warn
-        data = data.buffer;
-      }
-      if(binaryFeatures.useBlobBuilder) {
-        var builder = new BlobBuilder();
-        builder.append(data);
-        blob = builder.getBlob()
-      } else {
-        blob = new Blob([data]);
-      }
-      (new BlobReadStream(blob, {chunkSize: this._options.chunkSize, 'ready_to_read_fn' : ready_to_read_fn})).pipe(stream);
-    } else {
-      stream.write(data);
-    }
   }
-  return stream;
+
+  var reader = null;
+  var stream = this.createStream(meta);
+
+  if (data.constructor == Blob || data.constructor == File) {
+    reader = new BlobReadStream(data, {chunkSize: this._options.chunkSize, 'ready_to_read_fn': ready_to_read_fn});
+  } else {
+    throw new Error("not supported");
+  }
+
+  reader.pipe(stream);
+  return {stream: stream, reader: reader}
 };
 
 BinaryClient.prototype._receiveStream = function(streamId){

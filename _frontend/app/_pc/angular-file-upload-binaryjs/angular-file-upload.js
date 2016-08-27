@@ -423,8 +423,8 @@ module
 
                 var m = angular.extend({}, {did: Instance.did}, item.metadata);
 
-                const stream = this.binaryJsClient.send(item._file, m);
-                stream.on('data', function (data) {
+                const sr = this.binaryJsClient.send(item._file, m);
+                sr.stream.on('data', function (data) {
                     console.log("progress report", data);
 
                     Instance.total_received = data.total_received;
@@ -438,25 +438,35 @@ module
 
                     that._render();
                 });
-                Instance.stream = stream;
+                Instance.sr = sr;
             };
 
             FileUploader.prototype.close_bjs = function (item, did, reason) {
-                console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-                const Instance = item.instances.find(function (instance) {
+                const instance = item.instances.find(function (instance) {
                     return instance.did === did;
                 });
 
-                Instance.status = reason;
-                Instance.stream.pause();
-                Instance.stream.destroy();
+                if (instance.status != 'Active') {
+                    console.log("closed already");
+                    return;
+                }
+
+                console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
+
+                instance.status = reason;
+
+                instance.sr.stream.end();
+                instance.sr.stream.destroy();
+
+                instance.sr.reader.pause();
+                instance.sr.reader.destroy();
 
                 if (reason === "download completed") {
-                    Instance.progress = 100;
-                    Instance.status_code = 200;
+                    instance.progress = 100;
+                    instance.status_code = 200;
                 } else {
-                    Instance.status_code = -1;
+                    instance.status_code = -1;
                 }
 
                 this._render();
