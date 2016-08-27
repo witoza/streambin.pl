@@ -33,10 +33,6 @@ String.prototype.endsWithAny = function () {
     return Array.prototype.some.call(arguments, arg => this.endsWith(arg));
 };
 
-function err2str(err) {
-    return "err.name=" + err.name + ", err.message=" + err.message;
-}
-
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -92,8 +88,8 @@ app.get('/genuuid', function (req, res) {
     res.send(uid);
 });
 
-function num_of_keys(hashmap) {
-    return Object.keys(hashmap).length;
+function num_of_keys(obj) {
+    return Object.keys(obj).length;
 }
 
 app.get('/status', function (req, res) {
@@ -135,10 +131,9 @@ app.get('/d/:file_uuid', function (req, res) {
 
     const rid = req.req_id;
 
-    var did = chance.word({length: 5});
     var file_uuid = req.params.file_uuid;
 
-    logger.info(rid, file_uuid, did, ": new downloading request");
+    logger.info(rid, file_uuid, ": new downloading request");
 
     var D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
@@ -163,71 +158,70 @@ app.get('/d/:file_uuid', function (req, res) {
         var arch = archiver('zip');
         arch.pipe(res);
 
-        for (var file_uuid of files) {
+        var remaining_files = files.length;
 
-            var T = files.length;
+        var stream_file = function (file_uuid, did) {
 
-            (function (file_uuid, did) {
-
-                const D = writers[file_uuid];
-                const R = {
-                    download_start: Date.now(),
-                    id: did,
-                    req: req,
-                    total_received: 0,
-                    closed: false,
-                    onstream: function (input) {
-                        arch.append(input, {name: D.data.file_meta.name})
-                    },
-                    close: function () {
-                        if (R.closed) {
-                            return;
-                        }
-                        R.closed = true;
-                        stats.total_files_streamed++;
-                        logger.info(rid, file_uuid, did, ": closing downloader");
-                        var reason = null;
-                        if (D.data.file_meta.size == R.total_received) {
-                            D.data.num_of_download_ok++;
-                            logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
-                            reason = 'download completed';
-                        } else {
-                            D.data.num_of_download_fail++;
-                            const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
-                            logger.info(rid, file_uuid, did, msg);
-                            reason = msg;
-                        }
-                        try {
-                            D.func.do_close(did, reason);
-                        } catch (err) {
-                            logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
-                        }
-                        logger.info(rid, file_uuid, did, ": removing downloader from registry");
-                        delete D.downloaders[did];
-                        T -= 1;
-                        logger.info(rid, "still waiting for remaining", T, "files");
-                        if (T == 0) {
-                            logger.info(rid, "all files has been compleated");
-                            arch.finalize(function (err, bytes) {
-                                if (err) {
-                                    throw err;
-                                }
-                                logger.info(bytes + ' total bytes');
-                            });
-                        }
+            const D = writers[file_uuid];
+            const R = {
+                download_start: Date.now(),
+                id: did,
+                req: req,
+                total_received: 0,
+                closed: false,
+                onstream: function (input) {
+                    arch.append(input, {name: D.data.file_meta.name})
+                },
+                close: function () {
+                    if (R.closed) {
+                        return;
                     }
-                };
-                D.downloaders[did] = R;
+                    R.closed = true;
+                    stats.total_files_streamed++;
+                    logger.info(rid, file_uuid, did, ": closing downloader");
+                    var reason = null;
+                    if (D.data.file_meta.size == R.total_received) {
+                        logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
+                        reason = 'download completed';
+                    } else {
+                        const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
+                        logger.info(rid, file_uuid, did, msg);
+                        reason = msg;
+                    }
+                    try {
+                        D.func.do_close(did, reason);
+                    } catch (err) {
+                        logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
+                    }
+                    delete D.downloaders[did];
+                    remaining_files -= 1;
+                    logger.info(rid, "still waiting for remaining", remaining_files, "files");
+                    if (remaining_files == 0) {
+                        logger.info(rid, "all files has been downloaded");
+                        arch.finalize(function (err, bytes) {
+                            if (err) {
+                                throw err;
+                            }
+                            logger.info(rid, bytes + ' total bytes');
+                        });
+                    }
+                }
+            };
+            D.downloaders[did] = R;
 
-                logger.info(rid, file_uuid, did, ": ready to download");
-                D.func.do_stream(did);
+            logger.info(rid, file_uuid, did, ": ready to download");
+            D.func.do_stream(did);
 
-            })(file_uuid, chance.word({length: 5}));
+        };
 
+        for (var file_uuid of files) {
+            stream_file(file_uuid, chance.word({length: 5}));
         }
 
         return;
     }
+
+    var did = chance.word({length: 5});
 
     const R = {
         download_start: Date.now(),
@@ -245,12 +239,10 @@ app.get('/d/:file_uuid', function (req, res) {
             logger.info(rid, file_uuid, did, ": closing downloader");
             var reason = null;
             if (D.data.file_meta.size == R.total_received) {
-                D.data.num_of_download_ok++;
                 logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                 reason = 'download completed';
                 R.res.end();
             } else {
-                D.data.num_of_download_fail++;
                 const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
                 logger.info(rid, file_uuid, did, msg);
                 reason = msg;
@@ -260,7 +252,6 @@ app.get('/d/:file_uuid', function (req, res) {
             } catch (err) {
                 logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
             }
-            logger.info(rid, file_uuid, did, ": removing downloader from registry");
             delete D.downloaders[did];
         }
     };
@@ -299,108 +290,97 @@ const server = http.createServer(app).listen(http_port, function () {
 const wss = new WebSocket.Server({server: server, path: '/binary-uploader-stream/sync'});
 wss.on('connection', function connection(ws) {
 
-    logger.info("new ws client connected");
+    logger.info("new sync ws client connected");
 
     ws.on('message', function incoming(message) {
         var S = JSON.parse(message);
         var file_uuid = S.meta.file_uuid;
+        var ws_send = function (cmd) {
+            cmd.file_uuid = file_uuid;
+            var str = JSON.stringify(cmd);
+            logger.info(file_uuid, ": sending", str);
+            ws.send(str);
+        };
 
-        if (S.action == 'register') {
+        if (S.action === 'register') {
             logger.info(file_uuid, ": registering file with meta", message);
             if (writers[file_uuid] != null) {
                 logger.info(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
                 return;
             }
+
             //throttling
             if (num_of_keys(writers) > 10) {
-                var cmd = {
+                ws_send({
                     action: 'do_error',
                     reason: 'too many concurrent clients. come back later',
-                }
-                var str = JSON.stringify(cmd);
-                logger.info(file_uuid, ": sending", str);
-                ws.send(str);
+                });
                 return;
             }
             var D = {
                 data: {
                     publish_time: Date.now(),
                     file_meta: S.meta,
-                    num_of_download_ok: 0,
-                    num_of_download_fail: 0,
                 },
                 downloaders: {},
                 func: {
                     ws: ws,
-                    _send: function (cmd) {
-                        cmd.file_uuid = file_uuid;
-                        var str = JSON.stringify(cmd);
-                        logger.info(file_uuid, ": sending", str);
-                        ws.send(str);
-                    },
                     do_stream: function (did) {
-                        var cmd = {
+                        ws_send({
                             action: 'do_stream',
                             did: did
-                        }
-                        D.func._send(cmd);
+                        });
                     },
                     do_close: function (did, reason) {
-                        var cmd = {
+                        ws_send({
                             action: 'do_close',
                             reason: reason,
                             did: did
-                        }
-                        D.func._send(cmd);
+                        });
                     }
                 }
             };
             writers[file_uuid] = D;
-        } else if (S.action == 'ping') {
-            var cmd = {
+        } else if (S.action === 'ping') {
+            ws_send({
                 action: 'do_pong',
                 reason: 'ping',
-            }
-            var str = JSON.stringify(cmd);
-            logger.info(file_uuid, ": sending", str);
-            ws.send(str);
-        } else if (S.action == 'cancel') {
+            });
+        } else if (S.action === 'cancel') {
             logger.info(file_uuid, ": cancelling by user");
             writers[file_uuid].downloaders[S.did].close();
-        } else if (S.action == 'chnage_dir_uuid') {
+        } else if (S.action === 'chnage_dir_uuid') {
             logger.info(file_uuid, ": changing dir_uuid", S);
             writers[file_uuid].data.desc = S.desc;
             writers[file_uuid].data.file_meta.dir_uuid = S.meta.dir_uuid;
         } else {
-            logger.info("unknovn WS command:", S.action)
+            logger.error("unknown command:", S.action)
         }
     });
 
-    function closeAllConnections() {
-        logger.info("ending all connected to that ws");
-        var k = Object.keys(writers);
-        for (var i in k) {
-            var D = writers[k[i]];
-            if (D.func.ws == ws) {
-                var k2 = Object.keys(D.downloaders);
-                for (var i2 in k2) {
-                    var D2 = D.downloaders[k2[i2]];
-                    D2.close();
+    function close_all_connections() {
+        logger.info("closing all files connected to that sync ws");
+
+        for (let file_uuid in writers) {
+            var D = writers[file_uuid];
+            if (D.func.ws === ws) {
+                for (let did in D.downloaders) {
+                    D[did].close();
                 }
-                logger.info(k[i], "removing info about availability");
-                delete writers[k[i]];
+                delete writers[file_uuid];
             }
         }
+
     };
 
     ws.on('close', function (e) {
         logger.info('ws socket closed', e);
-        closeAllConnections();
+        close_all_connections();
     });
 
     ws.on('error', function (e) {
         logger.info('ws socket error', e);
-        closeAllConnections();
+        close_all_connections();
     });
 
 });
@@ -446,6 +426,10 @@ bs.on('connection', function (client) {
 
             if (D.res) {
                 D.res.write(data);
+
+                // if (!D.res.write(data)) {
+                //     throw new Error("not supported yet");
+                // }
             }
 
             var progress = {
