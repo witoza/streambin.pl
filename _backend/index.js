@@ -129,6 +129,56 @@ var archiver = require('archiver');
 
 app.get('/d/:file_uuid', function (req, res) {
 
+    var stream_file = function (file_uuid, onstream) {
+
+        var did = chance.word({length: 5});
+
+        return new Promise(function (resolve, reject) {
+
+            const D = writers[file_uuid];
+            const R = {
+                download_start: Date.now(),
+                req: req,
+                res: res,
+
+                total_received: 0,
+                closed: false,
+                onstream: onstream,
+                close: function () {
+                    if (R.closed) {
+                        return;
+                    }
+                    R.closed = true;
+                    stats.total_files_streamed++;
+                    logger.info(rid, file_uuid, did, ": closing downloader");
+                    var reason = null;
+                    if (D.data.file_meta.size === R.total_received) {
+                        logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
+                        reason = 'download completed';
+                        resolve();
+                    } else {
+                        reject();
+                        const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
+                        logger.info(rid, file_uuid, did, msg);
+                        reason = msg;
+                    }
+                    try {
+                        D.func.do_close(did, reason);
+                    } catch (err) {
+                        logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
+                    }
+                    delete D.downloaders[did];
+                }
+            };
+            D.downloaders[did] = R;
+
+            logger.info(rid, file_uuid, did, ": ready to receive data");
+            D.func.do_stream(did);
+
+        });
+
+    };
+
     const rid = req.req_id;
 
     var file_uuid = req.params.file_uuid;
@@ -142,9 +192,7 @@ app.get('/d/:file_uuid', function (req, res) {
         const files = [];
         for (let f_uuid in writers) {
             if (writers[f_uuid].data.file_meta.dir_uuid === file_uuid) {
-                files.push({
-                    file_uuid: f_uuid
-                });
+                files.push(f_uuid);
             }
         }
         if (files.length == 0) {
@@ -160,122 +208,36 @@ app.get('/d/:file_uuid', function (req, res) {
         var arch = archiver('zip');
         arch.pipe(res);
 
-        var remaining_files = files.length;
+        var pr = Promise.resolve();
 
-        var stream_file = function (file_uuid, did) {
+        for (var file_uuid of files) {
 
-            const D = writers[file_uuid];
-            const R = {
-                download_start: Date.now(),
-                req: req,
-                total_received: 0,
-                closed: false,
-                onstream: function (input) {
-                    arch.append(input, {name: D.data.file_meta.name})
-                },
-                close: function () {
-                    if (R.closed) {
-                        return;
-                    }
-                    R.closed = true;
-                    stats.total_files_streamed++;
-                    logger.info(rid, file_uuid, did, ": closing downloader");
-                    var reason = null;
-                    if (D.data.file_meta.size === R.total_received) {
-                        logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
-                        reason = 'download completed';
-                    } else {
-                        const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
-                        logger.info(rid, file_uuid, did, msg);
-                        reason = msg;
-
-                        //well, thats sad but we need to close all remaining downloaders and abort whole archive
-                        files.forEach(function (file) {
-
-                            var d = writers[file.file_uuid].downloaders[file.did];
-                            if (d) {
-                                try {
-                                    d.close();
-                                } catch (err) {
-                                    logger.warn("problem while forcing close file in archive", err)
-                                }
-                            }
-
-                        });
-                        res.destroy();
-                    }
-                    try {
-                        D.func.do_close(did, reason);
-                    } catch (err) {
-                        logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
-                    }
-                    delete D.downloaders[did];
-                    remaining_files -= 1;
-                    logger.info(rid, "waiting for remaining", remaining_files, "files");
-
-                    if (!onFinished.isFinished(req)) {
-                        if (remaining_files === 0) {
-                            logger.info(rid, "all files has been downloaded");
-                            arch.finalize(function (err, bytes) {
-                                if (err) {
-                                    throw err;
-                                }
-                                logger.info(rid, bytes + ' total bytes');
-                            });
-                        }
-                    }
-                }
-            };
-            D.downloaders[did] = R;
-
-            logger.info(rid, file_uuid, did, ": ready to receive data");
-            D.func.do_stream(did);
-
-        };
-
-        for (var file of files) {
-            file.did = chance.word({length: 5});
-            stream_file(file.file_uuid, file.did);
+            (function (file_uuid) {
+                pr = pr.then(function () {
+                    var onstream = function (input) {
+                        const D = writers[file_uuid];
+                        arch.append(input, {name: D.data.file_meta.name})
+                    };
+                    return stream_file(file_uuid, onstream);
+                });
+            })(file_uuid);
         }
 
-        return;
+        return pr
+            .then(function () {
+                logger.info(rid, "all files has been downloaded");
+                arch.finalize(function (err, bytes) {
+                    if (err) {
+                        throw err;
+                    }
+                    logger.info(rid, bytes + ' total bytes');
+                });
+            }).catch(function () {
+                logger.info("one of the files can't be downloaded, zip file is bad");
+                res.destroy();
+            });
+
     }
-
-    var did = chance.word({length: 5});
-
-    const R = {
-        download_start: Date.now(),
-        req: req,
-        res: res,
-        total_received: 0,
-        closed: false,
-        close: function () {
-            if (R.closed) {
-                return;
-            }
-            R.closed = true;
-            stats.total_files_streamed++;
-            logger.info(rid, file_uuid, did, ": closing downloader");
-            var reason = null;
-            if (D.data.file_meta.size === R.total_received) {
-                logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
-                reason = 'download completed';
-                R.res.end();
-            } else {
-                const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
-                logger.info(rid, file_uuid, did, msg);
-                reason = msg;
-            }
-            try {
-                D.func.do_close(did, reason);
-            } catch (err) {
-                logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
-            }
-            delete D.downloaders[did];
-        }
-    };
-
-    D.downloaders[did] = R;
 
     const filename = path.basename(D.data.file_meta.name);
 
@@ -285,8 +247,13 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
 
-    logger.info(rid, file_uuid, did, ": ready to receive data");
-    D.func.do_stream(did);
+    stream_file(file_uuid)
+        .then(function () {
+            res.end();
+        })
+        .catch(function () {
+        });
+
 });
 
 var args = process.argv.slice(2);

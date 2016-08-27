@@ -403,7 +403,7 @@ module
 
                 var that = this;
 
-                var Instance = {
+                var ins = {
                     did: did,
                     total_received: 0,
                     progress: 0,
@@ -413,61 +413,61 @@ module
                         var S = {
                             action: 'cancel',
                             meta: item.metadata,
-                            did: Instance.did
+                            did: ins.did
                         }
                         that.socket.send(JSON.stringify(S));
                         that.close_bjs(item, did, 'cancelled');
                     }
                 };
 
-                item.instances.unshift(Instance);
+                item.instances.unshift(ins);
 
-                var m = angular.extend({}, {did: Instance.did}, item.metadata);
+                var m = angular.extend({}, {did: ins.did}, item.metadata);
 
                 const sr = this.binaryJsClient.send(item._file, m);
                 sr.stream.on('data', function (data) {
-                    console.log("progress report", data);
+                    console.log("progress report", data, that.binaryJsClient._socket.bufferedAmount);
 
-                    Instance.total_received = data.total_received;
-                    Instance.progress = Math.round((Instance.total_received / item.metadata.size) * 100);
+                    ins.total_received = data.total_received;
+                    ins.progress = Math.round((ins.total_received / item.metadata.size) * 100);
 
-                    if (Instance.total_received === item.metadata.size) {
-                        Instance.progress = 100;
+                    if (ins.total_received === item.metadata.size) {
+                        ins.progress = 100;
                         that._onSuccessItem(item);
                         that._onCompleteItem(item);
                     }
 
                     that._render();
                 });
-                Instance.sr = sr;
+                ins.sr = sr;
             };
 
             FileUploader.prototype.close_bjs = function (item, did, reason) {
 
-                const instance = item.instances.find(function (instance) {
+                const ins = item.instances.find(function (instance) {
                     return instance.did === did;
                 });
 
-                if (instance.status != 'Active') {
+                if (ins.status != 'Active') {
                     console.log("closed already");
                     return;
                 }
 
                 console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-                instance.status = reason;
+                ins.status = reason;
 
-                instance.sr.stream.end();
-                instance.sr.stream.destroy();
+                ins.sr.stream.end();
+                ins.sr.stream.destroy();
 
-                instance.sr.reader.pause();
-                instance.sr.reader.destroy();
+                ins.sr.reader.pause();
+                ins.sr.reader.destroy();
 
                 if (reason === "download completed") {
-                    instance.progress = 100;
-                    instance.status_code = 200;
+                    ins.progress = 100;
+                    ins.status_code = 200;
                 } else {
-                    instance.status_code = -1;
+                    ins.status_code = -1;
                 }
 
                 this._render();
