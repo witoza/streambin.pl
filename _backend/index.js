@@ -149,15 +149,15 @@ app.get('/d/:file_uuid', function (req, res) {
                     stats.total_files_streamed++;
                     logger.info(rid, file_uuid, did, ": closing downloader");
                     var reason = null;
+                    var isok = true;
                     if (D.data.file_meta.size === R.total_received) {
                         logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                         reason = 'download completed';
-                        resolve();
                     } else {
-                        reject();
                         const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
                         logger.info(rid, file_uuid, did, msg);
                         reason = msg;
+                        isok = false;
                     }
                     try {
                         D.func.do_close(did, reason);
@@ -165,6 +165,12 @@ app.get('/d/:file_uuid', function (req, res) {
                         logger.warn(rid, file_uuid, did, ": can't send info to client about that event: ", err);
                     }
                     delete D.downloaders[did];
+
+                    if (isok) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
                 }
             };
             D.downloaders[did] = R;

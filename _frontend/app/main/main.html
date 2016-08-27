@@ -35,7 +35,7 @@
                 </span>
 
                 <span class="btn btn-default btn-file">
-                    <input id="dir_input" type="file" webkitdirectory directory multiple> select directory
+                    <input class="dir_input" type="file" webkitdirectory directory multiple> select directory
                </span>
             </center>
         </div>
@@ -59,6 +59,9 @@
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
+                <span class="btn btn-default btn-file">
+                    <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
+               </span>
             </center>
         </div>
 
@@ -70,8 +73,7 @@
                 <div class="panel-body">
 
                     <center>
-                        <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under:
-
+                        <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under url
                             <b><a ng-href="{{ theFile.download_url }}" target="_blank">
                                 {{ theFile.download_url}}</a></b>
 
@@ -109,10 +111,10 @@
                                     </span>
 
                                     <div class="btn-group">
-                                        <button class="btn btn-default dropdown-toggle" type="button"
+                                        <button class="btn btn-default dropdown-toggle btn-sm" type="button"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                            <span class="glyphicon glyphicon-folder-open"></span>
-                                            Change ...
+                                            <!--<span class="glyphicon glyphicon-folder-open"></span>-->
+                                            Change
                                             <span class="caret"></span>
                                         </button>
 
@@ -143,8 +145,12 @@
                                         </ul>
                                     </div>
 
+                                        <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
+                                            <a target="_blank" ng-href="/d/{{theFile.metadata.dir_uuid}}"><b>download as zip</b></a>
+                                        </span>
+                                    </p>
+
                                 </div>
-<br/>
                                 <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                                     text="theFile.download_url" image="true"></qr>
 
@@ -156,11 +162,11 @@
                     </div>
 
                     <div ng-show="theFile.instances.length == 0">
-                        <br/>
-                        <p><b>There are no clients yet connected - share the link or QR code</b></p>
+                        <!--<br/>-->
+                        <!--<p><b>There are no clients yet connected - share the link or QR code</b></p>-->
                     </div>
 
-                    <div ng-show="theFile.instances.length > 0">
+                    <div ng-show="theFile.instances.length > -1">
                         <b><p>Download status:</p></b>
 
                         <table class="table">

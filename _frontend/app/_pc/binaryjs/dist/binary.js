@@ -1484,30 +1484,28 @@ function BinaryClient(socket, options) {
 
 util.inherits(BinaryClient, EventEmitter);
 
-BinaryClient.prototype.send = function(data, meta){
+  BinaryClient.prototype.send = function (data, meta) {
 
-  var that = this;
+    if (data.constructor != File) {
+      throw new Error("not supported");
+    };
+
+    var that = this;
 
     function ready_to_read_fn() {
-        var is_ready = that._socket.bufferedAmount <= (that._options.chunkSize * 4);
-        if (!is_ready) {
-            console.log("bufferedAmount is too big: " + that._socket.bufferedAmount);
-        }
-        return is_ready;
+      var is_ready = that._socket.bufferedAmount <= (that._options.chunkSize * 4);
+      if (!is_ready) {
+        console.log("bufferedAmount is too big: " + that._socket.bufferedAmount);
+      }
+      return is_ready;
     }
 
-  var reader = null;
-  var stream = this.createStream(meta);
+    var stream = this.createStream(meta);
+    var reader = new BlobReadStream(data, {chunkSize: this._options.chunkSize}, ready_to_read_fn);
 
-  if (data.constructor == File) {
-    reader = new BlobReadStream(data, {chunkSize: this._options.chunkSize}, ready_to_read_fn);
-  } else {
-    throw new Error("not supported");
-  }
-
-  reader.pipe(stream);
-  return {stream: stream, reader: reader}
-};
+    reader.pipe(stream);
+    return {stream: stream, reader: reader}
+  };
 
 BinaryClient.prototype._receiveStream = function(streamId){
   var self = this;
