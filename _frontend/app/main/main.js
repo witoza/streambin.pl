@@ -1,3 +1,7 @@
+function isEmpty(str) {
+    return str == null || str.trim().length == 0;
+}
+
 angular
     .module('sb.main', [
         'angularFileUpload',
@@ -127,28 +131,44 @@ angular
             uploader.onAfterAddingFile = function (fileItem) {
                 console.info('onAfterAddingFile', fileItem);
 
-                get_genid($http, function f(data) {
+                function f() {
+                    get_genid($http, function (data) {
 
-                    fileItem.metadata = {
-                        file_uuid: data,
-                        dir_uuid: $localStorage.dir_uuid,
-                        relativePath: fileItem._file.webkitRelativePath,
-                        name: fileItem._file.name,
-                        size: fileItem._file.size
-                    };
-                    fileItem.options = $scope.options;
-                    fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
-                    fileItem.isStreaming = false;
-                    fileItem.instances = [];
-                    fileItem.original_dir_uuid = $localStorage.dir_uuid;
+                        fileItem.metadata = {
+                            file_uuid: data,
+                            dir_uuid: $scope.dir_uuid,
+                            relativePath: fileItem._file.webkitRelativePath,
+                            name: fileItem._file.name,
+                            size: fileItem._file.size
+                        };
+                        fileItem.options = $scope.options;
+                        fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
+                        fileItem.isStreaming = false;
+                        fileItem.instances = [];
+                        fileItem.original_dir_uuid = $scope.dir_uuid;
 
-                    fileItem.upload();
+                        fileItem.upload();
 
-                    $scope.theFiles.push(fileItem);
+                        $scope.theFiles.push(fileItem);
 
-                    $scope.scrollto(fileItem);
+                        $scope.scrollto(fileItem);
 
-                });
+                    });
+                }
+
+                if (isEmpty($scope.dir_uuid)) {
+                    $scope.dir_uuid = $localStorage.dir_uuid;
+                }
+
+                if (isEmpty($scope.dir_uuid)) {
+                    get_genuuid($http, function (data) {
+                        $scope.dir_uuid = data;
+                        f();
+                    });
+                } else {
+                    f();
+                }
+
 
             };
 

@@ -100,7 +100,7 @@
                                 </div>
                                 <p></p>
                                 <div>
-                                    Directory name:<b>
+                                    Directory <b>
                                     <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
                                         <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
                                     </span>
@@ -139,8 +139,6 @@
                                             <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
                                                 <a ng-click="theFile.chnage_dir_uuid(theFile.original_dir_uuid); "
                                                    href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
-                                            </li>
-                                            <li><a ng-click="theFile.chnage_dir_uuid(null); " href>Remove Directory name</a>
                                             </li>
                                         </ul>
                                     </div>

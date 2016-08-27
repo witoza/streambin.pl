@@ -74,18 +74,18 @@ app.use('/', function (req, res, next) {
 });
 
 app.get('/genid', function (req, res) {
-    var uid = null;
-    while (true) {
-        uid = chance.word({length: 10});
-        if (writers[uid] === undefined) {
-            break;
-        }
+    var uid = chance.string({length: 8, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'});
+    if (writers[uid]) {
+        throw new Error("rand is of no good");
     }
     res.send(uid);
 });
 
 app.get('/genuuid', function (req, res) {
-    var uid = chance.word({length: 15});
+    var uid = chance.string({length: 8, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'});
+    if (writers[uid]) {
+        throw new Error("rand is of no good");
+    }
     res.send(uid);
 });
 
