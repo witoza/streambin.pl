@@ -216,7 +216,13 @@ app.get('/d/:file_uuid', function (req, res) {
                 pr = pr.then(function () {
                     var onstream = function (input) {
                         const D = writers[file_uuid];
-                        arch.append(input, {name: D.data.file_meta.name})
+
+                        if (D.data.file_meta.relativePath) {
+                            arch.append(input, {name: D.data.file_meta.relativePath})
+                        } else {
+                            arch.append(input, {name: D.data.file_meta.name})
+                        }
+
                     };
                     return stream_file(file_uuid, onstream);
                 });

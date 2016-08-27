@@ -11,7 +11,7 @@ angular
             document.getElementById('dir_input').onchange = function (e) {
                 console.log('onchange called with e=' + e);
                 var fileList = document.getElementById('dir_input').files;
-                if (Object.keys(fileList).length > 10) {
+                if (Object.keys(fileList).length > 100) {
                     alert("too many files");
                     return;
                 }
@@ -132,6 +132,7 @@ angular
                     fileItem.metadata = {
                         file_uuid: data,
                         dir_uuid: $localStorage.dir_uuid,
+                        relativePath: fileItem._file.webkitRelativePath,
                         name: fileItem._file.name,
                         size: fileItem._file.size
                     };
@@ -151,9 +152,18 @@ angular
 
             };
 
-            $scope.scrollto = function(fileItem){
+            var scrollto_q = [];
+
+            $scope.scrollto = function (fileItem) {
+                scrollto_q.push(fileItem);
+
                 setTimeout(function () {
-                    anchorSmoothScroll.scrollTo("panel_"+fileItem.metadata.file_uuid);
+                    if (scrollto_q.length === 0) {
+                        return
+                    }
+                    var fileItem = scrollto_q.pop();
+                    scrollto_q.length = 0;
+                    anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
                 }, 50);
             };
 
