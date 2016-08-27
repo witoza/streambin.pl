@@ -171,6 +171,9 @@ app.get('/d/:file_uuid', function (req, res) {
                 }
             };
             D.downloaders[did] = R;
+            if (onstream != null) {
+                delete R.res;
+            }
 
             logger.info(rid, file_uuid, did, ": ready to receive data");
             D.func.do_stream(did);
@@ -226,12 +229,7 @@ app.get('/d/:file_uuid', function (req, res) {
         return pr
             .then(function () {
                 logger.info(rid, "all files has been downloaded");
-                arch.finalize(function (err, bytes) {
-                    if (err) {
-                        throw err;
-                    }
-                    logger.info(rid, bytes + ' total bytes');
-                });
+                arch.finalize();
             }).catch(function () {
                 logger.info("one of the files can't be downloaded, zip file is bad");
                 res.destroy();

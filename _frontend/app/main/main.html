@@ -183,7 +183,7 @@
                                 <td>{{ instance.did }}</td>
                                 <td>
                                     <div class="progress" style="margin-bottom: 0;">
-                                        <div class="progress-bar" role="progressbar"
+                                        <div ng-class="{active: instance.status === 'Active'}" class="progress-bar progress-bar-striped" role="progressbar"
                                              ng-style="{ 'width': instance.progress + '%' }">{{ instance.progress }} %
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@
                                 <td>{{ instance.total_received | bytes }}</td>
                                 <td>
                             <span ng-show="instance.status_code === 200">
-                                <span class="label label-success">File received</span>
+                                <span class="label label-success">OK</span> {{ instance.status }}
                             </span>
                                     <span ng-show="instance.status_code === -1">
                                 <span class="label label-warning">Error:</span> {{ instance.status }}
@@ -199,7 +199,7 @@
                                     <button ng-show="instance.status === 'Active'" type="button"
                                             class="btn btn-warning btn-xs"
                                             ng-click="instance.cancel()">
-                                        <span class="glyphicon"></span> Cancel
+                                        <i class="fa fa-times"></i> Cancel
                                     </button>
                                 </td>
                             </tr>
