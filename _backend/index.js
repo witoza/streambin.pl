@@ -16,6 +16,7 @@ const Chance = require('chance'), chance = new Chance();
 const log4js = require('log4js');
 const jsonutil = require('jsonutil');
 const bodyParser = require('body-parser');
+const archiver = require('archiver');
 
 const writers = {};
 
@@ -101,13 +102,11 @@ app.get('/status', function (req, res) {
     logger.info("get status for directory", dir_uuid);
 
     var R = [];
-    var k = Object.keys(writers);
-    for (var i in k) {
-        var key = k[i];
-        var D = writers[key];
 
-        if (dir_uuid == D.data.file_meta.dir_uuid) {
-            R.push(jsonutil.deepCopy(D.data));
+    for (let file_uuid in writers) {
+        var D = writers[file_uuid];
+        if (dir_uuid === D.data.file_meta.dir_uuid) {
+            R.push(D.data);
         }
     }
 
@@ -125,13 +124,11 @@ app.get('/stats', function (req, res) {
     res.json(R);
 });
 
-var archiver = require('archiver');
-
 app.get('/d/:file_uuid', function (req, res) {
 
     var stream_file = function (file_uuid, onstream) {
 
-        var did = chance.word({length: 5});
+        const did = chance.word({length: 5});
 
         return new Promise(function (resolve, reject) {
 

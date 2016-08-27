@@ -182,19 +182,28 @@
                             <tr ng-repeat="instance in theFile.instances">
                                 <td>{{ instance.did }}</td>
                                 <td>
-                                    <div class="progress" style="margin-bottom: 0;">
-                                        <div ng-class="{active: instance.status === 'Active'}" class="progress-bar progress-bar-striped" role="progressbar"
-                                             ng-style="{ 'width': instance.progress + '%' }">{{ instance.progress }} %
+                                    <div ng-show="instance.status === 'Active'">
+
+                                        <div class="progress" style="margin-bottom: 0;">
+                                            <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                 ng-style="{ 'width': instance.progress + '%' }">{{ instance.progress }} %
+                                            </div>
                                         </div>
+
                                     </div>
+
+                                    <div ng-show="instance.status !== 'Active'">
+                                        <p>{{ instance.status }}</p>
+                                    </div>
+
                                 </td>
-                                <td>{{ instance.total_received | bytes }}</td>
+                                <td>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes }}</td>
                                 <td>
                             <span ng-show="instance.status_code === 200">
-                                <span class="label label-success">OK</span> {{ instance.status }}
+                                <span class="label label-success">OK</span>
                             </span>
                                     <span ng-show="instance.status_code === -1">
-                                <span class="label label-warning">Error:</span> {{ instance.status }}
+                                <span class="label label-warning">Error</span>
                             </span>
                                     <button ng-show="instance.status === 'Active'" type="button"
                                             class="btn btn-warning btn-xs"
