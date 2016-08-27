@@ -142,6 +142,7 @@ module
                 item._prepareToUploading();
 
                 this.isUploading = true;
+                console.log("FileUploader::uploadItem");
                 this.stream(item);
 
             };
@@ -496,11 +497,10 @@ module
 
             FileUploader.prototype.stream = function (item) {
                 if (item.isStreaming) {
-                    throw "invalid state: item is being streamed";
+                    throw "file is already being streamed";
                 }
                 item.isStreaming = true;
                 var that = this;
-
 
                 if (this.binaryJsClient == null) {
                     this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
@@ -527,7 +527,6 @@ module
                             var S = {
                                 action: 'ping',
                                 meta: {
-                                    file_uuid: 'ping'
                                 }
                             }
                             that.socket.send(JSON.stringify(S));

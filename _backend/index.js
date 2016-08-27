@@ -133,16 +133,18 @@ app.get('/d/:file_uuid', function (req, res) {
 
     var file_uuid = req.params.file_uuid;
 
-    logger.info(rid, file_uuid, ": new downloading request");
+    logger.info(rid, "new downloading request");
 
     var D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
-        logger.info(rid, "file " + file_uuid + "not found");
+        logger.info(rid, "file", file_uuid, "not found");
 
         const files = [];
-        for (let uuid in writers) {
-            if (writers[uuid].data.file_meta.dir_uuid === file_uuid) {
-                files.push(uuid);
+        for (let f_uuid in writers) {
+            if (writers[f_uuid].data.file_meta.dir_uuid === file_uuid) {
+                files.push({
+                    file_uuid: f_uuid
+                });
             }
         }
         if (files.length == 0) {
@@ -150,7 +152,7 @@ app.get('/d/:file_uuid', function (req, res) {
             return;
         }
 
-        logger.info(rid, "looks like this is a dir, files belonged", files);
+        logger.info(rid, "looks like this is a dir, files belonged:", files);
 
         res.setHeader('Content-type', 'application/zip');
         res.setHeader('Content-disposition', 'attachment; filename=\"' + file_uuid + '.zip\"');
@@ -165,7 +167,6 @@ app.get('/d/:file_uuid', function (req, res) {
             const D = writers[file_uuid];
             const R = {
                 download_start: Date.now(),
-                id: did,
                 req: req,
                 total_received: 0,
                 closed: false,
@@ -180,13 +181,28 @@ app.get('/d/:file_uuid', function (req, res) {
                     stats.total_files_streamed++;
                     logger.info(rid, file_uuid, did, ": closing downloader");
                     var reason = null;
-                    if (D.data.file_meta.size == R.total_received) {
+                    if (D.data.file_meta.size === R.total_received) {
                         logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                         reason = 'download completed';
                     } else {
                         const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
                         logger.info(rid, file_uuid, did, msg);
                         reason = msg;
+
+                        //well, thats sad but we need to close all remaining downloaders and abort whole archive
+                        files.forEach(function (file) {
+
+                            var d = writers[file.file_uuid].downloaders[file.did];
+                            if (d) {
+                                try {
+                                    d.close();
+                                } catch (err) {
+                                    logger.warn("problem while forcing close file in archive", err)
+                                }
+                            }
+
+                        });
+                        res.destroy();
                     }
                     try {
                         D.func.do_close(did, reason);
@@ -195,27 +211,31 @@ app.get('/d/:file_uuid', function (req, res) {
                     }
                     delete D.downloaders[did];
                     remaining_files -= 1;
-                    logger.info(rid, "still waiting for remaining", remaining_files, "files");
-                    if (remaining_files == 0) {
-                        logger.info(rid, "all files has been downloaded");
-                        arch.finalize(function (err, bytes) {
-                            if (err) {
-                                throw err;
-                            }
-                            logger.info(rid, bytes + ' total bytes');
-                        });
+                    logger.info(rid, "waiting for remaining", remaining_files, "files");
+
+                    if (!onFinished.isFinished(req)) {
+                        if (remaining_files === 0) {
+                            logger.info(rid, "all files has been downloaded");
+                            arch.finalize(function (err, bytes) {
+                                if (err) {
+                                    throw err;
+                                }
+                                logger.info(rid, bytes + ' total bytes');
+                            });
+                        }
                     }
                 }
             };
             D.downloaders[did] = R;
 
-            logger.info(rid, file_uuid, did, ": ready to download");
+            logger.info(rid, file_uuid, did, ": ready to receive data");
             D.func.do_stream(did);
 
         };
 
-        for (var file_uuid of files) {
-            stream_file(file_uuid, chance.word({length: 5}));
+        for (var file of files) {
+            file.did = chance.word({length: 5});
+            stream_file(file.file_uuid, file.did);
         }
 
         return;
@@ -225,7 +245,6 @@ app.get('/d/:file_uuid', function (req, res) {
 
     const R = {
         download_start: Date.now(),
-        id: did,
         req: req,
         res: res,
         total_received: 0,
@@ -238,7 +257,7 @@ app.get('/d/:file_uuid', function (req, res) {
             stats.total_files_streamed++;
             logger.info(rid, file_uuid, did, ": closing downloader");
             var reason = null;
-            if (D.data.file_meta.size == R.total_received) {
+            if (D.data.file_meta.size === R.total_received) {
                 logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                 reason = 'download completed';
                 R.res.end();
@@ -258,8 +277,7 @@ app.get('/d/:file_uuid', function (req, res) {
 
     D.downloaders[did] = R;
 
-    const file = D.data.file_meta.name;
-    const filename = path.basename(file);
+    const filename = path.basename(D.data.file_meta.name);
 
     res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', 'attachment; filename=\"' + filename + '\"');
@@ -267,7 +285,7 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
 
-    logger.info(rid, file_uuid, did, ": ready to download");
+    logger.info(rid, file_uuid, did, ": ready to receive data");
     D.func.do_stream(did);
 });
 
@@ -298,12 +316,22 @@ wss.on('connection', function connection(ws) {
         var ws_send = function (cmd) {
             cmd.file_uuid = file_uuid;
             var str = JSON.stringify(cmd);
-            logger.info(file_uuid, ": sending", str);
+            if (file_uuid) {
+                logger.info(file_uuid, ": sending", str);
+            } else {
+                logger.info("sending", str);
+            }
             ws.send(str);
         };
 
+        if (file_uuid) {
+            logger.info(file_uuid, ": new command", message);
+        } else {
+            logger.info("new command", message);
+        }
+
         if (S.action === 'register') {
-            logger.info(file_uuid, ": registering file with meta", message);
+            logger.info(file_uuid, ": registering file");
             if (writers[file_uuid] != null) {
                 logger.info(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
                 return;

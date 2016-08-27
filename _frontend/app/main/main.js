@@ -132,7 +132,6 @@ angular
                     fileItem.metadata = {
                         file_uuid: data,
                         dir_uuid: $localStorage.dir_uuid,
-                        author: "j",
                         name: fileItem._file.name,
                         size: fileItem._file.size
                     };
