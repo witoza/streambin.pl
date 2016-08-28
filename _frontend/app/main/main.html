@@ -118,23 +118,23 @@
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
                         <div class="form-inline">
-                            <input class="form-control urls clipboard" readonly style="width: 70%"
+                            <input class="form-control urls clipboard" readonly style="width: 100%"
                                    value='{{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
+                            <p></p>
                             <input  class="form-control urls clipboard" readonly style="width: 60px"
                                    value='curl   -J -O  {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
                             <input class="form-control urls clipboard" readonly style="width: 60px"
                                    value='wget   {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
+
+                            <a href ng-click="show_qr = !show_qr">QR code</a>
                         </div>
                         <p></p>
                     </div>
                 </div>
                 <p></p>
-                <div ng-show="!show_qr">
-                    <a href ng-click="show_qr = true">Show QR code</a>
-                </div>
                 <div ng-show="show_qr">
                     <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                         text="dir_uuid" image="true"></qr>
@@ -163,14 +163,15 @@
                         </center>
 
                         <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
                                 <center>
                                     <p></p>
                                     <div class="form-inline">
-                                        <input class="form-control urls clipboard" readonly style="width: 70%"
+                                        <input class="form-control urls clipboard" readonly style="width: 100%"
                                                value='{{ theFile.download_url }}'
                                                onmouseup="return false;">
+                                        <p></p>
 
                                         <input class="form-control urls clipboard" readonly style="width: 60px"
                                                value='curl   -J -O  {{ theFile.download_url }}'
@@ -179,17 +180,11 @@
                                         <input class="form-control urls clipboard" readonly style="width: 60px"
                                                value='wget   -O  "{{theFile.file.name}}" {{ theFile.download_url }}'
                                                onmouseup="return false;">
+
+                                        <a href ng-click="theFile.show_qr = !theFile.show_qr">QR code</a>
                                     </div>
                                     <p></p>
-                                    <div>
 
-                                    </div>
-
-                                    <p></p>
-
-                                    <div ng-show="!theFile.show_qr">
-                                        <a href ng-click="theFile.show_qr = true">Show QR code</a>
-                                    </div>
                                     <div ng-show="theFile.show_qr">
                                         <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                                             text="theFile.download_url" image="true"></qr>
@@ -199,7 +194,7 @@
 
                                 </center>
                             </div>
-                            <div class="col-md-3"></div>
+                            <div class="col-md-4"></div>
                         </div>
 
                         <script>
