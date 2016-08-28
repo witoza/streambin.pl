@@ -1,1 +1,157 @@
-function get_genid(t,e){t.get("genid").then(function(t){e(t.data)})}function get_genuuid(t,e){t.get("genuuid").then(function(t){e(t.data)})}function get_streams(t,e,o){t.get("status",{params:{dir_uuid:e}}).then(function(t){o(t.data)})}function get_stats(t,e){t.get("stats").then(function(t){e(t.data)})}angular.module("sbApp",["angularFileUpload","ja.qr","ngStorage","ngRoute","sb.main","sb.dir"]).filter("bytes",function(){return function(t,e){if(0===t)return"0 bytes";if(isNaN(parseFloat(t))||!isFinite(t))return"-";"undefined"==typeof e&&(e=1);var o=["bytes","kB","MB","GB","TB","PB"],n=Math.floor(Math.log(t)/Math.log(1024)),r=(t/Math.pow(1024,Math.floor(n))).toFixed(e);return(r.match(/\.0*$/)?r.substr(0,r.indexOf(".")):r)+" "+o[n]}}).service("anchorSmoothScroll",function(){this.scrollTo=function(t){function e(){return self.pageYOffset?self.pageYOffset:document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop?document.body.scrollTop:0}function o(t){for(var e=document.getElementById(t),o=e.offsetTop,n=e;n.offsetParent&&n.offsetParent!=document.body;)n=n.offsetParent,o+=n.offsetTop;return o}var n=e(),r=o(t),i=r>n?r-n:n-r;if(i<100)return void scrollTo(0,r);var u=Math.round(i/20);u>=20&&(u=20);var a,l=Math.round(i/25),f=r>n?n+l:n-l,d=0;if(r>n)for(a=n;a<r;a+=l)setTimeout("window.scrollTo(0, "+f+")",d*u),f+=l,f>r&&(f=r),d++;else for(a=n;a>r;a-=l)setTimeout("window.scrollTo(0, "+f+")",d*u),f-=l,f<r&&(f=r),d++}}).config(["$routeProvider",function(t){t.when("/",{templateUrl:"main/main.html",controller:"mainCtrl"}).when("/dir/:directoryId",{templateUrl:"dir/dir.html",controller:"dirCtrl"}).otherwise({redirectTo:"/"})}]);
+function get_genid($http, cb) {
+    $http.get('genid').then(function (data) {
+        void 0;
+        cb(data.data);
+    });
+}
+
+function get_genuuid($http, cb) {
+    $http.get('genuuid').then(function (data) {
+        void 0;
+        cb(data.data);
+    });
+}
+
+function get_streams($http, dirId, cb) {
+    $http.get('status', {
+        params: {
+            dir_uuid: dirId
+        }
+    }).then(function (data) {
+        void 0;
+        cb(data.data);
+    });
+}
+
+function get_stats($http, cb) {
+    $http.get('stats').then(function (data) {
+        void 0;
+        cb(data.data);
+    });
+}
+
+angular
+    .module('sbApp', [
+        'angularFileUpload',
+        'ja.qr',
+        'ngStorage',
+        'ngRoute',
+        'sb.main',
+        'sb.dir'])
+
+    .filter('bytes', function () {
+        return function (bytes, precision) {
+            if (bytes === 0) {
+                return '0 bytes'
+            }
+            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+            if (typeof precision === 'undefined') precision = 1;
+
+            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+                number = Math.floor(Math.log(bytes) / Math.log(1024)),
+                val = (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision);
+
+            return (val.match(/\.0*$/) ? val.substr(0, val.indexOf('.')) : val) + ' ' + units[number];
+        }
+    })
+
+    .service('anchorSmoothScroll', function () {
+
+        this.scrollTo = function (eID) {
+
+            // This scrolling function
+            // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+            var startY = currentYPosition();
+            var stopY = elmYPosition(eID);
+            var distance = stopY > startY ? stopY - startY : startY - stopY;
+            if (distance < 100) {
+                scrollTo(0, stopY);
+                return;
+            }
+            var speed = Math.round(distance / 20);
+            if (speed >= 20) speed = 20;
+            var step = Math.round(distance / 25);
+            var leapY = stopY > startY ? startY + step : startY - step;
+            var timer = 0;
+            var i;
+            if (stopY > startY) {
+                for (i = startY; i < stopY; i += step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY += step;
+                    if (leapY > stopY) leapY = stopY;
+                    timer++;
+                }
+                return;
+            }
+            for (i = startY; i > stopY; i -= step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY -= step;
+                if (leapY < stopY) leapY = stopY;
+                timer++;
+            }
+
+            function currentYPosition() {
+                // Firefox, Chrome, Opera, Safari
+                if (self.pageYOffset) return self.pageYOffset;
+                // Internet Explorer 6 - standards mode
+                if (document.documentElement && document.documentElement.scrollTop)
+                    return document.documentElement.scrollTop;
+                // Internet Explorer 6, 7 and 8
+                if (document.body.scrollTop) return document.body.scrollTop;
+                return 0;
+            }
+
+            function elmYPosition(eID) {
+                var elm = document.getElementById(eID);
+                var y = elm.offsetTop;
+                var node = elm;
+                while (node.offsetParent && node.offsetParent != document.body) {
+                    node = node.offsetParent;
+                    y += node.offsetTop;
+                }
+                return y;
+            }
+
+        };
+
+    })
+    .directive('toggle', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                if (attrs.toggle == "tooltip") {
+                    $(element).tooltip({
+                        delay: {"show": 750, "hide": 10},
+                        placement: 'bottom',
+                        trigger: 'hover'
+                    });
+                }
+                if (attrs.toggle == "popover") {
+                    $(element).popover();
+                }
+            }
+        };
+    })
+    .config(['$routeProvider',
+        function ($routeProvider) {
+            $routeProvider.when('/', {
+                templateUrl: 'main/main.html',
+                controller: 'mainCtrl'
+            }).when('/dir/:directoryId', {
+                templateUrl: 'dir/dir.html',
+                controller: 'dirCtrl'
+            }).otherwise({
+                redirectTo: '/'
+            });
+        }])
+
+    .run(["$rootScope", "$location", "$timeout", function ($rootScope, $location, $timeout) {
+
+        void 0;
+
+        const host = location.origin + location.pathname;
+        void 0;
+
+        $rootScope.host = host;
+    }]);

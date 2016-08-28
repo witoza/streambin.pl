@@ -142,6 +142,7 @@ module
                 item._prepareToUploading();
 
                 this.isUploading = true;
+                console.log("FileUploader::uploadItem");
                 this.stream(item);
 
             };
@@ -402,7 +403,7 @@ module
 
                 var that = this;
 
-                var W = {
+                var ins = {
                     did: did,
                     total_received: 0,
                     progress: 0,
@@ -412,66 +413,94 @@ module
                         var S = {
                             action: 'cancel',
                             meta: item.metadata,
-                            did: W.did
+                            did: ins.did
                         }
                         that.socket.send(JSON.stringify(S));
                         that.close_bjs(item, did, 'cancelled');
                     }
                 };
 
-                item.instances.unshift(W);
+                item.instances.unshift(ins);
 
-                var m = angular.extend({}, {did: W.did}, item.metadata);
+                var m = angular.extend({}, {did: ins.did}, item.metadata);
 
-                const stream = this.binaryJsClient.send(item._file, m);
-                stream.on('data', function (data) {
-                    console.log("progress report", data);
+                const sr = this.binaryJsClient.send(item._file, m);
+                sr.stream.on('data', function (data) {
+                    console.log("progress report", data, that.binaryJsClient._socket.bufferedAmount);
 
-                    W.total_received = data.total_received;
-                    W.progress = Math.round((W.total_received / item.metadata.size) * 100);
+                    ins.total_received = data.total_received;
+                    ins.progress = Math.round((ins.total_received / item.metadata.size) * 100);
 
-                    if (W.total_received === item.metadata.size) {
-                        W.progress = 100;
+                    if (ins.total_received === item.metadata.size) {
+                        ins.progress = 100;
                         that._onSuccessItem(item);
                         that._onCompleteItem(item);
                     }
 
                     that._render();
                 });
-                W.stream = stream;
+                ins.sr = sr;
             };
 
             FileUploader.prototype.close_bjs = function (item, did, reason) {
-                console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
-                const m = item.instances.find(function (instance) {
+                const ins = item.instances.find(function (instance) {
                     return instance.did === did;
                 });
 
-                m.status = 'Closed: ' + reason;
-                m.stream.pause();
-                m.stream.destroy();
+                if (ins.status != 'Active') {
+                    console.log("closed already");
+                    return;
+                }
+
+                console.log("closing stream", item.metadata.file_uuid, did, "because:", reason);
+
+                ins.status = reason;
+
+                ins.sr.stream.end();
+                ins.sr.stream.destroy();
+
+                ins.sr.reader.pause();
+                ins.sr.reader.destroy();
+
+                if (reason === "download completed") {
+                    ins.progress = 100;
+                    ins.status_code = 200;
+                } else {
+                    ins.status_code = -1;
+                }
 
                 this._render();
             };
 
             FileUploader.prototype.send_availability = function (item) {
-                console.log("sending availability", item.metadata);
-                var S = {
-                    action: 'register',
-                    meta: item.metadata
-                };
-                this.socket.send(JSON.stringify(S));
-                this._render();
+
+                var self = this;
+
+                (function fn() {
+
+                    if (self.socket.readyState != 1) {
+                        setTimeout(fn, 1000);
+                        return;
+                    }
+
+                    console.log("sending availability", item.metadata);
+                    var S = {
+                        action: 'register',
+                        meta: item.metadata
+                    };
+                    self.socket.send(JSON.stringify(S));
+                    self._render();
+                })();
+
             };
 
             FileUploader.prototype.stream = function (item) {
                 if (item.isStreaming) {
-                    throw "invalid state: item is being streamed";
+                    throw "file is already being streamed";
                 }
                 item.isStreaming = true;
                 var that = this;
-
 
                 if (this.binaryJsClient == null) {
                     this.binaryJsClient = new BinaryClient(this.binaryJsClient_ulr);
@@ -498,7 +527,6 @@ module
                             var S = {
                                 action: 'ping',
                                 meta: {
-                                    file_uuid: 'ping'
                                 }
                             }
                             that.socket.send(JSON.stringify(S));
@@ -533,18 +561,22 @@ module
                         location.reload();
                     };
 
-                    item.chnage_dir_uuid = function () {
-                        var S = {
-                            action: 'chnage_dir_uuid',
-                            meta: item.metadata,
-                            desc: "very interesting file sir"
-                        };
-                        console.log("chnage dir_uuid", S);
-                        that.socket.send(JSON.stringify(S));
-                    };
                 } else {
                     that.send_availability(item);
                 }
+
+                item.chnage_dir_uuid = function (new_dir) {
+                    var S = {
+                        action: 'chnage_dir_uuid',
+                        meta: item.metadata,
+                        desc: "very interesting file sir"
+                    };
+                    if (new_dir !== undefined) {
+                        item.metadata.dir_uuid = new_dir;
+                    }
+                    console.log("chnage dir_uuid", S);
+                    that.socket.send(JSON.stringify(S));
+                };
 
             };
 

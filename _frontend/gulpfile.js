@@ -30,7 +30,7 @@ gulp.task('minify-js', function () {
     gulp.src(['./app/**/*.js', '!./app/_bc/**', '!./app/_pc/**'])
         .pipe(stripDebug())
         .pipe(ngAnnotate())
-        .pipe(uglify())
+//        .pipe(uglify())
         .pipe(gulp.dest('./dist/'))
 });
 

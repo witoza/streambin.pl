@@ -10,9 +10,11 @@
 </ul>
 
 <div ng-show="state=='tab_npm'">
+
     <br/>
     <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
-        outgoing traffic.</p>
+        outgoing traffic.Visit  <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for details.</p>
+
     <pre>
 
     $ npm i --global streambin
@@ -118,9 +120,11 @@
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
                         <div class="form-inline">
-                            <input class="form-control urls clipboard" readonly style="width: 100%"
-                                   value='{{host}}d/{{dir_uuid}}'
-                                   onmouseup="return false;">
+                            <div>
+                                <input class="form-control urls clipboard" readonly style="width: 100%"
+                                       value='{{host}}d/{{dir_uuid}}'
+                                       onmouseup="return false;">
+                            </div>
                             <p></p>
                             <input  class="form-control urls clipboard" readonly style="width: 60px"
                                    value='curl   -J -O  {{host}}d/{{dir_uuid}}'
@@ -168,9 +172,11 @@
                                 <center>
                                     <p></p>
                                     <div class="form-inline">
-                                        <input class="form-control urls clipboard" readonly style="width: 100%"
-                                               value='{{ theFile.download_url }}'
-                                               onmouseup="return false;">
+                                        <div>
+                                            <input class="form-control urls clipboard" readonly style="width: 100%"
+                                                   value='{{ theFile.download_url }}'
+                                                   onmouseup="return false;">
+                                        </div>
                                         <p></p>
 
                                         <input class="form-control urls clipboard" readonly style="width: 60px"

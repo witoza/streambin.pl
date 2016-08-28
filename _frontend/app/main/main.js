@@ -1,7 +1,3 @@
-function isEmpty(str) {
-    return str == null || str.trim().length == 0;
-}
-
 angular
     .module('sb.main', [
         'angularFileUpload',
@@ -12,11 +8,15 @@ angular
 
         function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
+            function isEmpty(str) {
+                return str == null || str.trim().length == 0;
+            }
+
             $(".dir_input").on('change', function (e) {
                 console.log('onchange called with e', e);
                 var fileList = e.currentTarget.files;
                 if (Object.keys(fileList).length > 500) {
-                    alert("too many files");
+                    alert("too many files, max is 500, the dir selected has " + Object.keys(fileList).length);
                     return;
                 }
                 for (var k in Object.keys(fileList)) {
@@ -195,7 +195,7 @@ angular
             };
 
             $scope.apply_dir = function (dir_uuid) {
-                $scope.dir_uuid = dir_uuid
+                $scope.dir_uuid = dir_uuid;
                 for (let d in $scope.the_files) {
                     $scope.the_files[d].forEach(function (item) {
                         item.chnage_dir_uuid(dir_uuid);
@@ -203,18 +203,17 @@ angular
                 }
             };
 
-            var scrollto_q = [];
+            var scrollto_last = null;
 
             $scope.scrollto = function (fileItem) {
-                scrollto_q.push(fileItem);
+                scrollto_last = fileItem;
 
                 setTimeout(function () {
-                    if (scrollto_q.length === 0 || $scope.total_files > 1) {
+                    if (scrollto_last == null || $scope.total_files > 1) {
                         return
                     }
-                    var fileItem = scrollto_q.pop();
-                    scrollto_q.length = 0;
-                    anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
+                    $scope.do_scrollto(scrollto_last);
+                    scrollto_last = null;
                 }, 50);
             };
 
