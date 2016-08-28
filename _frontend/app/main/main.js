@@ -29,7 +29,7 @@ angular
                 $window.location = 'about:blank';
             };
 
-            $scope.theFiles = [];
+            $scope.the_files = {};
 
             if ($localStorage.you_streams == null) {
                 $localStorage.you_streams = ['public'];
@@ -149,7 +149,15 @@ angular
 
                         fileItem.upload();
 
-                        $scope.theFiles.push(fileItem);
+                        var k = "files:";
+                        if (!isEmpty(fileItem.metadata.relativePath)) {
+                            k = fileItem.metadata.relativePath.substring(0, fileItem.metadata.relativePath.length - fileItem.metadata.name.length);
+                        }
+                        if (!$scope.the_files[k]) {
+                            $scope.the_files[k] = [];
+                        }
+                        $scope.the_files[k].push(fileItem);
+                        $scope.the_files_len = Object.keys($scope.the_files).length;
 
                         $scope.scrollto(fileItem);
 
