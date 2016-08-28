@@ -50,15 +50,15 @@
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <b>Now publishing:</b>
                 <div ng-repeat="(key, theFiles) in the_files">
-                    <b>{{key}}</b>
+                    <b>{{key}}({{theFiles.length}})</b>
                     <div ng-repeat="theFile in theFiles">
                         <code id="m_{{theFile.metadata.file_uuid}}">
-                            <b><a href ng-click="scrollto(theFile)"
-                            >{{ theFile.metadata.name }}</a></b></code>
+                            <b><a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{
+                                theFile.metadata.name }}</a></b></code>
                     </div>
                 </div>
-
-                <br/>
+                <p></p>
+                <p>Total {{total_size | bytes}} in {{total_files }} files</p>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
@@ -147,10 +147,12 @@
             <div class="panel panel-default">
                 <div class="panel-body">
 
-                    Directory <b>{{key}}:</b>
+                    Directory <b>{{key}}</b>
                     <hr/>
 
                     <div ng-repeat="theFile in theFiles">
+
+                        {{ theFile.metadata.rest_dir }}
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
                             <h4>File <code><b>{{theFile.file.name}}</b></code> is published under:</h4>
@@ -372,11 +374,6 @@
             download from other unknown people. That can be mitigated, if you own the host server, or it is installed
             somewhere when access logs are not kept
         </li>
-    </ul>
-
-    <h2>Limits</h2>
-    <ul>
-        <li>10 concurrent streams, this is because of server is hosted not owned</li>
     </ul>
 
     <h2>Contact</h2>

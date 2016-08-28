@@ -15,7 +15,7 @@ angular
             $(".dir_input").on('change', function (e) {
                 console.log('onchange called with e', e);
                 var fileList = e.currentTarget.files;
-                if (Object.keys(fileList).length > 100) {
+                if (Object.keys(fileList).length > 500) {
                     alert("too many files");
                     return;
                 }
@@ -126,6 +126,7 @@ angular
             });
 
             $scope.total_files = 0;
+            $scope.total_size = 0;
             $scope.dir_uuid = $localStorage.dir_uuid;
             $scope.original_dir_uuid = $scope.dir_uuid;
             if (isEmpty($scope.dir_uuid)) {
@@ -164,7 +165,13 @@ angular
 
                     var k = "Files/";
                     if (!isEmpty(fileItem.metadata.relativePath)) {
-                        k = fileItem.metadata.relativePath.substring(0, fileItem.metadata.relativePath.length - fileItem.metadata.name.length);
+                        var rp = fileItem.metadata.relativePath;
+                        fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
+
+                        rp = rp.substring(rp.indexOf("/") + 1);
+                        fileItem.metadata.rest_dir = rp.substring(0, rp.lastIndexOf("/") + 1);
+
+                        k = fileItem.metadata.top_dir;
                     }
                     if (!$scope.the_files[k]) {
                         $scope.the_files[k] = [];
@@ -172,6 +179,7 @@ angular
                     $scope.the_files[k].push(fileItem);
                     $scope.the_files_len = Object.keys($scope.the_files).length;
                     $scope.total_files++;
+                    $scope.total_size += fileItem.metadata.size;
 
                     setTimeout(function () {
                         var tid = "#m_" + fileItem.metadata.file_uuid;
@@ -208,6 +216,10 @@ angular
                     scrollto_q.length = 0;
                     anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
                 }, 50);
+            };
+
+            $scope.do_scrollto = function (fileItem) {
+                anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
             };
 
             uploader.onAfterAddingAll = function (addedFileItems) {
