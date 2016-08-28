@@ -49,16 +49,19 @@
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <b>Now publishing:</b>
+            </center>
+
                 <div ng-repeat="(key, theFiles) in the_files">
                     <b>{{key}}({{theFiles.length}})</b>
                     <div ng-repeat="theFile in theFiles">
                         <code id="m_{{theFile.metadata.file_uuid}}">
-                            <b><a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{
-                                theFile.metadata.name }}</a></b></code>
+                            <b> <a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{ theFile.metadata.name }}</a></b></code>
                     </div>
                 </div>
                 <p></p>
                 <p>Total {{total_size | bytes}} in {{total_files }} files</p>
+
+            <center>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
@@ -152,10 +155,8 @@
 
                     <div ng-repeat="theFile in theFiles">
 
-                        {{ theFile.metadata.rest_dir }}
-
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4>File <code><b>{{theFile.file.name}}</b></code> is published under:</h4>
+                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b></code> is published under:</h4>
                         </center>
 
                         <div class="row">
