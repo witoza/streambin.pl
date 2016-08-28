@@ -341,7 +341,11 @@ wss.on('connection', function connection(ws) {
             });
         } else if (S.action === 'cancel') {
             logger.info(file_uuid, ": cancelling by user");
-            writers[file_uuid].downloaders[S.did].close();
+            try {
+                writers[file_uuid].downloaders[S.did].close();
+            } catch (err) {
+                logger.warn("problem while closing downloader", err);
+            }
         } else if (S.action === 'chnage_dir_uuid') {
             logger.info(file_uuid, ": changing dir_uuid", S);
             writers[file_uuid].data.desc = S.desc;
