@@ -147,6 +147,9 @@
             <div class="panel panel-default">
                 <div class="panel-body">
 
+                    Directory <b>{{key}}:</b>
+                    <hr/>
+
                     <div ng-repeat="theFile in theFiles">
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
@@ -199,9 +202,9 @@
                         </script>
 
                         <center>
-                        <div ng-show="theFile.instances.length == 0">
-                            <i>No clients yet connected</i>
-                        </div>
+                            <div ng-show="theFile.instances.length == 0">
+                                <i>No clients yet connected</i>
+                            </div>
                         </center>
 
                         <div ng-show="theFile.instances.length > 0">
@@ -381,7 +384,7 @@
     </p>
 </div>
 
-<div ng-show="state==5">
+<div ng-show="state=='stats'">
     <h2>Stats</h2>
     <pre>{{ stats | json}}</pre>
 </div>

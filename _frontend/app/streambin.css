@@ -43,18 +43,18 @@
 
 .flash {
 	-webkit-animation-name: flash-animation;
-	-webkit-animation-duration: 0.6s;
+	-webkit-animation-duration: 0.8s;
 
 	animation-name: flash-animation;
-	animation-duration: 0.6s;
+	animation-duration: 0.8s;
 }
 
 @-webkit-keyframes flash-animation {
-	from { background: orangered; }
+	from { background: lightskyblue; }
 	to   { background: default; }
 }
 
 @keyframes flash-animation {
-	from { background: orangered; }
+	from { background: lightskyblue; }
 	to   { background: default; }
 }

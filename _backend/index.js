@@ -126,9 +126,9 @@ app.get('/stats', function (req, res) {
 
 app.get('/d/:file_uuid', function (req, res) {
 
-    var stream_file = function (file_uuid, onstream) {
+    const did = chance.word({length: 5});
 
-        const did = chance.word({length: 5});
+    var stream_file = function (file_uuid, onstream) {
 
         return new Promise(function (resolve, reject) {
 

@@ -96,7 +96,7 @@ angular
             $scope.showStats = function () {
 
                 console.log("tab change");
-                $scope.state = 5;
+                $scope.state = 'stats';
 
                 get_stats($http, function (data) {
                     $scope.stats = data;
@@ -141,56 +141,58 @@ angular
             uploader.onAfterAddingFile = function (fileItem) {
                 console.info('onAfterAddingFile', fileItem);
 
-                function f() {
-                    get_genid($http, function (data) {
-
-                        fileItem.metadata = {
-                            file_uuid: data,
-                            dir_uuid: $scope.dir_uuid,
-                            relativePath: fileItem._file.webkitRelativePath,
-                            name: fileItem._file.name,
-                            size: fileItem._file.size
-                        };
-                        fileItem.options = $scope.options;
-                        fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
-                        fileItem.isStreaming = false;
-                        fileItem.instances = [];
-                        fileItem.original_dir_uuid = $scope.dir_uuid;
-
-                        fileItem.upload();
-
-                        var k = "Files/";
-                        if (!isEmpty(fileItem.metadata.relativePath)) {
-                            k = fileItem.metadata.relativePath.substring(0, fileItem.metadata.relativePath.length - fileItem.metadata.name.length);
-                        }
-                        if (!$scope.the_files[k]) {
-                            $scope.the_files[k] = [];
-                        }
-                        $scope.the_files[k].push(fileItem);
-                        $scope.the_files_len = Object.keys($scope.the_files).length;
-                        $scope.total_files++;
-
-                        setTimeout(function () {
-                            var tid = "#m_" + fileItem.metadata.file_uuid;
-                            $(tid).addClass('flash');
-                            setTimeout(function () {
-                                $(tid).removeClass('flash');
-                            }, 1000);
-                        }, 100);
-                        $scope.scrollto(fileItem);
-
-                    });
-                }
-
                 if (isEmpty($scope.dir_uuid)) {
                     throw new Error("dir can't be empty");
                 }
-                f();
+
+                get_genid($http, function (data) {
+
+                    fileItem.metadata = {
+                        file_uuid: data,
+                        dir_uuid: $scope.dir_uuid,
+                        relativePath: fileItem._file.webkitRelativePath,
+                        name: fileItem._file.name,
+                        size: fileItem._file.size
+                    };
+                    fileItem.options = $scope.options;
+                    fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
+                    fileItem.isStreaming = false;
+                    fileItem.instances = [];
+                    fileItem.original_dir_uuid = $scope.dir_uuid;
+
+                    fileItem.upload();
+
+                    var k = "Files/";
+                    if (!isEmpty(fileItem.metadata.relativePath)) {
+                        k = fileItem.metadata.relativePath.substring(0, fileItem.metadata.relativePath.length - fileItem.metadata.name.length);
+                    }
+                    if (!$scope.the_files[k]) {
+                        $scope.the_files[k] = [];
+                    }
+                    $scope.the_files[k].push(fileItem);
+                    $scope.the_files_len = Object.keys($scope.the_files).length;
+                    $scope.total_files++;
+
+                    setTimeout(function () {
+                        var tid = "#m_" + fileItem.metadata.file_uuid;
+                        $(tid).addClass('flash');
+                        setTimeout(function () {
+                            $(tid).removeClass('flash');
+                        }, 1000);
+                    }, 100);
+                    $scope.scrollto(fileItem);
+
+                });
 
             };
 
-            $scope.apply_dir = function (dir_name) {
-//todo
+            $scope.apply_dir = function (dir_uuid) {
+                $scope.dir_uuid = dir_uuid
+                for (let d in $scope.the_files) {
+                    $scope.the_files[d].forEach(function (item) {
+                        item.chnage_dir_uuid(dir_uuid);
+                    })
+                }
             };
 
             var scrollto_q = [];
