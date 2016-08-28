@@ -15,11 +15,26 @@ angular
             $(".dir_input").on('change', function (e) {
                 console.log('onchange called with e', e);
                 var fileList = e.currentTarget.files;
-                if (Object.keys(fileList).length > 500) {
+                var num_of_files = Object.keys(fileList).length;
+                if (num_of_files > 500) {
                     alert("too many files, max is 500, the dir selected has " + Object.keys(fileList).length);
                     return;
                 }
+
                 for (var k in Object.keys(fileList)) {
+                    var file = fileList[k];
+
+                    var rp = file.webkitRelativePath;
+                    if (!isEmpty(rp)) {
+                        var top_dir = rp.substring(0, rp.indexOf("/") + 1);
+                        if (!$scope.props[top_dir]) {
+                            $scope.props[top_dir] = {
+                                expanded: num_of_files < 20,
+                                size: 0
+                            }
+                        }
+                    }
+
                     uploader.addToQueue(fileList[k]);
                 }
             });
@@ -125,6 +140,12 @@ angular
                 binaryJsClient_ulr: binaryJsClient_ulr
             });
 
+            $scope.props = {
+                "/": {
+                    expanded: true,
+                    size: 0
+                }
+            };
             $scope.total_files = 0;
             $scope.total_size = 0;
             $scope.dir_uuid = $localStorage.dir_uuid;
@@ -163,7 +184,7 @@ angular
 
                     fileItem.upload();
 
-                    var k = "Files/";
+                    var k = "/";
                     if (!isEmpty(fileItem.metadata.relativePath)) {
                         var rp = fileItem.metadata.relativePath;
                         fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
@@ -180,6 +201,11 @@ angular
                     $scope.the_files_len = Object.keys($scope.the_files).length;
                     $scope.total_files++;
                     $scope.total_size += fileItem.metadata.size;
+
+                    $scope.props[k].size += fileItem.metadata.size;
+                    if (!$scope.props[k].expanded) {
+                        return;
+                    }
 
                     setTimeout(function () {
                         var tid = "#m_" + fileItem.metadata.file_uuid;
