@@ -315,17 +315,24 @@
     <br/>
 
     <form class="form-horizontal">
+
         <div class="form-group">
-            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be automatically
-                published with</label>
+            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be published with</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" id="lb1" placeholder="Directory" ng-model="bind_dir_uuid">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <button type="button" class="btn btn-default btn-block" ng-click="bind_dir_uuid = ''">Clear</button>
                 <button type="button" class="btn btn-default btn-block" ng-click="generate_random_dir_uuid()">Set
                     random
                 </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-3">
                 <button type="button" class="btn btn-success btn-block" ng-click="saveMySettings()">Save</button>
             </div>
         </div>
