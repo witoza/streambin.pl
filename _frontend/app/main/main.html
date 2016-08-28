@@ -13,7 +13,9 @@
 
     <br/>
     <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
-        outgoing traffic.Visit  <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for details.</p>
+        outgoing traffic.Visit <a
+                href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for details.
+    </p>
 
     <pre>
 
@@ -121,15 +123,15 @@
                     <div class="col-md-6">
                         <div class="form-inline">
                             <div>
-                                <input class="form-control urls clipboard" readonly style="width: 100%"
+                                <input class="form-control urls clipboard " readonly style="width: 100%"
                                        value='{{host}}d/{{dir_uuid}}'
                                        onmouseup="return false;">
                             </div>
                             <p></p>
-                            <input  class="form-control urls clipboard" readonly style="width: 60px"
+                            <input class="form-control urls clipboard " readonly style="width: 60px"
                                    value='curl   -J -O  {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-                            <input class="form-control urls clipboard" readonly style="width: 60px"
+                            <input class="form-control urls clipboard " readonly style="width: 60px"
                                    value='wget   -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
 
@@ -156,12 +158,13 @@
                 <div class="panel-body">
 
                     Directory <b>{{key}}</b>
-                    <hr/>
 
                     <div ng-repeat="theFile in theFiles">
+                        <hr/>
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b> ({{theFile.file.size | bytes}})</code> is
+                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b>
+                                ({{theFile.file.size | bytes}})</code> is
                                 published under:</h4>
                         </center>
 
@@ -170,23 +173,26 @@
                             <div class="col-md-4">
                                 <center>
                                     <p></p>
+                                    <div>
+                                        <input class="form-control urls clipboard " readonly style="width: 100%"
+                                               value='{{ theFile.download_url }}'
+                                               onmouseup="return false;">
+                                    </div>
+                                    <p></p>
                                     <div class="form-inline">
-                                        <div>
-                                            <input class="form-control urls clipboard" readonly style="width: 100%"
-                                                   value='{{ theFile.download_url }}'
-                                                   onmouseup="return false;">
-                                        </div>
-                                        <p></p>
 
-                                        <input class="form-control urls clipboard" readonly style="width: 60px"
+                                        <input class="form-control urls clipboard " readonly
+                                               style="width: 60px"
                                                value='curl   -J -O  {{ theFile.download_url }}'
                                                onmouseup="return false;">
 
-                                        <input class="form-control urls clipboard" readonly style="width: 60px"
+                                        <input class="form-control urls clipboard " readonly
+                                               style="width: 60px"
                                                value='wget   -O  "{{theFile.file.name}}" {{ theFile.download_url }}'
                                                onmouseup="return false;">
 
                                         <a href ng-click="theFile.show_qr = !theFile.show_qr">QR code</a>
+
                                     </div>
                                     <p></p>
 
@@ -201,8 +207,8 @@
                         </div>
 
                         <script>
-                            $(".clipboard").unbind('click');
-                            $(".clipboard").on('click', function (e) {
+                            $(".clipboard ").unbind('click');
+                            $(".clipboard ").on('click', function (e) {
                                 $(this).select();
                                 var v = $(this).val();
                                 console.log("copied", v);
@@ -279,8 +285,6 @@
 
                         </div>
 
-                        <hr/>
-
                     </div>
                 </div>
 
@@ -316,7 +320,8 @@
     <form class="form-horizontal">
 
         <div class="form-group">
-            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be published with</label>
+            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be published
+                with</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" id="lb1" placeholder="Directory" ng-model="bind_dir_uuid">
             </div>
