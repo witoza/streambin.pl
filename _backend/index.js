@@ -358,7 +358,10 @@ wss.on('connection', function connection(ws) {
             var D = writers[file_uuid];
             if (D.func.ws === ws) {
                 for (let did in D.downloaders) {
-                    D[did].close();
+                    var d = D[did];
+                    if (d) {
+                        d.close();
+                    }
                 }
                 delete writers[file_uuid];
             }
