@@ -51,15 +51,16 @@
                 <b>Now publishing:</b>
             </center>
 
-                <div ng-repeat="(key, theFiles) in the_files">
-                    <b>{{key}}({{theFiles.length}})</b>
-                    <div ng-repeat="theFile in theFiles">
-                        <code id="m_{{theFile.metadata.file_uuid}}">
-                            <b> <a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{ theFile.metadata.name }}</a></b></code>
-                    </div>
+            <div ng-repeat="(key, theFiles) in the_files">
+                <b>{{key}}({{theFiles.length}})</b>
+                <div ng-repeat="theFile in theFiles">
+                    <code id="m_{{theFile.metadata.file_uuid}}">
+                        <b> <a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{
+                            theFile.metadata.name }}</a></b></code>
                 </div>
-                <p></p>
-                <p>Total {{total_size | bytes}} in {{total_files }} files</p>
+            </div>
+            <p></p>
+            <p>Total {{total_size | bytes}} in {{total_files }} files</p>
 
             <center>
                 Drag and drop here or
@@ -116,17 +117,15 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <div>
-                            <input type="url" class="form-control urls clipboard" readonly
+                        <div class="form-inline">
+                            <input type="url" class="form-control urls clipboard" readonly style="width: 80%"
                                    value='{{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-                        </div>
-                        <p></p>
-                        <div>
-                            <input type="url" class="form-control urls clipboard" readonly
+                            <input type="url" class="form-control urls clipboard" readonly style="width: 50px"
                                    value='curl -J -O  {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
                         </div>
+                        <p></p>
                     </div>
                 </div>
                 <p></p>
@@ -156,7 +155,8 @@
                     <div ng-repeat="theFile in theFiles">
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b></code> is published under:</h4>
+                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b></code> is
+                                published under:</h4>
                         </center>
 
                         <div class="row">
@@ -164,16 +164,18 @@
                             <div class="col-md-4">
                                 <center>
                                     <p></p>
-                                    <div>
-                                        <input type="url" class="form-control urls clipboard" readonly
+                                    <div class="form-inline">
+                                        <input class="form-control urls clipboard" readonly style="width: 80%"
                                                value='{{ theFile.download_url }}'
+                                               onmouseup="return false;">
+
+                                        <input class="form-control urls clipboard" readonly style="width: 50px"
+                                               value='curl -J -O  {{ theFile.download_url }}'
                                                onmouseup="return false;">
                                     </div>
                                     <p></p>
                                     <div>
-                                        <input type="url" class="form-control urls clipboard" readonly
-                                               value='curl -J -O  {{ theFile.download_url }}'
-                                               onmouseup="return false;">
+
                                     </div>
 
                                     <p></p>
@@ -197,6 +199,8 @@
                             $(".clipboard").unbind('click');
                             $(".clipboard").on('click', function (e) {
                                 $(this).select();
+                                var v = $(this).val();
+                                console.log("copied", v);
                                 document.execCommand('copy');
                                 var cp = $('<p>Link has been copied</p>');
                                 cp.fadeOut(2000);
