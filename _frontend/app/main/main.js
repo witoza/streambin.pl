@@ -125,6 +125,16 @@ angular
                 binaryJsClient_ulr: binaryJsClient_ulr
             });
 
+            $scope.total_files = 0;
+            $scope.dir_uuid = $localStorage.dir_uuid;
+            $scope.original_dir_uuid = $scope.dir_uuid;
+            if (isEmpty($scope.dir_uuid)) {
+                get_genuuid($http, function (data) {
+                    $scope.dir_uuid = data;
+                    $scope.original_dir_uuid = $scope.dir_uuid;
+                });
+            }
+
             uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
                 console.info('onWhenAddingFileFailed', item, filter, options);
             };
@@ -149,7 +159,7 @@ angular
 
                         fileItem.upload();
 
-                        var k = "files:";
+                        var k = "Files/";
                         if (!isEmpty(fileItem.metadata.relativePath)) {
                             k = fileItem.metadata.relativePath.substring(0, fileItem.metadata.relativePath.length - fileItem.metadata.name.length);
                         }
@@ -158,26 +168,29 @@ angular
                         }
                         $scope.the_files[k].push(fileItem);
                         $scope.the_files_len = Object.keys($scope.the_files).length;
+                        $scope.total_files++;
 
+                        setTimeout(function () {
+                            var tid = "#m_" + fileItem.metadata.file_uuid;
+                            $(tid).addClass('flash');
+                            setTimeout(function () {
+                                $(tid).removeClass('flash');
+                            }, 1000);
+                        }, 100);
                         $scope.scrollto(fileItem);
 
                     });
                 }
 
                 if (isEmpty($scope.dir_uuid)) {
-                    $scope.dir_uuid = $localStorage.dir_uuid;
+                    throw new Error("dir can't be empty");
                 }
+                f();
 
-                if (isEmpty($scope.dir_uuid)) {
-                    get_genuuid($http, function (data) {
-                        $scope.dir_uuid = data;
-                        f();
-                    });
-                } else {
-                    f();
-                }
+            };
 
-
+            $scope.apply_dir = function (dir_name) {
+//todo
             };
 
             var scrollto_q = [];
@@ -186,7 +199,7 @@ angular
                 scrollto_q.push(fileItem);
 
                 setTimeout(function () {
-                    if (scrollto_q.length === 0) {
+                    if (scrollto_q.length === 0 || $scope.total_files > 1) {
                         return
                     }
                     var fileItem = scrollto_q.pop();

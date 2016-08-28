@@ -310,15 +310,6 @@ wss.on('connection', function connection(ws) {
                 logger.info(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
                 return;
             }
-
-            //throttling
-            if (num_of_keys(writers) > 10) {
-                ws_send({
-                    action: 'do_error',
-                    reason: 'too many concurrent clients. come back later',
-                });
-                return;
-            }
             var D = {
                 data: {
                     publish_time: Date.now(),

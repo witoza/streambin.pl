@@ -6,7 +6,7 @@
 
     <div ng-show="curr_streams_data.length >0">
 
-        <p>Download URL (zip of all files): <b><a ng-href="{{ host }}d/{{ curr_stream }}">{{ host }}d/{{ curr_stream }}</a></b></p>
+        <p>Download whole directory (zip file) URL: <b><a ng-href="{{ host }}d/{{ curr_stream }}">{{ host }}d/{{ curr_stream }}</a></b></p>
 
         <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
             <span class="glyphicon glyphicon-refresh"></span> Refresh
@@ -17,25 +17,22 @@
             <thead>
             <th>Name</th>
             <th>Size</th>
-            <th>URL</th>
-            <th>Downloaded stats</th>
+            <th>Download URL</th>
             </thead>
             <tbody>
             <tr ng-repeat="item in curr_streams_data">
-                <td>
-                    <b>{{ item.file_meta.name }}</b>
-                </td>
+                    <td ng-if="item.file_meta.relativePath">
+                        <b>{{ item.file_meta.relativePath }}</b>
+                    </td>
+                    <td ng-if="!item.file_meta.relativePath">
+                        <b>{{ item.file_meta.name }}</b>
+                    </td>
                 <td>
                     {{ item.file_meta.size | bytes }}
                 </td>
                 <td>
-                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid
-                        }}</a>
+                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid }}</a>
                 </td>
-                <td>
-                    Success# <b>{{ item.num_of_download_ok }}</b> Fail# <b>{{ item.num_of_download_fail }}</b>
-                </td>
-
             </tr>
             </tbody>
         </table>

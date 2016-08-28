@@ -37,7 +37,24 @@
 	background-color: grey;
 }
 
+/*.urls {*/
+	/*font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;*/
+/*}*/
 
-.urls {
-	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+.flash {
+	-webkit-animation-name: flash-animation;
+	-webkit-animation-duration: 0.6s;
+
+	animation-name: flash-animation;
+	animation-duration: 0.6s;
+}
+
+@-webkit-keyframes flash-animation {
+	from { background: orangered; }
+	to   { background: default; }
+}
+
+@keyframes flash-animation {
+	from { background: orangered; }
+	to   { background: default; }
 }

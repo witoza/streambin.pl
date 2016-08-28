@@ -48,15 +48,16 @@
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
-                <b>Now streaming files:</b>
+                <b>Now publishing:</b>
                 <div ng-repeat="(key, theFiles) in the_files">
-                    {{key}}
+                    <b>{{key}}</b>
                     <div ng-repeat="theFile in theFiles">
-                        <code>
+                        <code id="m_{{theFile.metadata.file_uuid}}">
                             <b><a href ng-click="scrollto(theFile)"
                             >{{ theFile.metadata.name }}</a></b></code>
                     </div>
                 </div>
+
                 <br/>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
@@ -71,6 +72,71 @@
         <h1 id="step2" class="h_active">Step 2: Download the files on the remote machine</h1>
 
         <center>
+
+            <div ng-show="total_files > 1">
+                All files are published under directory <a target="_blank"
+                                                           ng-href="#/dir/{{dir_uuid}}"><b>{{dir_uuid}}</b></a>
+
+                <div class="btn-group">
+                    <button class="btn btn-default dropdown-toggle btn-sm" type="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <!--<span class="glyphicon glyphicon-folder-open"></span>-->
+                        Change
+                        <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="input-group"
+                                 style="padding-top: 3px; padding-left: 20px;padding-right: 20px;">
+                                <input type="text" class="form-control"
+                                       ng-model="dir_uuid"
+                                       placeholder="Directory">
+                                <span class="input-group-btn">
+                                <button type="button" class="btn btn-default"
+                                        ng-click="apply_dir(dir_uuid)">Set</button>
+                            </span>
+                            </div>
+                        </li>
+                        <li role="separator" class="divider"></li>
+
+                        <li><a ng-click="apply_dir('public'); " href>Directory
+                            <b>public</b></a>
+                        </li>
+                        <li>
+                            <a ng-click="apply_dir(original_dir_uuid); "
+                               href>Directory <b>{{original_dir_uuid}}</b></a>
+                        </li>
+                    </ul>
+                </div>
+                <p>Download whole directory as .zip via URL:</p>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <div>
+                            <input type="url" class="form-control urls clipboard" readonly
+                                   value='{{host}}d/{{dir_uuid}}'
+                                   onmouseup="return false;">
+                        </div>
+                        <p></p>
+                        <div>
+                            <input type="url" class="form-control urls clipboard" readonly
+                                   value='curl -J -O  {{host}}d/{{dir_uuid}}'
+                                   onmouseup="return false;">
+                        </div>
+                    </div>
+                </div>
+                <p></p>
+                <div ng-show="!show_qr">
+                    <a href ng-click="show_qr = true">Show QR code</a>
+                </div>
+                <div ng-show="show_qr">
+                    <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                        text="dir_uuid" image="true"></qr>
+                </div>
+
+                <p></p>
+            </div>
             <p>To cancel publishing and close all the clients <a
                     href="javascript:location.reload();">reload</a> or <a
                     ng-click="close_page()" href>close</a> this page</p>
@@ -84,13 +150,12 @@
                     <div ng-repeat="theFile in theFiles">
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4><p>File <code><b>{{theFile.file.name}}</b></code> is being published under:
-                            </p></h4>
+                            <h4>File <code><b>{{theFile.file.name}}</b></code> is published under:</h4>
                         </center>
 
                         <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
                                 <center>
                                     <p></p>
                                     <div>
@@ -106,65 +171,20 @@
                                     </div>
 
                                     <p></p>
-                                    <div>
-                                        Directory <b>
-                                    <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
-                                        <a target="_blank" ng-href="#/dir/{{theFile.metadata.dir_uuid}}"><b>{{theFile.metadata.dir_uuid}}</b></a>
-                                    </span>
-                                    </b>
 
-                                        <span ng-show="theFile.metadata.dir_uuid == null || theFile.metadata.dir_uuid == ''">
-                                        none
-                                    </span>
-
-                                        <div class="btn-group">
-                                            <button class="btn btn-default dropdown-toggle btn-sm" type="button"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                <!--<span class="glyphicon glyphicon-folder-open"></span>-->
-                                                Change
-                                                <span class="caret"></span>
-                                            </button>
-
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <div class="input-group"
-                                                         style="padding-top: 3px; padding-left: 20px;padding-right: 20px;">
-                                                        <input type="text" class="form-control"
-                                                               ng-model="theFile.change_dir_manual"
-                                                               placeholder="Directory">
-                                                        <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default"
-                                                                ng-click="theFile.chnage_dir_uuid(theFile.change_dir_manual);">Set</button>
-                                                    </span>
-                                                    </div>
-                                                </li>
-                                                <li role="separator" class="divider"></li>
-
-                                                <li><a ng-click="theFile.chnage_dir_uuid('public'); "
-                                                       href>Directory
-                                                    <b>public</b></a>
-                                                </li>
-                                                <li ng-show="theFile.original_dir_uuid != null && theFile.original_dir_uuid != ''">
-                                                    <a ng-click="theFile.chnage_dir_uuid(theFile.original_dir_uuid); "
-                                                       href>Directory <b>{{theFile.original_dir_uuid}}</b></a>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        <span ng-show="theFile.metadata.dir_uuid != null && theFile.metadata.dir_uuid != ''">
-                                            <a target="_blank" ng-href="/d/{{theFile.metadata.dir_uuid}}"><b>download as zip</b></a>
-                                        </span>
-                                        </p>
-
+                                    <div ng-show="!theFile.show_qr">
+                                        <a href ng-click="theFile.show_qr = true">Show QR code</a>
                                     </div>
-                                    <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                                        text="theFile.download_url" image="true"></qr>
+                                    <div ng-show="theFile.show_qr">
+                                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                                            text="theFile.download_url" image="true"></qr>
+                                    </div>
 
-                                    <br/>
+                                    <p></p>
 
                                 </center>
                             </div>
-                            <div class="col-md-3"></div>
+                            <div class="col-md-4"></div>
                         </div>
 
                         <script>
@@ -178,9 +198,11 @@
                             })
                         </script>
 
+                        <center>
                         <div ng-show="theFile.instances.length == 0">
                             <i>No clients yet connected</i>
                         </div>
+                        </center>
 
                         <div ng-show="theFile.instances.length > 0">
                             <b><p>Clients:</p></b>
