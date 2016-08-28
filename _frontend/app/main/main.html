@@ -161,7 +161,7 @@
                     <div ng-repeat="theFile in theFiles">
 
                         <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b></code> is
+                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b> ({{theFile.file.size | bytes}})</code> is
                                 published under:</h4>
                         </center>
 
