@@ -130,12 +130,11 @@
                                    value='curl   -J -O  {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
                             <input class="form-control urls clipboard" readonly style="width: 60px"
-                                   value='wget   {{host}}d/{{dir_uuid}}'
+                                   value='wget   -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
 
                             <a href ng-click="show_qr = !show_qr">QR code</a>
                         </div>
-                        <p></p>
                     </div>
                 </div>
                 <p></p>
