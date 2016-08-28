@@ -37,9 +37,9 @@
 	background-color: grey;
 }
 
-/*.urls {*/
-	/*font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;*/
-/*}*/
+.urls {
+	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
 
 .flash {
 	-webkit-animation-name: flash-animation;
