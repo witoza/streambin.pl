@@ -37,9 +37,17 @@
 	background-color: grey;
 }
 
+.filep_path {
+	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+	font-size: 90%;
+	margin:0;
+	color: #337ab7;
+	font-weight: bold;
+	padding-top: 6px;
+}
+
 .urls {
 	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-	text-align: center
 }
 
 .flash {
