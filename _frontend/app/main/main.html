@@ -51,6 +51,7 @@
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
@@ -143,7 +144,7 @@
         <div ng-repeat="(key, theFiles) in the_files">
 
             <div class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" style="padding:0 10px 10px 10px">
 
 <h3><code><b>{{key}}</b> {{theFiles.length}} file(s) total {{props[key].size | bytes}}</code></h3>
 
@@ -153,10 +154,10 @@
 
 <div class="row" ng-repeat="theFile in theFiles" ng-if="props[key].expanded">
 
-    <hr style="margin-bottom: 1px; margin-top: 0px"/>
+    <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
     <div class="col-sm-5">
-        <p class="filep_path">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
+        <p class="filep_path_main">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
     </div>
     <div class="col-sm-1">
         <p class="filep_path">{{ theFile.file.size | bytes}}</p>
@@ -271,14 +272,6 @@
     </script>
 
 </div>
-
-
-
-
-
-
-
-
 
                 </div>
 
