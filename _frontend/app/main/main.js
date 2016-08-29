@@ -16,17 +16,22 @@ angular
                 console.log('onchange called with e', e);
                 var fileList = e.currentTarget.files;
                 var num_of_files = Object.keys(fileList).length;
+                if (num_of_files == 0) {
+                    return;
+                }
                 if (num_of_files > 500) {
                     alert("too many files, max is 500, the dir selected has " + Object.keys(fileList).length);
                     return;
                 }
+
+                var top_dir;
 
                 for (var k in Object.keys(fileList)) {
                     var file = fileList[k];
 
                     var rp = file.webkitRelativePath;
                     if (!isEmpty(rp)) {
-                        var top_dir = rp.substring(0, rp.indexOf("/") + 1);
+                        top_dir = rp.substring(0, rp.indexOf("/") + 1);
                         if (!$scope.props[top_dir]) {
                             $scope.props[top_dir] = {
                                 expanded: num_of_files < 20,
@@ -37,6 +42,8 @@ angular
 
                     uploader.addToQueue(fileList[k]);
                 }
+
+                add_msg('Directory content <b>' + top_dir + '</b> is being published');
             });
 
             $scope.close_page = function () {
@@ -159,6 +166,17 @@ angular
                 });
             }
 
+            var add_msg = function (msg) {
+                var A = $('<p style="margin:0"><code>' + msg + '</code></p>');
+                A._cls = function () {
+                    A.fadeTo(500, 0.4).slideUp(2000, function () {
+                        A.remove();
+                    });
+                };
+                $("#msgs_here").append(A);
+                setTimeout(A._cls, 1000);
+            };
+
             uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
                 console.info('onWhenAddingFileFailed', item, filter, options);
             };
@@ -174,6 +192,7 @@ angular
                         return fi._file.name === fileItem._file.name && fi._file.webkitRelativePath === fileItem._file.webkitRelativePath;
                     });
                     if (already_there) {
+                        add_msg('File <b>' + fileItem._file.name + '</b> is already being published');
                         console.info("file is already being published - skipping");
                         return;
                     }
@@ -212,6 +231,10 @@ angular
                     $scope.the_files[k].push(fileItem);
                     $scope.total_files++;
                     $scope.total_size += fileItem.metadata.size;
+
+                    if (k === "/") {
+                        add_msg('File <b>' + fileItem.metadata.name + '</b> is being published');
+                    }
 
                     $scope.props[k].size += fileItem.metadata.size;
 
