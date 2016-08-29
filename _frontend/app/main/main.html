@@ -2,7 +2,7 @@
     <li role="presentation" ng-class="{active: state==1}"><a ng-click="state=1" href><i
             class="glyphicon glyphicon-transfer"></i> Transfer</a></li>
     <li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i
-            class="glyphicon glyphicon-folder-close"></i> Browse directories</a></li>
+            class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
     <li role="presentation" ng-class="{active: state=='tab_npm'}"><a ng-click="state='tab_npm'" href><i
             class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
 </ul>
@@ -293,8 +293,6 @@
 
 <div ng-show="state==2">
 
-    <br>
-
     <h3>Directory name, which your files will be published with</h3>
     <div class="row">
         <div class="form-group">
@@ -310,11 +308,13 @@
             </div>
         </div>
     </div>
-    <br/>
 
+    <hr/>
+
+    <h3>Browse directories</h3>
     <div class="row">
         <div class="col-md-2">
-           <h3>Attached</h3>
+           <h5>Attached</h5>
             <ul style="list-style-type: none;">
                 <li role="presentation" ng-repeat="item in you_streams">
                     <a ng-click="get_stream_data(item)" href><span
@@ -325,10 +325,6 @@
 
             <button class="btn btn-default btn-block button-sm" data-toggle="modal" data-target="#myModal1">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach
-            </button>
-
-            <button class="btn btn-warning btn-block button-sm" ng-click="removeStreamDir()" ng-show="curr_stream != ''">
-                <i class="fa fa-times"></i> Detach
             </button>
 
         </div>
