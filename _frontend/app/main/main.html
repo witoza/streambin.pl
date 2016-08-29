@@ -109,26 +109,27 @@
                         </li>
                     </ul>
                 </div>
-                <p>Download whole directory as .zip via URL:</p>
+                <p>Download whole directory as .zip via:</p>
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
                         <div class="form-inline">
-                            <div>
-                                <input class="form-control urls clipboard " readonly style="width: 100%"
-                                       value='{{host}}d/{{dir_uuid}}'
-                                       onmouseup="return false;">
-                            </div>
-                            <p></p>
-                            <input class="form-control urls clipboard " readonly size="4"
-                                   value='curl -J -O  {{host}}d/{{dir_uuid}}'
+
+                            <input class="form-control urls clipboard " readonly size="31"
+                                   value='{{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
+
+                            <input class="form-control urls clipboard " readonly size="4"
+                                   value='curl -J -O {{host}}d/{{dir_uuid}}'
+                                   onmouseup="return false;">
+
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='wget -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
 
                             <a href ng-click="show_qr = !show_qr">QR code</a>
                         </div>
+                        <br/>
                     </div>
                 </div>
                 <p></p>
@@ -156,42 +157,39 @@
 
     <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
-    <div class="col-sm-5">
+    <div class="col-md-6">
         <p class="filep_path_main">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
     </div>
-    <div class="col-sm-1">
+    <div class="col-md-1">
         <p class="filep_path">{{ theFile.file.size | bytes}}</p>
     </div>
-    <div class="col-sm-3">
-        <div>
-            <input class="form-control urls clipboard input-sm" readonly style="width: 100%"
-                   value='{{ theFile.download_url }}'
-                   onmouseup="return false;">
-        </div>
-    </div>
-    <div class="col-sm-3">
+    <div class="col-md-5">
         <center>
-        <div class="form-inline">
+            <div class="form-inline">
 
-            <input class="form-control urls clipboard input-sm" readonly
-                   size="4"
-                   value='curl -J -O  {{ theFile.download_url }}'
-                   onmouseup="return false;">
+                <input class="form-control urls clipboard input-sm" readonly size="31"
+                       value='{{ theFile.download_url }}'
+                       onmouseup="return false;">
 
-            <input class="form-control urls clipboard input-sm" readonly
-                   size="4"
-                   value='wget -O  "{{theFile.file.name}}" {{ theFile.download_url }}'
-                   onmouseup="return false;">
+                <input class="form-control urls clipboard input-sm" readonly
+                       size="4"
+                       value='curl -J -O {{ theFile.download_url }}'
+                       onmouseup="return false;">
 
-            <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
+                <input class="form-control urls clipboard input-sm" readonly
+                       size="4"
+                       value='wget -O "{{theFile.file.name}}" {{ theFile.download_url }}'
+                       onmouseup="return false;">
 
-        </div>
+                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
 
-        <div ng-show="theFile.show_qr">
-            <p></p>
-            <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                text="theFile.download_url" image="true"></qr>
-        </div>
+            </div>
+
+            <div ng-show="theFile.show_qr">
+                <p></p>
+                <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                    text="theFile.download_url" image="true"></qr>
+            </div>
         </center>
     </div>
 
