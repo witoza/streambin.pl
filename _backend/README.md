@@ -1,13 +1,13 @@
 # StreamBIN
 
-Transfer files by a Web Browser.
+Transfer files and folders by a Web Browser.
 
-Stream via global webpage http://streambin.pl/, or set up local instalation
+Stream via global webpage http://streambin.pl/ or set up local instalation
 
 
 ### Local installation
 
-or install locally by 
+Install locally by 
 
 ```
 $ npm i --global streambin

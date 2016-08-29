@@ -8,19 +8,15 @@
 </ul>
 
 <div ng-show="state=='tab_npm'">
-
     <br/>
-    <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
-        outgoing traffic.Visit <a
-                href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for details.
+    <p>You can install <b>StreamBIN</b> in your local environment to share files in your LAN without external servers and
+        outgoing traffic.
     </p>
 
-    <pre>
+    <p>The only requirement is you have <code>npm</code> installed.</p>
 
-    $ npm i --global streambin
-    $ streambin
-    </pre>
-    <p>Now open http://localhost:9001 and share your files !</p>
+    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.
+    </p>
 </div>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
