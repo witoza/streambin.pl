@@ -200,23 +200,19 @@ angular
                         $scope.the_files[k] = [];
                     }
                     $scope.the_files[k].push(fileItem);
-                    $scope.the_files_len = Object.keys($scope.the_files).length;
                     $scope.total_files++;
                     $scope.total_size += fileItem.metadata.size;
 
                     $scope.props[k].size += fileItem.metadata.size;
-                    if (!$scope.props[k].expanded) {
-                        return;
-                    }
 
-                    setTimeout(function () {
-                        var tid = "#m_" + fileItem.metadata.file_uuid;
-                        $(tid).addClass('flash');
-                        setTimeout(function () {
-                            $(tid).removeClass('flash');
-                        }, 1000);
-                    }, 100);
-                    $scope.scrollto(fileItem);
+                    // setTimeout(function () {
+                    //     var tid = "#m_" + fileItem.metadata.file_uuid;
+                    //     $(tid).addClass('flash');
+                    //     setTimeout(function () {
+                    //         $(tid).removeClass('flash');
+                    //     }, 1000);
+                    // }, 100);
+                    // $scope.scrollto(fileItem);
 
                 });
 

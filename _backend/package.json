@@ -1,6 +1,6 @@
 {
   "name": "streambin",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "StreamBIN",
   "main": "index.js",
   "scripts": {
