@@ -169,6 +169,16 @@ angular
                     throw new Error("dir can't be empty");
                 }
 
+                for (let dir_name in $scope.the_files) {
+                    const already_there = $scope.the_files[dir_name].some(function (fi) {
+                        return fi._file.name === fileItem._file.name && fi._file.webkitRelativePath === fileItem._file.webkitRelativePath;
+                    });
+                    if (already_there) {
+                        console.info("file is already being published - skipping");
+                        return;
+                    }
+                }
+
                 get_genid($http, function (data) {
 
                     fileItem.metadata = {
