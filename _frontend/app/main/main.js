@@ -148,7 +148,9 @@ angular
             };
             $scope.total_files = 0;
             $scope.total_size = 0;
+
             $scope.dir_uuid = $localStorage.dir_uuid;
+            $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
             $scope.original_dir_uuid = $scope.dir_uuid;
             if (isEmpty($scope.dir_uuid)) {
                 get_genuuid($http, function (data) {
@@ -222,6 +224,7 @@ angular
 
             $scope.apply_dir = function (dir_uuid) {
                 $scope.dir_uuid = dir_uuid;
+                $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
                 for (let d in $scope.the_files) {
                     $scope.the_files[d].forEach(function (item) {
                         item.chnage_dir_uuid(dir_uuid);
