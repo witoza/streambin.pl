@@ -154,4 +154,5 @@ angular
         console.log("host", host);
 
         $rootScope.host = host;
+        $rootScope.chrome = window.chrome;
     });

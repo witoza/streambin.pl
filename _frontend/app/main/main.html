@@ -38,9 +38,16 @@
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select files
                 </span>
 
-                <span class="btn btn-default btn-file">
-                    <input class="dir_input" type="file" webkitdirectory directory multiple> select directory
-               </span>
+                <span ng-show="chrome">
+                    <span class="btn btn-default btn-file">
+                        <input class="dir_input" type="file" webkitdirectory directory multiple> select directory
+                   </span>
+                </span>
+
+                <span ng-show="!chrome">
+                    <i>[use Chrome to upload whole directories]</i>
+                </span>
+
             </center>
         </div>
         <h1 class="h_nactive">Download the files on the remote machine</h1>
@@ -57,9 +64,16 @@
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
-                <span class="btn btn-default btn-file">
-                    <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
-               </span>
+
+                <span ng-show="chrome">
+                    <span class="btn btn-default btn-file">
+                        <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
+                   </span>
+                </span>
+
+                <span ng-show="!chrome">
+                    <i>[use Chrome to upload whole directories]</i>
+                </span>
             </center>
         </div>
 
