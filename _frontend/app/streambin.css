@@ -44,6 +44,7 @@
 	color: #337ab7;
 	font-weight: bold;
 	padding-top: 6px;
+	word-wrap: break-word;
 }
 
 .filep_path {
@@ -52,6 +53,7 @@
 	margin:0;
 	color: #337ab7;
 	padding-top: 6px;
+	word-wrap: break-word;
 }
 
 .urls {

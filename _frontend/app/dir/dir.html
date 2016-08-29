@@ -22,10 +22,10 @@
             <tbody>
             <tr ng-repeat="item in curr_streams_data">
                     <td ng-if="item.file_meta.relativePath">
-                        <b>{{ item.file_meta.relativePath }}</b>
+                        <p class="filep_path_main">{{ item.file_meta.relativePath }}</p>
                     </td>
                     <td ng-if="!item.file_meta.relativePath">
-                        <b>{{ item.file_meta.name }}</b>
+                        <p class="filep_path_main">{{ item.file_meta.name }}</p>
                     </td>
                 <td>
                     {{ item.file_meta.size | bytes }}
