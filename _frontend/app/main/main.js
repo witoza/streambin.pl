@@ -102,22 +102,17 @@ angular
             };
             $scope.showExplore = function () {
 
-                console.log("tab change");
+                console.log("showExplore");
                 $scope.state = 2;
 
                 $scope.curr_streams_data = [];
                 $scope.curr_stream = "";
-            };
-            $scope.showMe = function () {
-
-                console.log("tab change");
-                $scope.state = 3;
 
                 $scope.bind_dir_uuid = $localStorage.dir_uuid;
             };
             $scope.showStats = function () {
 
-                console.log("tab change");
+                console.log("showStats");
                 $scope.state = 'stats';
 
                 get_stats($http, function (data) {

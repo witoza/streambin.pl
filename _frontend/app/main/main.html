@@ -1,10 +1,8 @@
 <ul class="nav nav-tabs">
     <li role="presentation" ng-class="{active: state==1}"><a ng-click="state=1" href><i
-            class="glyphicon glyphicon-transfer"></i> Share Files</a></li>
+            class="glyphicon glyphicon-transfer"></i> Transfer</a></li>
     <li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i
-            class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
-    <li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i
-            class="glyphicon glyphicon-user"></i> Me</a></li>
+            class="glyphicon glyphicon-folder-close"></i> Browse directories</a></li>
     <li role="presentation" ng-class="{active: state=='tab_npm'}"><a ng-click="state='tab_npm'" href><i
             class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
 </ul>
@@ -296,50 +294,49 @@
 <div ng-show="state==2">
 
     <br>
-    <p>Select Directory below to browse or
-        <button class="btn btn-default" data-toggle="modal" data-target="#myModal1">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach Directory
-        </button>
-    </p>
-    <ul class="nav nav-pills">
-        <li role="presentation" ng-repeat="item in you_streams">
-            <a ng-click="get_stream_data(item)" href><span
-                    ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
-                    aria-hidden="true"></span> {{ item }}</a>
-        </li>
-    </ul>
 
-    <div ng-include="'dir/dir.html'"></div>
-
-</div>
-
-<div ng-show="state==3">
+    <h3>Directory name, which your files will be published with</h3>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-sm-3">
+                <input type="text" class="form-control"  placeholder="Directory name" ng-model="bind_dir_uuid">
+            </div>
+            <div class="col-sm-6">
+                    <button type="button" class="btn btn-default " ng-click="bind_dir_uuid = ''">Clear</button>
+                    <button type="button" class="btn btn-default " ng-click="generate_random_dir_uuid()">Set
+                        random
+                    </button>
+                    <button type="button" class="btn btn-success " ng-click="saveMySettings()">Save</button>
+            </div>
+        </div>
+    </div>
     <br/>
 
-    <form class="form-horizontal">
+    <div class="row">
+        <div class="col-md-2">
+           <h3>Attached</h3>
+            <ul style="list-style-type: none;">
+                <li role="presentation" ng-repeat="item in you_streams">
+                    <a ng-click="get_stream_data(item)" href><span
+                            ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
+                            aria-hidden="true"></span> {{ item }}</a>
+                </li>
+            </ul>
 
-        <div class="form-group">
-            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be published
-                with</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" id="lb1" placeholder="Directory" ng-model="bind_dir_uuid">
-            </div>
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-default btn-block" ng-click="bind_dir_uuid = ''">Clear</button>
-                <button type="button" class="btn btn-default btn-block" ng-click="generate_random_dir_uuid()">Set
-                    random
-                </button>
-            </div>
+            <button class="btn btn-default btn-block button-sm" data-toggle="modal" data-target="#myModal1">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach
+            </button>
+
+            <button class="btn btn-warning btn-block button-sm" ng-click="removeStreamDir()" ng-show="curr_stream != ''">
+                <i class="fa fa-times"></i> Detach
+            </button>
+
+        </div>
+        <div class="col-md-10">
+            <div ng-include="'dir/dir.html'"></div>
         </div>
 
-        <div class="form-group">
-            <div class="col-sm-4">
-            </div>
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-success btn-block" ng-click="saveMySettings()">Save</button>
-            </div>
-        </div>
-    </form>
+    </div>
 
 </div>
 
@@ -434,15 +431,13 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                 <cl></cl>ass="modal-title" id="myModalLabel1">Attach Directory</h4>
+                 <h4>Attach Directory</h4>
             </div>
             <div class="modal-body">
-                <p>Enter ID of Directory to attach</p>
+                <p>Enter name of Directory to attach</p>
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory ID">
+                    <input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory name">
                 </div>
-                <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage
-                    of your browser</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
