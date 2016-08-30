@@ -24,14 +24,16 @@
     <div ng-show="!total_files">
 
         <center>
-            <h2>Choose the files to publish</h2>
+            <h3>Choose the files to publish</h3>
             <p>The files are uploaded to receiver and never persisted on the server</p>
         </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                <span ng-show="drag_and_drop">
                 Drag and drop here or
+                </span>
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select files
                 </span>
@@ -53,7 +55,7 @@
     <div ng-show="total_files > 0">
 
         <center>
-            <h2>Now publishing, you can download the files or publish more</h2>
+            <h3>Now publishing, you can download the files or publish more</h3>
             <p>To cancel publishing and close all the clients simply <a
                     href="javascript:location.reload();">reload</a> or <a
                     ng-click="close_page()" href>close</a> this page</p>
@@ -63,7 +65,9 @@
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <div id="msgs_here"></div>
+                <span ng-show="drag_and_drop">
                 Drag and drop here or
+                </span>
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
@@ -313,11 +317,19 @@
         <div class="col-md-2">
            <h5>Attached</h5>
             <ul style="list-style-type: none;">
+
+                <li role="presentation">
+                    <a ng-click="get_stream_data(dir_uuid)" href><span
+                            ng-class="{'glyphicon glyphicon-folder-open' : dir_uuid == curr_stream, 'glyphicon glyphicon-folder-close' : dir_uuid != curr_stream}"
+                            aria-hidden="true"></span> {{ dir_uuid }} </a>
+                </li>
+
                 <li role="presentation" ng-repeat="item in you_streams">
                     <a ng-click="get_stream_data(item)" href><span
                             ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
                             aria-hidden="true"></span> {{ item }}</a>
                 </li>
+
             </ul>
 
             <button class="btn btn-default btn-block button-sm" data-toggle="modal" data-target="#myModal1">
