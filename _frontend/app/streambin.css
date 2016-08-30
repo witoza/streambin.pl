@@ -1,20 +1,26 @@
 
-.my-drop-zone { border: dotted 3px lightgray; }
-.nv-file-over { border: dotted 3px red; } 
-			
-.btn-file {
-	position: relative;
-	overflow: hidden;
+.my-drop-zone {
+    border: dotted 3px lightgray;
 }
+
+.nv-file-over {
+    border: dotted 3px red;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
 .btn-file input[type=file] {
-	position: absolute;
-	top: 0;
-	right: 0;
-	min-width: 100%;
-	min-height: 100%;
-	opacity: 0;
-	cursor: inherit;
-	display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 0;
+    cursor: inherit;
+    display: block;
 }
 
 .h_active {
@@ -22,9 +28,9 @@
     color: white;
     padding: 10px;
     letter-spacing: 1px;
-	font-size: 1.3em;
+    font-size: 1.3em;
 
-	background-color: steelblue
+    background-color: steelblue
 }
 
 .h_nactive {
@@ -32,48 +38,67 @@
     color: white;
     padding: 10px;
     letter-spacing: 1px;
-	font-size: 1.3em;
+    font-size: 1.3em;
 
-	background-color: grey;
+    background-color: grey;
 }
 
 .filep_path_main {
-	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-	font-size: 90%;
-	margin:0;
-	color: #337ab7;
-	font-weight: bold;
-	padding-top: 6px;
-	word-wrap: break-word;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: 90%;
+    margin: 0;
+    color: #337ab7;
+    font-weight: bold;
+    padding-top: 6px;
+    word-wrap: break-word;
 }
 
 .filep_path {
-	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-	font-size: 90%;
-	margin:0;
-	color: #337ab7;
-	padding-top: 6px;
-	word-wrap: break-word;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: 90%;
+    margin: 0;
+    color: #337ab7;
+    padding-top: 6px;
+    word-wrap: break-word;
 }
 
 .urls {
-	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
 .flash {
-	-webkit-animation-name: flash-animation;
-	-webkit-animation-duration: 0.8s;
+    -webkit-animation-name: flash-animation;
+    -webkit-animation-duration: 0.8s;
 
-	animation-name: flash-animation;
-	animation-duration: 0.8s;
+    animation-name: flash-animation;
+    animation-duration: 0.8s;
 }
 
 @-webkit-keyframes flash-animation {
-	from { background: lightskyblue; }
-	to   { background: default; }
+    from {
+        background: lightskyblue;
+    }
+    to {
+        background: default;
+    }
 }
 
 @keyframes flash-animation {
-	from { background: lightskyblue; }
-	to   { background: default; }
+    from {
+        background: lightskyblue;
+    }
+    to {
+        background: default;
+    }
+}
+
+.form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.form-control {
+    display: inline-block;
+    width: auto;
 }

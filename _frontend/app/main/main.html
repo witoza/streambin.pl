@@ -138,7 +138,7 @@
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='wget -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-
+                            
                             <a href ng-click="show_qr = !show_qr">QR code</a>
                         </div>
                         <br/>
@@ -169,12 +169,12 @@
 
     <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
-    <div class="col-md-7">
+    <div class="col-sm-7">
         <p class="filep_path_main pull-left">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
-
         <p class="filep_path pull-right">{{ theFile.file.size | bytes}}</p>
+        <div class="clearfix"/>
     </div>
-    <div class="col-md-5">
+    <div class="col-sm-5">
         <center>
             <div class="form-inline">
 
@@ -186,12 +186,10 @@
                        size="4"
                        value='curl -J -O {{ theFile.download_url }}'
                        onmouseup="return false;">
-
                 <input class="form-control urls clipboard input-sm" readonly
                        size="4"
                        value='wget -O "{{theFile.file.name}}" {{ theFile.download_url }}'
                        onmouseup="return false;">
-
                 <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
 
             </div>
