@@ -125,7 +125,7 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <div class="form-inline">
+                            <div class="form-inline">
 
                             <input class="form-control urls clipboard " readonly size="31"
                                    value='{{host}}d/{{dir_uuid}}'
@@ -134,12 +134,12 @@
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='curl -J -O {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-
+<!--
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='wget -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-                            
-                            <a href ng-click="show_qr = !show_qr">QR code</a>
+-->
+                            <a href ng-click="show_qr = !show_qr"><span class="filep_path" style="white-space: nowrap">QR code</span></a>
                         </div>
                         <br/>
                     </div>
@@ -159,7 +159,7 @@
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:0 10px 10px 10px">
 
-<h3><code><b>{{key}}</b></code></h3>
+<h3><code><b>{{key}}</b></code></h3><p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
 
 <span ng-if="!props[key].expanded">
       <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
@@ -186,11 +186,13 @@
                        size="4"
                        value='curl -J -O {{ theFile.download_url }}'
                        onmouseup="return false;">
+<!--
                 <input class="form-control urls clipboard input-sm" readonly
                        size="4"
                        value='wget -O "{{theFile.file.name}}" {{ theFile.download_url }}'
                        onmouseup="return false;">
-                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
+-->
+                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path" style="white-space: nowrap">QR code</span></a>
 
             </div>
 
@@ -280,7 +282,6 @@
 
 </div>
 
-                    <p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
                 </div>
 
             </div>

@@ -92,13 +92,13 @@
     }
 }
 
-.form-group {
+.form-inline > .form-group {
     display: inline-block;
     margin-bottom: 0;
     vertical-align: middle;
 }
 
-.form-control {
+.form-inline > .form-control {
     display: inline-block;
     width: auto;
 }
