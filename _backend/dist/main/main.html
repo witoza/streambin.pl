@@ -9,11 +9,11 @@
 
 <div ng-show="state=='tab_npm'">
     <br/>
-    <p>You can install <b>StreamBIN</b> in your local environment to share files in your LAN without external servers and
+    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers and
         outgoing traffic.
     </p>
 
-    <p>The only requirement is you have <code>npm</code> installed.</p>
+    <p>You need to have <code>npm</code> installed.</p>
 
     <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.
     </p>
@@ -88,8 +88,7 @@
         <center>
 
             <div ng-show="total_files > 1">
-                All files are published under directory <a target="_blank"
-                                                           ng-href="#/dir/{{dir_uuid}}"><b>{{dir_uuid}}</b></a>
+                All files are published under directory <a href ng-click="open_current_dir();"><b>{{dir_uuid}}</b></a>
 
                 <div class="btn-group">
                     <button class="btn btn-default dropdown-toggle btn-sm" type="button"
@@ -126,7 +125,7 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <div class="form-inline">
+                            <div class="form-inline">
 
                             <input class="form-control urls clipboard " readonly size="31"
                                    value='{{host}}d/{{dir_uuid}}'
@@ -135,12 +134,12 @@
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='curl -J -O {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-
+<!--
                             <input class="form-control urls clipboard " readonly size="4"
                                    value='wget -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-
-                            <a href ng-click="show_qr = !show_qr">QR code</a>
+-->
+                            <a href ng-click="show_qr = !show_qr"><span class="filep_path" style="white-space: nowrap">QR code</span></a>
                         </div>
                         <br/>
                     </div>
@@ -160,7 +159,7 @@
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:0 10px 10px 10px">
 
-<h3><code><b>{{key}}</b></code></h3>
+<h3><code><b>{{key}}</b></code></h3><p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
 
 <span ng-if="!props[key].expanded">
       <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
@@ -170,12 +169,12 @@
 
     <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
-    <div class="col-md-7">
+    <div class="col-sm-7">
         <p class="filep_path_main pull-left">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
-
         <p class="filep_path pull-right">{{ theFile.file.size | bytes}}</p>
+        <div class="clearfix"/>
     </div>
-    <div class="col-md-5">
+    <div class="col-sm-5">
         <center>
             <div class="form-inline">
 
@@ -187,13 +186,13 @@
                        size="4"
                        value='curl -J -O {{ theFile.download_url }}'
                        onmouseup="return false;">
-
+<!--
                 <input class="form-control urls clipboard input-sm" readonly
                        size="4"
                        value='wget -O "{{theFile.file.name}}" {{ theFile.download_url }}'
                        onmouseup="return false;">
-
-                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
+-->
+                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path" style="white-space: nowrap">QR code</span></a>
 
             </div>
 
@@ -283,7 +282,6 @@
 
 </div>
 
-                    <p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
                 </div>
 
             </div>
@@ -365,7 +363,7 @@
             required and no data is persisted on the server side
         </li>
         <li>No buffering is done on a server side. Server passes only chunks of raw data from client to receiver</li>
-        <li>There is a possibility to upload multiple files and group them in the Directory</li>
+        <li>There is a possibility to upload multiple files and whole directories and group them in the Directory</li>
         <li>File is streamed no sooner than the receiver requests the file</li>
     </ul>
 
@@ -373,6 +371,7 @@
     <p>There are several possibilities to use this, off the top of my head, you can:</p>
     <ul>
         <li>Send file to your different machine e.x. from laptop to phone or laptop to laptop</li>
+        <li>Send file between different OS e.x: windows <-> linux</li>
         <li>Send file to a friend</li>
         <li>Send file to a person you don't know - in real life - publish the file on your phone and let him scan the QR
             code, you don't have to share email or facebook account to send some picture
@@ -392,15 +391,15 @@
         <li>All information needed to set up sender with receiver is destroyed after publisher closes/reloads the web
             page
         </li>
-        <li>It is possible to figure out from what machine certain downloaded/uploaded happened by looking at the access
-            log (it logs accessed URLs, not content) at the Host server, so please, don't upload anything illegal to
-            download from other unknown people. That can be mitigated, if you own the host server, or it is installed
-            somewhere when access logs are not kept
+        <li>It is possible to figure out from what machine certain downloading/uploading happened by looking at the access
+            log (it logs accessed URLs, not content) at the host server, so please, don't upload anything illegal, or
+            download from unknown people. That can be mitigated, if you own the host server, or it is installed
+            somewhere when access logs are not kept.
         </li>
     </ul>
 
     <h2>Contact</h2>
-    <p>Comments, questions ? send me an e-mail at <a href="mailto:admin@streambin.pl?Subject=StreamBIN%20question">admin@streambin.pl</a>
+    <p>Comments, questions ? Drop me a line at <a href="mailto:witold.zegarowski@gmail.com?Subject=StreamBIN%20question">witold.zegarowski@gmail.com</a>
     </p>
 </div>
 

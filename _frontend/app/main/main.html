@@ -9,11 +9,11 @@
 
 <div ng-show="state=='tab_npm'">
     <br/>
-    <p>You can install <b>StreamBIN</b> in your local environment to share files in your LAN without external servers and
+    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers and
         outgoing traffic.
     </p>
 
-    <p>The only requirement is you have <code>npm</code> installed.</p>
+    <p>You need to have <code>npm</code> installed.</p>
 
     <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.
     </p>
@@ -363,7 +363,7 @@
             required and no data is persisted on the server side
         </li>
         <li>No buffering is done on a server side. Server passes only chunks of raw data from client to receiver</li>
-        <li>There is a possibility to upload multiple files and group them in the Directory</li>
+        <li>There is a possibility to upload multiple files and whole directories and group them in the Directory</li>
         <li>File is streamed no sooner than the receiver requests the file</li>
     </ul>
 
@@ -371,6 +371,7 @@
     <p>There are several possibilities to use this, off the top of my head, you can:</p>
     <ul>
         <li>Send file to your different machine e.x. from laptop to phone or laptop to laptop</li>
+        <li>Send file between different OS e.x: windows <-> linux</li>
         <li>Send file to a friend</li>
         <li>Send file to a person you don't know - in real life - publish the file on your phone and let him scan the QR
             code, you don't have to share email or facebook account to send some picture
@@ -390,15 +391,15 @@
         <li>All information needed to set up sender with receiver is destroyed after publisher closes/reloads the web
             page
         </li>
-        <li>It is possible to figure out from what machine certain downloaded/uploaded happened by looking at the access
-            log (it logs accessed URLs, not content) at the Host server, so please, don't upload anything illegal to
-            download from other unknown people. That can be mitigated, if you own the host server, or it is installed
-            somewhere when access logs are not kept
+        <li>It is possible to figure out from what machine certain downloading/uploading happened by looking at the access
+            log (it logs accessed URLs, not content) at the host server, so please, don't upload anything illegal, or
+            download from unknown people. That can be mitigated, if you own the host server, or it is installed
+            somewhere when access logs are not kept.
         </li>
     </ul>
 
     <h2>Contact</h2>
-    <p>Comments, questions ? send me an e-mail at <a href="mailto:admin@streambin.pl?Subject=StreamBIN%20question">admin@streambin.pl</a>
+    <p>Comments, questions ? Drop me a line at <a href="mailto:witold.zegarowski@gmail.com?Subject=StreamBIN%20question">witold.zegarowski@gmail.com</a>
     </p>
 </div>
 
