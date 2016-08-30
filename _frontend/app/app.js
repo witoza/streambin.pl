@@ -153,6 +153,8 @@ angular
         const host = location.origin + location.pathname;
         console.log("host", host);
 
+        $rootScope.drag_and_drop = ('draggable' in document.createElement('span'));
+
         $rootScope.host = host;
         $rootScope.chrome = window.chrome;
     });

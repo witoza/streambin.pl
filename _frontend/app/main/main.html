@@ -31,7 +31,9 @@
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                <span ng-show="drag_and_drop">
                 Drag and drop here or
+                </span>
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select files
                 </span>
@@ -63,7 +65,9 @@
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
                 <div id="msgs_here"></div>
+                <span ng-show="drag_and_drop">
                 Drag and drop here or
+                </span>
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
