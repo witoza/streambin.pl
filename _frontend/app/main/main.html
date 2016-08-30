@@ -166,11 +166,10 @@
 
     <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
-    <div class="col-md-6">
-        <p class="filep_path_main">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
-    </div>
-    <div class="col-md-1">
-        <p class="filep_path">{{ theFile.file.size | bytes}}</p>
+    <div class="col-md-7">
+        <p class="filep_path_main pull-left">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
+
+        <p class="filep_path pull-right">{{ theFile.file.size | bytes}}</p>
     </div>
     <div class="col-md-5">
         <center>
