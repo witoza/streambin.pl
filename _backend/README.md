@@ -11,7 +11,7 @@ Install locally by
 
 ```
 $ npm i --global streambin
-$ streambin
+$ streambin -h http://192.168.0.1/ -p 9001
 ```
 
-Now open http://localhost:9001 and share your files !
+Now open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to resources - you can use your internal LAN Ip address for that.

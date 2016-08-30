@@ -6,22 +6,48 @@ angular
         'ngRoute'])
     .controller('mainCtrl',
 
-        ["$window", "$scope", "$localStorage", "$http", "anchorSmoothScroll", "FileUploader", function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
+        ["$window", "$scope", "$rootScope", "$localStorage", "$http", "anchorSmoothScroll", "FileUploader", function ($window, $scope, $rootScope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
             function isEmpty(str) {
                 return str == null || str.trim().length == 0;
             }
 
+            function get_top_folder(fileList) {
+                for (var k in Object.keys(fileList)) {
+                    var rp = fileList[k].webkitRelativePath;
+                    return rp.substring(0, rp.indexOf("/") + 1);
+                }
+            }
+
+            get_config($http, function (data) {
+                if (!isEmpty(data.hostname)) {
+                    $rootScope.host = data.hostname;
+                }
+            });
+
             $(".dir_input").on('change', function (e) {
                 void 0;
-                var fileList = e.currentTarget.files;
-                if (Object.keys(fileList).length > 500) {
+                const fileList = e.currentTarget.files;
+                const num_of_files = Object.keys(fileList).length;
+                if (num_of_files === 0) {
+                    return;
+                }
+                if (num_of_files > 800) {
                     void 0;
                     return;
                 }
-                for (var k in Object.keys(fileList)) {
-                    uploader.addToQueue(fileList[k]);
+
+                const top_dir = get_top_folder(fileList);
+                if (!$scope.props[top_dir]) {
+                    $scope.props[top_dir] = {
+                        expanded: num_of_files < 20,
+                        size: 0
+                    }
                 }
+
+                uploader.addToQueue(fileList);
+
+                add_msg('Files from directory <b>' + top_dir + '</b> are being published');
             });
 
             $scope.close_page = function () {
@@ -85,11 +111,6 @@ angular
 
                 $scope.curr_streams_data = [];
                 $scope.curr_stream = "";
-            };
-            $scope.showMe = function () {
-
-                void 0;
-                $scope.state = 3;
 
                 $scope.bind_dir_uuid = $localStorage.dir_uuid;
             };
@@ -104,9 +125,7 @@ angular
             };
 
             $scope.generate_random_dir_uuid = function () {
-                get_genuuid($http, function (data) {
-                    $scope.bind_dir_uuid = data;
-                });
+                $scope.bind_dir_uuid = gen_uuid();
             };
 
             $scope.saveMySettings = function () {
@@ -125,16 +144,32 @@ angular
                 binaryJsClient_ulr: binaryJsClient_ulr
             });
 
+            $scope.props = {
+                "/": {
+                    expanded: true,
+                    size: 0
+                }
+            };
             $scope.total_files = 0;
             $scope.total_size = 0;
+
             $scope.dir_uuid = $localStorage.dir_uuid;
-            $scope.original_dir_uuid = $scope.dir_uuid;
             if (isEmpty($scope.dir_uuid)) {
-                get_genuuid($http, function (data) {
-                    $scope.dir_uuid = data;
-                    $scope.original_dir_uuid = $scope.dir_uuid;
-                });
+                $scope.dir_uuid = gen_uuid();
             }
+            $scope.original_dir_uuid = $scope.dir_uuid;
+            $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
+
+            var add_msg = function (msg) {
+                var A = $('<p style="margin:0"><code>' + msg + '</code></p>');
+                A._cls = function () {
+                    A.fadeTo(500, 0.4).slideUp(2000, function () {
+                        A.remove();
+                    });
+                };
+                $("#msgs_here").append(A);
+                setTimeout(A._cls, 1000);
+            };
 
             uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
                 void 0;
@@ -146,79 +181,68 @@ angular
                     throw new Error("dir can't be empty");
                 }
 
-                get_genid($http, function (data) {
-
-                    fileItem.metadata = {
-                        file_uuid: data,
-                        dir_uuid: $scope.dir_uuid,
-                        relativePath: fileItem._file.webkitRelativePath,
-                        name: fileItem._file.name,
-                        size: fileItem._file.size
-                    };
-                    fileItem.options = $scope.options;
-                    fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
-                    fileItem.isStreaming = false;
-                    fileItem.instances = [];
-                    fileItem.original_dir_uuid = $scope.dir_uuid;
-
-                    fileItem.upload();
-
-                    var k = "Files/";
-                    if (!isEmpty(fileItem.metadata.relativePath)) {
-                        var rp = fileItem.metadata.relativePath;
-                        fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
-
-                        rp = rp.substring(rp.indexOf("/") + 1);
-                        fileItem.metadata.rest_dir = rp.substring(0, rp.lastIndexOf("/") + 1);
-
-                        k = fileItem.metadata.top_dir;
+                for (let dir_name in $scope.the_files) {
+                    const already_there = $scope.the_files[dir_name].some(function (fi) {
+                        return fi._file.name === fileItem._file.name && fi._file.webkitRelativePath === fileItem._file.webkitRelativePath;
+                    });
+                    if (already_there) {
+                        add_msg('File <b>' + fileItem._file.name + '</b> is already being published');
+                        void 0;
+                        return;
                     }
-                    if (!$scope.the_files[k]) {
-                        $scope.the_files[k] = [];
-                    }
-                    $scope.the_files[k].push(fileItem);
-                    $scope.the_files_len = Object.keys($scope.the_files).length;
-                    $scope.total_files++;
-                    $scope.total_size += fileItem.metadata.size;
+                }
 
-                    setTimeout(function () {
-                        var tid = "#m_" + fileItem.metadata.file_uuid;
-                        $(tid).addClass('flash');
-                        setTimeout(function () {
-                            $(tid).removeClass('flash');
-                        }, 1000);
-                    }, 100);
-                    $scope.scrollto(fileItem);
+                fileItem.metadata = {
+                    file_uuid: gen_uuid(),
+                    dir_uuid: $scope.dir_uuid,
+                    relativePath: fileItem._file.webkitRelativePath,
+                    name: fileItem._file.name,
+                    size: fileItem._file.size
+                };
+                fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
+                fileItem.isStreaming = false;
+                fileItem.instances = [];
 
-                });
+                var dir = "/";
+                if (!isEmpty(fileItem.metadata.relativePath)) {
+                    var rp = fileItem.metadata.relativePath;
+                    fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
+
+                    rp = rp.substring(rp.indexOf("/") + 1);
+                    fileItem.metadata.rest_dir = rp.substring(0, rp.lastIndexOf("/") + 1);
+
+                    dir = fileItem.metadata.top_dir;
+                }
+                if (!$scope.the_files[dir]) {
+                    $scope.the_files[dir] = [];
+                }
+                $scope.the_files[dir].push(fileItem);
+                $scope.total_files++;
+                $scope.total_size += fileItem.metadata.size;
+
+                if (dir === "/") {
+                    add_msg('File <b>' + fileItem.metadata.name + '</b> is being published');
+
+                    $scope.the_files[dir].sort(function (a, b) {
+                        return a.metadata.name > b.metadata.name;
+                    });
+
+                }
+
+                $scope.props[dir].size += fileItem.metadata.size;
+
+                fileItem.upload();
 
             };
 
             $scope.apply_dir = function (dir_uuid) {
                 $scope.dir_uuid = dir_uuid;
+                $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
                 for (let d in $scope.the_files) {
                     $scope.the_files[d].forEach(function (item) {
                         item.chnage_dir_uuid(dir_uuid);
                     })
                 }
-            };
-
-            var scrollto_last = null;
-
-            $scope.scrollto = function (fileItem) {
-                scrollto_last = fileItem;
-
-                setTimeout(function () {
-                    if (scrollto_last == null || $scope.total_files > 1) {
-                        return
-                    }
-                    $scope.do_scrollto(scrollto_last);
-                    scrollto_last = null;
-                }, 50);
-            };
-
-            $scope.do_scrollto = function (fileItem) {
-                anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
             };
 
             uploader.onAfterAddingAll = function (addedFileItems) {

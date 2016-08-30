@@ -1,32 +1,32 @@
 <ul class="nav nav-tabs">
     <li role="presentation" ng-class="{active: state==1}"><a ng-click="state=1" href><i
-            class="glyphicon glyphicon-transfer"></i> Share Files</a></li>
+            class="glyphicon glyphicon-transfer"></i> Transfer</a></li>
     <li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i
             class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
-    <li role="presentation" ng-class="{active: state==3}"><a ng-click="showMe()" href><i
-            class="glyphicon glyphicon-user"></i> Me</a></li>
     <li role="presentation" ng-class="{active: state=='tab_npm'}"><a ng-click="state='tab_npm'" href><i
             class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
 </ul>
 
 <div ng-show="state=='tab_npm'">
-
     <br/>
-    <p>You can install StreamBIN in your local environment to share files in your LAN without external servers and
-        outgoing traffic.Visit  <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for details.</p>
+    <p>You can install <b>StreamBIN</b> in your local environment to share files in your LAN without external servers and
+        outgoing traffic.
+    </p>
 
-    <pre>
+    <p>The only requirement is you have <code>npm</code> installed.</p>
 
-    $ npm i --global streambin
-    $ streambin
-    </pre>
-    <p>Now open http://localhost:9001 and share your files !</p>
+    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.
+    </p>
 </div>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
 
-    <div ng-show="!the_files_len">
-        <h1 class="h_active">Step 1: Choose the files to publish</h1>
+    <div ng-show="!total_files">
+
+        <center>
+            <h2>Choose the files to publish</h2>
+            <p>The files are uploaded to receiver and never persisted on the server</p>
+        </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
@@ -36,46 +36,50 @@
                     <input type="file" nv-file-select="" uploader="uploader" multiple> select files
                 </span>
 
-                <span class="btn btn-default btn-file">
-                    <input class="dir_input" type="file" webkitdirectory directory multiple> select directory
-               </span>
+                <span ng-show="chrome">
+                    <span class="btn btn-default btn-file">
+                        <input class="dir_input" type="file" webkitdirectory directory multiple> select directory
+                   </span>
+                </span>
+
+                <span ng-show="!chrome">
+                    <i>[use Chrome to upload whole directories]</i>
+                </span>
+
             </center>
         </div>
-        <h1 class="h_nactive">Step 2: Download the files on the remote machine</h1>
     </div>
 
-    <div ng-show="the_files_len">
-        <h1 class="h_nactive">Step 1: Choose the files to publish</h1>
+    <div ng-show="total_files > 0">
+
+        <center>
+            <h2>Now publishing, you can download the files or publish more</h2>
+            <p>To cancel publishing and close all the clients simply <a
+                    href="javascript:location.reload();">reload</a> or <a
+                    ng-click="close_page()" href>close</a> this page</p>
+        </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
-                <b>Now publishing:</b>
-            </center>
-
-            <div ng-repeat="(key, theFiles) in the_files">
-                <b>{{key}}({{theFiles.length}})</b>
-                <div ng-repeat="theFile in theFiles">
-                    <code id="m_{{theFile.metadata.file_uuid}}">
-                        <b> <a href ng-click="do_scrollto(theFile)">{{theFile.metadata.rest_dir}}{{
-                            theFile.metadata.name }}</a></b></code>
-                </div>
-            </div>
-            <p></p>
-            <p>Total {{total_size | bytes}} in {{total_files }} files</p>
-
-            <center>
+                <div id="msgs_here"></div>
                 Drag and drop here or
                 <span class="btn btn-default btn-file">
                     <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
                 </span>
-                <span class="btn btn-default btn-file">
-                    <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
-               </span>
+
+                <span ng-show="chrome">
+                    <span class="btn btn-default btn-file">
+                        <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
+                   </span>
+                </span>
+
+                <span ng-show="!chrome">
+                    <i>[use Chrome to upload whole directories]</i>
+                </span>
             </center>
         </div>
 
-        <h1 id="step2" class="h_active">Step 2: Download the files on the remote machine</h1>
 
         <center>
 
@@ -86,7 +90,6 @@
                 <div class="btn-group">
                     <button class="btn btn-default dropdown-toggle btn-sm" type="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <!--<span class="glyphicon glyphicon-folder-open"></span>-->
                         Change
                         <span class="caret"></span>
                     </button>
@@ -115,174 +118,168 @@
                         </li>
                     </ul>
                 </div>
-                <p>Download whole directory as .zip via URL:</p>
+                <p>Download whole directory as .zip via:</p>
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
                         <div class="form-inline">
-                            <div>
-                                <input class="form-control urls clipboard" readonly style="width: 100%"
-                                       value='{{host}}d/{{dir_uuid}}'
-                                       onmouseup="return false;">
-                            </div>
-                            <p></p>
-                            <input  class="form-control urls clipboard" readonly style="width: 60px"
-                                   value='curl   -J -O  {{host}}d/{{dir_uuid}}'
+
+                            <input class="form-control urls clipboard " readonly size="31"
+                                   value='{{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
-                            <input class="form-control urls clipboard" readonly style="width: 60px"
-                                   value='wget   {{host}}d/{{dir_uuid}}'
+
+                            <input class="form-control urls clipboard " readonly size="4"
+                                   value='curl -J -O {{host}}d/{{dir_uuid}}'
+                                   onmouseup="return false;">
+
+                            <input class="form-control urls clipboard " readonly size="4"
+                                   value='wget -O "{{dir_uuid}}.zip" {{host}}d/{{dir_uuid}}'
                                    onmouseup="return false;">
 
                             <a href ng-click="show_qr = !show_qr">QR code</a>
                         </div>
-                        <p></p>
+                        <br/>
                     </div>
                 </div>
                 <p></p>
                 <div ng-show="show_qr">
                     <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                        text="dir_uuid" image="true"></qr>
+                        text="download_dir_uuid" image="true"></qr>
                 </div>
 
                 <p></p>
             </div>
-            <p>To cancel publishing and close all the clients <a
-                    href="javascript:location.reload();">reload</a> or <a
-                    ng-click="close_page()" href>close</a> this page</p>
         </center>
 
         <div ng-repeat="(key, theFiles) in the_files">
 
             <div class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" style="padding:0 10px 10px 10px">
 
-                    Directory <b>{{key}}</b>
-                    <hr/>
+<h3><code><b>{{key}}</b></code></h3>
 
-                    <div ng-repeat="theFile in theFiles">
+<span ng-if="!props[key].expanded">
+      <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
+</span>
 
-                        <center id="panel_{{ theFile.metadata.file_uuid }}">
-                            <h4>File <code>{{ theFile.metadata.rest_dir }}<b>{{theFile.file.name}}</b></code> is
-                                published under:</h4>
-                        </center>
+<div class="row" ng-repeat="theFile in theFiles" ng-if="props[key].expanded">
 
-                        <div class="row">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-4">
-                                <center>
-                                    <p></p>
-                                    <div class="form-inline">
-                                        <div>
-                                            <input class="form-control urls clipboard" readonly style="width: 100%"
-                                                   value='{{ theFile.download_url }}'
-                                                   onmouseup="return false;">
-                                        </div>
-                                        <p></p>
+    <hr style="margin-bottom: 1px; margin-top: 0px; margin-left: 10px;  margin-right: 10px"/>
 
-                                        <input class="form-control urls clipboard" readonly style="width: 60px"
-                                               value='curl   -J -O  {{ theFile.download_url }}'
-                                               onmouseup="return false;">
+    <div class="col-md-7">
+        <p class="filep_path_main pull-left">{{ theFile.metadata.rest_dir }}{{theFile.file.name}}</p>
 
-                                        <input class="form-control urls clipboard" readonly style="width: 60px"
-                                               value='wget   -O  "{{theFile.file.name}}" {{ theFile.download_url }}'
-                                               onmouseup="return false;">
+        <p class="filep_path pull-right">{{ theFile.file.size | bytes}}</p>
+    </div>
+    <div class="col-md-5">
+        <center>
+            <div class="form-inline">
 
-                                        <a href ng-click="theFile.show_qr = !theFile.show_qr">QR code</a>
-                                    </div>
-                                    <p></p>
+                <input class="form-control urls clipboard input-sm" readonly size="31"
+                       value='{{ theFile.download_url }}'
+                       onmouseup="return false;">
 
-                                    <div ng-show="theFile.show_qr">
-                                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                                            text="theFile.download_url" image="true"></qr>
-                                    </div>
+                <input class="form-control urls clipboard input-sm" readonly
+                       size="4"
+                       value='curl -J -O {{ theFile.download_url }}'
+                       onmouseup="return false;">
 
-                                </center>
+                <input class="form-control urls clipboard input-sm" readonly
+                       size="4"
+                       value='wget -O "{{theFile.file.name}}" {{ theFile.download_url }}'
+                       onmouseup="return false;">
+
+                <a href ng-click="theFile.show_qr = !theFile.show_qr"><span class="filep_path">QR code</span></a>
+
+            </div>
+
+            <div ng-show="theFile.show_qr">
+                <p></p>
+                <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                    text="theFile.download_url" image="true"></qr>
+            </div>
+        </center>
+    </div>
+
+    <div class="col-sm-12">
+        <div ng-show="theFile.instances.length > 0">
+
+            <table class="table">
+                <colgroup>
+                    <col class="col-sm-2">
+                    <col class="col-sm-4">
+                    <col class="col-sm-4">
+                    <col class="col-sm-2">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Progress</th>
+                    <th>Downloaded</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="instance in theFile.instances">
+                    <td>{{ instance.did }}</td>
+                    <td>
+                        <div ng-show="instance.status === 'Active'">
+
+                            <div class="progress" style="margin-bottom: 0;">
+                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                     ng-style="{ 'width': instance.progress + '%' }">{{
+                                    instance.progress }} %
+                                </div>
                             </div>
-                            <div class="col-md-4"></div>
-                        </div>
-
-                        <script>
-                            $(".clipboard").unbind('click');
-                            $(".clipboard").on('click', function (e) {
-                                $(this).select();
-                                var v = $(this).val();
-                                console.log("copied", v);
-                                document.execCommand('copy');
-                                var cp = $('<p>Link has been copied</p>');
-                                cp.fadeOut(2000);
-                                $(this).parent().append(cp);
-                            })
-                        </script>
-
-                        <center>
-                            <div ng-show="theFile.instances.length == 0">
-                                <i>No clients yet connected</i>
-                            </div>
-                        </center>
-
-                        <div ng-show="theFile.instances.length > 0">
-                            <b><p>Clients:</p></b>
-
-                            <table class="table">
-                                <colgroup>
-                                    <col class="col-sm-2">
-                                    <col class="col-sm-4">
-                                    <col class="col-sm-2">
-                                    <col class="col-sm-4">
-                                </colgroup>
-                                <thead>
-                                <tr>
-                                    <th>Client ID</th>
-                                    <th>Progress</th>
-                                    <th>Downloaded</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="instance in theFile.instances">
-                                    <td>{{ instance.did }}</td>
-                                    <td>
-                                        <div ng-show="instance.status === 'Active'">
-
-                                            <div class="progress" style="margin-bottom: 0;">
-                                                <div class="progress-bar progress-bar-striped" role="progressbar"
-                                                     ng-style="{ 'width': instance.progress + '%' }">{{
-                                                    instance.progress }} %
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div ng-show="instance.status !== 'Active'">
-
-                                             <span ng-show="instance.status_code === 200">
-                                                <span class="label label-success">OK</span>
-                                            </span>
-                                            <span ng-show="instance.status_code === -1">
-                                                <span class="label label-warning">Error</span>
-                                            </span>
-
-                                            <span>{{ instance.status }}</span>
-                                        </div>
-
-                                    </td>
-                                    <td>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes }}</td>
-                                    <td>
-                                        <button ng-show="instance.status === 'Active'" type="button"
-                                                class="btn btn-warning btn-xs"
-                                                ng-click="instance.cancel()">
-                                            <i class="fa fa-times"></i> Cancel
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
 
                         </div>
 
-                        <hr/>
+                        <div ng-show="instance.status !== 'Active'">
 
-                    </div>
+                    <span ng-show="instance.status_code === 200">
+                        <span class="label label-success">OK</span>
+                    </span>
+
+                            <span ng-show="instance.status_code === -1">
+                        <span class="label label-warning">Error</span>
+                    </span>
+
+                            <span>{{ instance.status }}</span>
+                        </div>
+
+                    </td>
+                    <td>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes
+                        }}
+                    </td>
+                    <td>
+                        <button ng-show="instance.status === 'Active'" type="button"
+                                class="btn btn-warning btn-xs"
+                                ng-click="instance.cancel()">
+                            <i class="fa fa-times"></i> Cancel
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(".clipboard ").unbind('click');
+        $(".clipboard ").on('click', function (e) {
+            $(this).select();
+            var v = $(this).val();
+            console.log("copied", v);
+            document.execCommand('copy');
+            var cp = $('<p>Link has been copied</p>');
+            cp.fadeOut(2000);
+            $(this).parent().append(cp);
+        })
+    </script>
+
+</div>
+
+                    <p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
                 </div>
 
             </div>
@@ -293,43 +290,46 @@
 
 <div ng-show="state==2">
 
-    <br>
-    <p>Select Directory below to browse or
-        <button class="btn btn-default" data-toggle="modal" data-target="#myModal1">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach Directory
-        </button>
-    </p>
-    <ul class="nav nav-pills">
-        <li role="presentation" ng-repeat="item in you_streams">
-            <a ng-click="get_stream_data(item)" href><span
-                    ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
-                    aria-hidden="true"></span> {{ item }}</a>
-        </li>
-    </ul>
-
-    <div ng-include="'dir/dir.html'"></div>
-
-</div>
-
-<div ng-show="state==3">
-    <br/>
-
-    <form class="form-horizontal">
+    <h3>Directory name, which your files will be published with</h3>
+    <div class="row">
         <div class="form-group">
-            <label for="lb1" class="col-sm-4 control-label">Directory name, which your files will be automatically
-                published with</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" id="lb1" placeholder="Directory" ng-model="bind_dir_uuid">
+                <input type="text" class="form-control"  placeholder="Directory name" ng-model="bind_dir_uuid">
             </div>
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-default btn-block" ng-click="bind_dir_uuid = ''">Clear</button>
-                <button type="button" class="btn btn-default btn-block" ng-click="generate_random_dir_uuid()">Set
-                    random
-                </button>
-                <button type="button" class="btn btn-success btn-block" ng-click="saveMySettings()">Save</button>
+            <div class="col-sm-6">
+                    <button type="button" class="btn btn-default " ng-click="bind_dir_uuid = ''">Clear</button>
+                    <button type="button" class="btn btn-default " ng-click="generate_random_dir_uuid()">Set
+                        random
+                    </button>
+                    <button type="button" class="btn btn-success " ng-click="saveMySettings()">Save</button>
             </div>
         </div>
-    </form>
+    </div>
+
+    <hr/>
+
+    <h3>Browse directories</h3>
+    <div class="row">
+        <div class="col-md-2">
+           <h5>Attached</h5>
+            <ul style="list-style-type: none;">
+                <li role="presentation" ng-repeat="item in you_streams">
+                    <a ng-click="get_stream_data(item)" href><span
+                            ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
+                            aria-hidden="true"></span> {{ item }}</a>
+                </li>
+            </ul>
+
+            <button class="btn btn-default btn-block button-sm" data-toggle="modal" data-target="#myModal1">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Attach
+            </button>
+
+        </div>
+        <div class="col-md-10">
+            <div ng-include="'dir/dir.html'"></div>
+        </div>
+
+    </div>
 
 </div>
 
@@ -401,7 +401,7 @@
 
 <div class="pull-left">
     <small>
-        &copy; 2016 <a href="http://streambin.pl">streambin.pl</a>
+        &copy; 2016 <a href="http://streambin.pl/#/">streambin.pl</a>
     </small>
 </div>
 
@@ -424,15 +424,13 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel1">Attach Directory</h4>
+                 <h4>Attach Directory</h4>
             </div>
             <div class="modal-body">
-                <p>Enter ID of Directory to attach</p>
+                <p>Enter name of Directory to attach</p>
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory ID">
+                    <input type="text" class="form-control" ng-model="dir_to_add" placeholder="Directory name">
                 </div>
-                <p><span class="label label-warning">Warning</span> This option will persist data in the Local Storage
-                    of your browser</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

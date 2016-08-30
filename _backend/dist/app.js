@@ -1,14 +1,7 @@
-function get_genid($http, cb) {
-    $http.get('genid').then(function (data) {
-        void 0;
-        cb(data.data);
-    });
-}
-
-function get_genuuid($http, cb) {
-    $http.get('genuuid').then(function (data) {
-        void 0;
-        cb(data.data);
+function gen_uuid() {
+    return chance.string({
+        length: 8,
+        pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     });
 }
 
@@ -30,6 +23,13 @@ function get_stats($http, cb) {
     });
 }
 
+function get_config($http, cb) {
+    $http.get('config').then(function (data) {
+        void 0;
+        cb(data.data);
+    });
+}
+
 angular
     .module('sbApp', [
         'angularFileUpload',
@@ -42,12 +42,12 @@ angular
     .filter('bytes', function () {
         return function (bytes, precision) {
             if (bytes === 0) {
-                return '0 bytes'
+                return '0 b'
             }
             if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
             if (typeof precision === 'undefined') precision = 1;
 
-            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+            var units = ['b', 'kB', 'MB', 'GB', 'TB', 'PB'],
                 number = Math.floor(Math.log(bytes) / Math.log(1024)),
                 val = (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision);
 
@@ -154,4 +154,5 @@ angular
         void 0;
 
         $rootScope.host = host;
+        $rootScope.chrome = window.chrome;
     }]);

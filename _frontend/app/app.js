@@ -23,6 +23,13 @@ function get_stats($http, cb) {
     });
 }
 
+function get_config($http, cb) {
+    $http.get('config').then(function (data) {
+        console.log("config", data.data);
+        cb(data.data);
+    });
+}
+
 angular
     .module('sbApp', [
         'angularFileUpload',

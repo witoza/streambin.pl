@@ -1,16 +1,22 @@
-<div class="row" ng-show="curr_stream != ''">
+<div ng-show="curr_stream != ''">
 
-    <h2>Directory <code>{{curr_stream}}</code></h2>
+    <h3>Directory <code>{{curr_stream}}</code></h3>
     <p>Found <b>{{curr_streams_data.length }}</b> files</p>
     <p>Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a></p>
+
+    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
+        <span class="glyphicon glyphicon-refresh"></span> Refresh
+    </button>
+
+
+    <button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()" ng-show="removeStreamDir != null">
+        <i class="fa fa-times"></i> Detach
+    </button>
 
     <div ng-show="curr_streams_data.length >0">
 
         <p>Download whole directory (zip file) URL: <b><a ng-href="{{ host }}d/{{ curr_stream }}">{{ host }}d/{{ curr_stream }}</a></b></p>
 
-        <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
-            <span class="glyphicon glyphicon-refresh"></span> Refresh
-        </button>
         <br/>
 
         <table class="table table-hover">
@@ -22,10 +28,10 @@
             <tbody>
             <tr ng-repeat="item in curr_streams_data">
                     <td ng-if="item.file_meta.relativePath">
-                        <b>{{ item.file_meta.relativePath }}</b>
+                        <p class="filep_path_main">{{ item.file_meta.relativePath }}</p>
                     </td>
                     <td ng-if="!item.file_meta.relativePath">
-                        <b>{{ item.file_meta.name }}</b>
+                        <p class="filep_path_main">{{ item.file_meta.name }}</p>
                     </td>
                 <td>
                     {{ item.file_meta.size | bytes }}

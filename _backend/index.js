@@ -77,6 +77,15 @@ function num_of_keys(obj) {
     return Object.keys(obj).length;
 }
 
+app.get('/config', function (req, res) {
+
+    const config = {
+        hostname: program.hostname
+    };
+
+    res.json(config);
+});
+
 app.get('/status', function (req, res) {
 
     var dir_uuid = req.query.dir_uuid;
@@ -247,18 +256,22 @@ app.get('/d/:file_uuid', function (req, res) {
 
 });
 
+const program = require('commander');
+
+program
+    .option('-d, --dir <dir>', 'The directory with frontend')
+    .option('-h, --hostname <hostname>', 'Hostname')
+    .option('-p, --port <port>', 'Port number')
+    .parse(process.argv);
+
 var args = process.argv.slice(2);
 
-logger.info("process args", args);
-var app_dir = args[0];
-if (!app_dir) {
-    app_dir = "/dist"
-}
+const app_dir = program.dir || "/dist";
 
 app.use(express.static(__dirname + app_dir));
 logger.info("Serving frontend from", __dirname + app_dir);
 
-const http_port = 9001;
+const http_port = program.port || 9001;
 const server = http.createServer(app).listen(http_port, function () {
     logger.info("StreamBin backend is running at: " + http_port);
 });

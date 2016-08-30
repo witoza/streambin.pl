@@ -6,7 +6,7 @@ angular
         'ngRoute'])
     .controller('mainCtrl',
 
-        function ($window, $scope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
+        function ($window, $scope, $rootScope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
 
             function isEmpty(str) {
                 return str == null || str.trim().length == 0;
@@ -18,6 +18,12 @@ angular
                     return rp.substring(0, rp.indexOf("/") + 1);
                 }
             }
+
+            get_config($http, function (data) {
+                if (!isEmpty(data.hostname)) {
+                    $rootScope.host = data.hostname;
+                }
+            });
 
             $(".dir_input").on('change', function (e) {
                 console.log('onchange called with e', e);

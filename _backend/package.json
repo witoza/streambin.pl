@@ -1,10 +1,10 @@
 {
   "name": "streambin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "StreamBIN",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js /../_frontend/app"
+    "start": "node index.js -d /../_frontend/app -p 9001"
   },
   "bin": {
     "streambin": "index.js"
@@ -14,6 +14,7 @@
     "binaryjs": "0.2.1",
     "body-parser": "^1.15.2",
     "chance": "1.0.4",
+    "commander": "^2.9.0",
     "express": "4.14.0",
     "express-brute": "1.0.0",
     "jsonutil": "^0.2.0",
