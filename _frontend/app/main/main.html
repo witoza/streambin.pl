@@ -88,8 +88,7 @@
         <center>
 
             <div ng-show="total_files > 1">
-                All files are published under directory <a target="_blank"
-                                                           ng-href="#/dir/{{dir_uuid}}"><b>{{dir_uuid}}</b></a>
+                All files are published under directory <a href ng-click="open_current_dir();"><b>{{dir_uuid}}</b></a>
 
                 <div class="btn-group">
                     <button class="btn btn-default dropdown-toggle btn-sm" type="button"

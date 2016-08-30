@@ -50,6 +50,15 @@ angular
                 add_msg('Files from directory <b>' + top_dir + '</b> are being published');
             });
 
+
+            $scope.open_current_dir = function () {
+                console.log("open_current_dir");
+                $scope.showExplore();
+
+                $scope.curr_stream = $scope.dir_uuid;
+                $scope.refreshStreamDir();
+            };
+
             $scope.close_page = function () {
                 console.log("close_page");
                 $window.location = 'about:blank';
