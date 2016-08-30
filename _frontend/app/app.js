@@ -1,14 +1,7 @@
-function get_genid($http, cb) {
-    $http.get('genid').then(function (data) {
-        console.log("generated uuid", data.data);
-        cb(data.data);
-    });
-}
-
-function get_genuuid($http, cb) {
-    $http.get('genuuid').then(function (data) {
-        console.log("generated uuid", data.data);
-        cb(data.data);
+function gen_uuid() {
+    return chance.string({
+        length: 8,
+        pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     });
 }
 

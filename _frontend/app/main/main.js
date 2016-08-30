@@ -12,38 +12,36 @@ angular
                 return str == null || str.trim().length == 0;
             }
 
+            function get_top_folder(fileList) {
+                for (var k in Object.keys(fileList)) {
+                    var rp = fileList[k].webkitRelativePath;
+                    return rp.substring(0, rp.indexOf("/") + 1);
+                }
+            }
+
             $(".dir_input").on('change', function (e) {
                 console.log('onchange called with e', e);
-                var fileList = e.currentTarget.files;
-                var num_of_files = Object.keys(fileList).length;
-                if (num_of_files == 0) {
+                const fileList = e.currentTarget.files;
+                const num_of_files = Object.keys(fileList).length;
+                if (num_of_files === 0) {
                     return;
                 }
-                if (num_of_files > 500) {
-                    alert("too many files, max is 500, the dir selected has " + Object.keys(fileList).length);
+                if (num_of_files > 800) {
+                    alert("too many files, max is 800, the dir selected has " + num_of_files);
                     return;
                 }
 
-                var top_dir;
-
-                for (var k in Object.keys(fileList)) {
-                    var file = fileList[k];
-
-                    var rp = file.webkitRelativePath;
-                    if (!isEmpty(rp)) {
-                        top_dir = rp.substring(0, rp.indexOf("/") + 1);
-                        if (!$scope.props[top_dir]) {
-                            $scope.props[top_dir] = {
-                                expanded: num_of_files < 20,
-                                size: 0
-                            }
-                        }
+                const top_dir = get_top_folder(fileList);
+                if (!$scope.props[top_dir]) {
+                    $scope.props[top_dir] = {
+                        expanded: num_of_files < 20,
+                        size: 0
                     }
-
-                    uploader.addToQueue(fileList[k]);
                 }
 
-                add_msg('Directory content <b>' + top_dir + '</b> is being published');
+                uploader.addToQueue(fileList);
+
+                add_msg('Files from directory <b>' + top_dir + '</b> are being published');
             });
 
             $scope.close_page = function () {
@@ -121,9 +119,7 @@ angular
             };
 
             $scope.generate_random_dir_uuid = function () {
-                get_genuuid($http, function (data) {
-                    $scope.bind_dir_uuid = data;
-                });
+                $scope.bind_dir_uuid = gen_uuid();
             };
 
             $scope.saveMySettings = function () {
@@ -152,14 +148,11 @@ angular
             $scope.total_size = 0;
 
             $scope.dir_uuid = $localStorage.dir_uuid;
-            $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
-            $scope.original_dir_uuid = $scope.dir_uuid;
             if (isEmpty($scope.dir_uuid)) {
-                get_genuuid($http, function (data) {
-                    $scope.dir_uuid = data;
-                    $scope.original_dir_uuid = $scope.dir_uuid;
-                });
+                $scope.dir_uuid = gen_uuid();
             }
+            $scope.original_dir_uuid = $scope.dir_uuid;
+            $scope.download_dir_uuid = $scope.host + "d/" + $scope.dir_uuid;
 
             var add_msg = function (msg) {
                 var A = $('<p style="margin:0"><code>' + msg + '</code></p>');
@@ -193,56 +186,46 @@ angular
                     }
                 }
 
-                get_genid($http, function (data) {
+                fileItem.metadata = {
+                    file_uuid: gen_uuid(),
+                    dir_uuid: $scope.dir_uuid,
+                    relativePath: fileItem._file.webkitRelativePath,
+                    name: fileItem._file.name,
+                    size: fileItem._file.size
+                };
+                fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
+                fileItem.isStreaming = false;
+                fileItem.instances = [];
 
-                    fileItem.metadata = {
-                        file_uuid: data,
-                        dir_uuid: $scope.dir_uuid,
-                        relativePath: fileItem._file.webkitRelativePath,
-                        name: fileItem._file.name,
-                        size: fileItem._file.size
-                    };
-                    fileItem.options = $scope.options;
-                    fileItem.download_url = $scope.host + "d/" + fileItem.metadata.file_uuid;
-                    fileItem.isStreaming = false;
-                    fileItem.instances = [];
-                    fileItem.original_dir_uuid = $scope.dir_uuid;
+                var dir = "/";
+                if (!isEmpty(fileItem.metadata.relativePath)) {
+                    var rp = fileItem.metadata.relativePath;
+                    fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
 
-                    fileItem.upload();
+                    rp = rp.substring(rp.indexOf("/") + 1);
+                    fileItem.metadata.rest_dir = rp.substring(0, rp.lastIndexOf("/") + 1);
 
-                    var k = "/";
-                    if (!isEmpty(fileItem.metadata.relativePath)) {
-                        var rp = fileItem.metadata.relativePath;
-                        fileItem.metadata.top_dir = rp.substring(0, rp.indexOf("/") + 1);
+                    dir = fileItem.metadata.top_dir;
+                }
+                if (!$scope.the_files[dir]) {
+                    $scope.the_files[dir] = [];
+                }
+                $scope.the_files[dir].push(fileItem);
+                $scope.total_files++;
+                $scope.total_size += fileItem.metadata.size;
 
-                        rp = rp.substring(rp.indexOf("/") + 1);
-                        fileItem.metadata.rest_dir = rp.substring(0, rp.lastIndexOf("/") + 1);
+                if (dir === "/") {
+                    add_msg('File <b>' + fileItem.metadata.name + '</b> is being published');
 
-                        k = fileItem.metadata.top_dir;
-                    }
-                    if (!$scope.the_files[k]) {
-                        $scope.the_files[k] = [];
-                    }
-                    $scope.the_files[k].push(fileItem);
-                    $scope.total_files++;
-                    $scope.total_size += fileItem.metadata.size;
+                    $scope.the_files[dir].sort(function (a, b) {
+                        return a.metadata.name > b.metadata.name;
+                    });
 
-                    if (k === "/") {
-                        add_msg('File <b>' + fileItem.metadata.name + '</b> is being published');
-                    }
+                }
 
-                    $scope.props[k].size += fileItem.metadata.size;
+                $scope.props[dir].size += fileItem.metadata.size;
 
-                    // setTimeout(function () {
-                    //     var tid = "#m_" + fileItem.metadata.file_uuid;
-                    //     $(tid).addClass('flash');
-                    //     setTimeout(function () {
-                    //         $(tid).removeClass('flash');
-                    //     }, 1000);
-                    // }, 100);
-                    // $scope.scrollto(fileItem);
-
-                });
+                fileItem.upload();
 
             };
 
@@ -254,24 +237,6 @@ angular
                         item.chnage_dir_uuid(dir_uuid);
                     })
                 }
-            };
-
-            var scrollto_last = null;
-
-            $scope.scrollto = function (fileItem) {
-                scrollto_last = fileItem;
-
-                setTimeout(function () {
-                    if (scrollto_last == null || $scope.total_files > 1) {
-                        return
-                    }
-                    $scope.do_scrollto(scrollto_last);
-                    scrollto_last = null;
-                }, 50);
-            };
-
-            $scope.do_scrollto = function (fileItem) {
-                anchorSmoothScroll.scrollTo("panel_" + fileItem.metadata.file_uuid);
             };
 
             uploader.onAfterAddingAll = function (addedFileItems) {

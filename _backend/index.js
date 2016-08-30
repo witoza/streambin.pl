@@ -73,22 +73,6 @@ app.use('/', function (req, res, next) {
     next();
 });
 
-app.get('/genid', function (req, res) {
-    var uid = chance.string({length: 8, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'});
-    if (writers[uid]) {
-        throw new Error("rand is of no good");
-    }
-    res.send(uid);
-});
-
-app.get('/genuuid', function (req, res) {
-    var uid = chance.string({length: 8, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'});
-    if (writers[uid]) {
-        throw new Error("rand is of no good");
-    }
-    res.send(uid);
-});
-
 function num_of_keys(obj) {
     return Object.keys(obj).length;
 }

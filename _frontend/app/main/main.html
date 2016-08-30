@@ -22,7 +22,11 @@
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
 
     <div ng-show="!total_files">
-        <h1 class="h_active">Choose the files to publish</h1>
+
+        <center>
+            <h2>Choose the files to publish</h2>
+            <p>The files are uploaded to receiver and never persisted on the server</p>
+        </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
@@ -44,11 +48,16 @@
 
             </center>
         </div>
-        <h1 class="h_nactive">Download the files on the remote machine</h1>
     </div>
 
     <div ng-show="total_files > 0">
-        <h1 class="h_active">Choose the files to publish</h1>
+
+        <center>
+            <h2>Now publishing, you can download the files or publish more</h2>
+            <p>To cancel publishing and close all the clients simply <a
+                    href="javascript:location.reload();">reload</a> or <a
+                    ng-click="close_page()" href>close</a> this page</p>
+        </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
@@ -71,14 +80,6 @@
             </center>
         </div>
 
-        <h1 id="step2" class="h_active">Download the files on the remote machine</h1>
-
-        <center>
-            <h3>Now publishing !</h3>
-            <p>To cancel publishing and close all the clients <a
-                    href="javascript:location.reload();">reload</a> or <a
-                    ng-click="close_page()" href>close</a> this page</p>
-        </center>
 
         <center>
 
@@ -155,7 +156,7 @@
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:0 10px 10px 10px">
 
-<h3><code><b>{{key}}</b> {{theFiles.length}} file(s) total {{props[key].size | bytes}}</code></h3>
+<h3><code><b>{{key}}</b></code></h3>
 
 <span ng-if="!props[key].expanded">
       <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
@@ -279,6 +280,7 @@
 
 </div>
 
+                    <p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
                 </div>
 
             </div>

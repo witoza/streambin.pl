@@ -2,8 +2,7 @@
   "name": "streambin.pl-frontend",
   "description": "",
   "main": "index.js",
-  "authors": [
-  ],
+  "authors": [],
   "license": "ISC",
   "homepage": "",
   "ignore": [
@@ -21,8 +20,9 @@
     "angular-file-upload-binaryjs": "1.2.0",
     "ngstorage": "0.3.11",
     "angular-qr": "0.2.0",
-	"angular-route": "~1.5.8",
-	"components-font-awesome": "^4.6.3"
+    "angular-route": "~1.5.8",
+    "components-font-awesome": "^4.6.3",
+    "chance": "^1.0.3"
   },
   "resolutions": {
     "angular": "1.5.8"
