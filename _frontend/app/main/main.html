@@ -159,7 +159,9 @@
             <div class="panel panel-default">
                 <div class="panel-body" style="padding:0 10px 10px 10px">
 
-<h3><code><b>{{key}}</b></code></h3><p><code>total {{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></p>
+<h3 class="pull-left"><code><b>{{key}}</b></code></h3>
+<h4 class="pull-right"><br/><code>{{props[key].size | bytes}} in {{theFiles.length}} file(s)</code></h4>
+<div class="clearfix"/>
 
 <span ng-if="!props[key].expanded">
       <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
