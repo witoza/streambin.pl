@@ -45,7 +45,7 @@ function is_req_static(req) {
 
     var is_resource_static =
         url === "/" ||
-        url.startsWithAny("/_bc/", "/_pc/") ||
+        url.startsWithAny("/_bc/", "/_pc/", "/.well-known/") ||
         url.endsWithAny("js", "jpg", "ico", "png", "css", "html");
 
     return is_resource_static;
