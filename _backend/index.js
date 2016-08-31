@@ -228,7 +228,7 @@ app.get('/d/:file_uuid', function (req, res) {
             .then(function () {
                 logger.info(rid, "all files has been downloaded");
                 arch.finalize();
-            }).catch(function () {
+            }).catch(function (err) {
                 logger.info("one of the files can't be downloaded, zip file is bad");
                 res.destroy();
             });
@@ -253,6 +253,8 @@ app.get('/d/:file_uuid', function (req, res) {
             res.end();
         })
         .catch(function () {
+            logger.info("bad download");
+            res.destroy();
         });
 
 });
