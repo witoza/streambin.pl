@@ -129,7 +129,6 @@ app.get('/d/:file_uuid', function (req, res) {
             const R = {
                 download_start: Date.now(),
                 req: req,
-                res: res,
 
                 total_received: 0,
                 closed: false,
@@ -167,9 +166,6 @@ app.get('/d/:file_uuid', function (req, res) {
                 }
             };
             D.downloaders[did] = R;
-            if (onstream != null) {
-                delete R.res;
-            }
 
             logger.info(rid, file_uuid, did, ": ready to receive data");
             D.func.do_stream(did);
@@ -213,7 +209,7 @@ app.get('/d/:file_uuid', function (req, res) {
 
             (function (file_uuid) {
                 pr = pr.then(function () {
-                    var onstream = function (input) {
+                    const onstream = function (input) {
                         const D = writers[file_uuid];
 
                         if (D.data.file_meta.relativePath) {
@@ -247,7 +243,12 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
 
-    stream_file(file_uuid)
+
+    const pipe_to_res = function (input) {
+        input.pipe(res);
+    };
+
+    stream_file(file_uuid, pipe_to_res)
         .then(function () {
             res.end();
         })
@@ -396,17 +397,15 @@ bs.on('connection', function (client) {
     });
 
     client.on('stream', function (stream, meta) {
-        var file_uuid = meta.file_uuid;
-        var did = meta.did;
+        const file_uuid = meta.file_uuid;
+        const did = meta.did;
         logger.info(file_uuid, did, ': received stream');
 
         var M = writers[file_uuid].data.file_meta;
         var D = writers[file_uuid].downloaders[did];
         D.stream_time = Date.now();
 
-        if (D.onstream != null) {
-            D.onstream(stream);
-        }
+        D.onstream(stream);
 
         stream.on('data', function (data) {
             if (D.closed) {
@@ -420,14 +419,6 @@ bs.on('connection', function (client) {
 
             D.total_received += data.length;
             logger.info(file_uuid, did, ': rcv[b]:', data.length, '; total rcv[%]:', Math.round((D.total_received / M.size) * 100), "; missing[b]:", M.size - D.total_received);
-
-            if (D.res) {
-                D.res.write(data);
-
-                // if (!D.res.write(data)) {
-                //     throw new Error("not supported yet");
-                // }
-            }
 
             var progress = {
                 total_received: D.total_received,
