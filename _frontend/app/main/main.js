@@ -6,7 +6,7 @@ angular
         'ngRoute'])
     .controller('mainCtrl',
 
-        function ($window, $scope, $rootScope, $localStorage, $http, anchorSmoothScroll, FileUploader) {
+        function ($window, $scope, $rootScope, $localStorage, FileUploader, MyRest) {
 
             function isEmpty(str) {
                 return str == null || str.trim().length == 0;
@@ -19,10 +19,14 @@ angular
                 }
             }
 
-            get_config($http, function (data) {
+            MyRest.get_config().then(function (data) {
                 if (!isEmpty(data.hostname)) {
                     $rootScope.host = data.hostname;
                 }
+            });
+
+            MyRest.get_stats().then(function (stats) {
+                $rootScope.stats = stats;
             });
 
             $(".dir_input").on('change', function (e) {
@@ -49,7 +53,6 @@ angular
 
                 add_msg('Files from directory <b>' + top_dir + '</b> are being published');
             });
-
 
             $scope.open_current_dir = function () {
                 console.log("open_current_dir");
@@ -93,7 +96,8 @@ angular
 
                 console.log("get_stream_data", sname);
                 $scope.curr_stream = sname;
-                get_streams($http, sname, function (data) {
+
+                MyRest.get_streams(sname).then(function (data) {
                     $scope.curr_streams_data = data;
                 });
             };
@@ -128,8 +132,8 @@ angular
                 console.log("showStats");
                 $scope.state = 'stats';
 
-                get_stats($http, function (data) {
-                    $scope.stats = data;
+                MyRest.get_stats().then(function (stats) {
+                    $rootScope.stats = stats;
                 });
             };
 

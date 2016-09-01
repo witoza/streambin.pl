@@ -23,7 +23,10 @@ const writers = {};
 const logger = log4js.getLogger();
 
 const stats = {
-    total_files_streamed: 0,
+    total_files_streamed_success: 0,
+    total_files_streamed_fail: 0,
+    now_transmiting: 0,
+    bytes_send: 0,
 };
 
 String.prototype.startsWithAny = function () {
@@ -78,11 +81,10 @@ function num_of_keys(obj) {
 }
 
 app.get('/config', function (req, res) {
-
     const config = {
-        hostname: program.hostname
+        hostname: program.hostname,
+        stats: get_stats()
     };
-
     res.json(config);
 });
 
@@ -106,15 +108,19 @@ app.get('/status', function (req, res) {
     res.json(R);
 });
 
-app.get('/stats', function (req, res) {
-    logger.info("get server stats");
-    const R = {
+
+function get_stats() {
+    return {
         curr: {
-            current_streams: Object.keys(writers).length
+            files_available: Object.keys(writers).length
         },
         stats: stats
-    };
-    res.json(R);
+    }
+}
+
+app.get('/stats', function (req, res) {
+    logger.info("get server stats");
+    res.json(get_stats());
 });
 
 app.get('/d/:file_uuid', function (req, res) {
@@ -138,18 +144,20 @@ app.get('/d/:file_uuid', function (req, res) {
                         return;
                     }
                     R.closed = true;
-                    stats.total_files_streamed++;
                     logger.info(rid, file_uuid, did, ": closing downloader");
+                    stats.now_transmiting--;
                     var reason = null;
                     var isok = true;
                     if (D.data.file_meta.size === R.total_received) {
                         logger.info(rid, file_uuid, did, ": gentle close reader - all data received");
                         reason = 'download completed';
+                        stats.total_files_streamed_success++;
                     } else {
                         const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
                         logger.info(rid, file_uuid, did, msg);
                         reason = msg;
                         isok = false;
+                        stats.total_files_streamed_fail++;
                     }
                     try {
                         D.func.do_close(did, reason);
@@ -399,6 +407,7 @@ bs.on('connection', function (client) {
     });
 
     client.on('stream', function (stream, meta) {
+        stats.now_transmiting++;
         const file_uuid = meta.file_uuid;
         const did = meta.did;
         logger.info(file_uuid, did, ': received stream');
@@ -426,6 +435,7 @@ bs.on('connection', function (client) {
                 total_received: D.total_received,
                 did: did
             };
+            stats.bytes_send += data.length;
             stream.write(progress);
 
         });
