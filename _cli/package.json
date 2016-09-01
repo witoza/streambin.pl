@@ -7,10 +7,12 @@
     "streambin": "index.js"
   },
   "dependencies": {
+    "binaryjs": "0.2.1",
     "chance": "1.0.4",
     "commander": "^2.9.0",
     "jsonutil": "^0.2.0",
-    "log4js": "^0.6.38"
+    "log4js": "^0.6.38",
+    "websocket": "^1.0.23"
   },
   "repository": {
     "type": "git",

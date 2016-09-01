@@ -91,7 +91,6 @@ app.get('/status', function (req, res) {
     if (dir_uuid == null) {
         dir_uuid = 'public';
     }
-    logger.info("get status for directory", dir_uuid);
 
     var R = [];
 
@@ -116,7 +115,6 @@ function get_stats() {
 }
 
 app.get('/stats', function (req, res) {
-    logger.info("get server stats");
     res.json(get_stats());
 });
 
