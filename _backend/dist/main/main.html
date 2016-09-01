@@ -24,8 +24,8 @@
     <div ng-show="!total_files">
 
         <center>
-            <h3>Choose the files to publish</h3>
-            <p>The files are uploaded to receiver and never persisted on the server</p>
+            <h3>Choose files or directories</h3>
+            <p>The files are streamed to the receiver, never persisted on the server</p>
         </center>
 
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
@@ -55,7 +55,7 @@
     <div ng-show="total_files > 0">
 
         <center>
-            <h3>Now publishing, you can download the files or publish more</h3>
+            <h3>Now, you can download the files or select more</h3>
             <p>To cancel publishing and close all the clients simply <a
                     href="javascript:location.reload();">reload</a> or <a
                     ng-click="close_page()" href>close</a> this page</p>
@@ -64,17 +64,26 @@
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
                 <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+
+                <span ng-show="total_files == 1">
+                    <code ><b>{{total_files}}</b> file has been selected</code><br/>
+                </span>
+
+                <span  ng-show="total_files > 1">
+                    <code><b>{{total_files}}</b> files have been selected</code><br/>
+                </span>
                 <div id="msgs_here"></div>
+
                 <span ng-show="drag_and_drop">
                 Drag and drop here or
                 </span>
                 <span class="btn btn-default btn-file">
-                    <input type="file" nv-file-select="" uploader="uploader" multiple> add more files
+                    <input type="file" nv-file-select="" uploader="uploader" multiple> select more files
                 </span>
 
                 <span ng-show="chrome">
                     <span class="btn btn-default btn-file">
-                        <input class="dir_input" type="file" webkitdirectory directory multiple> add more directories
+                        <input class="dir_input" type="file" webkitdirectory directory multiple> select more directories
                    </span>
                 </span>
 
@@ -88,7 +97,7 @@
         <center>
 
             <div ng-show="total_files > 1">
-                All files are published under directory <a href ng-click="open_current_dir();"><b>{{dir_uuid}}</b></a>
+                All selected files are published under directory <a href ng-click="open_current_dir();"><b>{{dir_uuid}}</b></a>
 
                 <div class="btn-group">
                     <button class="btn btn-default dropdown-toggle btn-sm" type="button"

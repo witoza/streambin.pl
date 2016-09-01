@@ -51,11 +51,14 @@
         <h1>Stream<font color="navy">BIN</font>
             <small><br/>Transfer files by a Web Browser</small>
         </h1>
-
-        <small>
-            Now transmitting <b>{{stats.stats.now_transmiting}}</b> of available <b>{{stats.curr.files_available}}</b> files</b>.
-            Total transmitted <b>{{stats.stats.total_files_streamed_fail + stats.stats.total_files_streamed_success}}</b> files of size <b>{{stats.stats.bytes_send | bytes}} </b>
-        </small>
+<!--
+        <i>
+            <small>
+                We transmitted <b>{{stats.stats.total_files_streamed_fail + stats.stats.total_files_streamed_success}}</b> files of total size <b>{{stats.stats.bytes_send | bytes}}.</b>
+                Now <b>{{stats.curr.files_available}}</b> files are available, and  <b>{{stats.stats.now_transmiting}}</b> are being streamed.
+            </small>
+        </i>
+-->
 
     </center>
 

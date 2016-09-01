@@ -6,17 +6,13 @@ const http = require('http');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const mime = require('mime');
-const Writable = require('stream').Writable;
 const BinaryServer = require('binaryjs').BinaryServer;
-const streamBuffers = require("stream-buffers");
 const WebSocket = require('ws');
 const onFinished = require('on-finished');
-const Chance = require('chance'), chance = new Chance();
 const log4js = require('log4js');
-const jsonutil = require('jsonutil');
 const bodyParser = require('body-parser');
 const archiver = require('archiver');
+const Chance = require('chance'), chance = new Chance();
 
 const writers = {};
 
@@ -81,10 +77,11 @@ function num_of_keys(obj) {
 }
 
 app.get('/config', function (req, res) {
+
     const config = {
-        hostname: program.hostname,
-        stats: get_stats()
+        hostname: program.hostname
     };
+
     res.json(config);
 });
 
