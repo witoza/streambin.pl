@@ -51,7 +51,7 @@ angular
 
                 uploader.addToQueue(fileList);
 
-                add_msg('Files from directory <b>' + top_dir + '</b> are being published');
+                add_msg(num_of_files + ' files from directory <b>' + top_dir + '</b> have been added');
             });
 
             $scope.open_current_dir = function () {
@@ -199,7 +199,7 @@ angular
                         return fi._file.name === fileItem._file.name && fi._file.webkitRelativePath === fileItem._file.webkitRelativePath;
                     });
                     if (already_there) {
-                        add_msg('File <b>' + fileItem._file.name + '</b> is already being published');
+                        add_msg('File <b>' + fileItem._file.name + '</b> has already been added');
                         console.info("file is already being published - skipping");
                         return;
                     }
@@ -234,7 +234,7 @@ angular
                 $scope.total_size += fileItem.metadata.size;
 
                 if (dir === "/") {
-                    add_msg('File <b>' + fileItem.metadata.name + '</b> is being published');
+                    add_msg('File <b>' + fileItem.metadata.name + '</b> has been added');
 
                     $scope.the_files[dir].sort(function (a, b) {
                         return a.metadata.name > b.metadata.name;
