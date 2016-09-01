@@ -399,7 +399,7 @@ module
             };
 
             FileUploader.prototype.open_bjs_and_stream = function (item, did) {
-                console.log("opening stream for, file:", item.metadata.file_uuid, "client:", did);
+                console.log("opening stream for file:", item.metadata.file_uuid, "client:", did);
 
                 var that = this;
 

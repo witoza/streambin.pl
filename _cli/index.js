@@ -10,18 +10,17 @@ const W3CWebSocket = require('websocket').w3cwebsocket;
 const logger = log4js.getLogger();
 const BinaryClient = require('binaryjs').BinaryClient;
 
-var binaryJsClient_ulr = "wss://streambin.pl/binary-uploader-stream";
-
-var binaryJsClient = null;
-
-var socket = new W3CWebSocket(binaryJsClient_ulr + "/sync");
-
 function gen_uuid() {
     return chance.string({
         length: 8,
         pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     });
 }
+
+var binaryJsClient_ulr = "wss://streambin.pl/binary-uploader-stream";
+var binaryJsClient = null;
+
+var socket = new W3CWebSocket(binaryJsClient_ulr + "/sync");
 
 var dir_uuid = "local";
 var host = "https://streambin.pl/";
@@ -48,11 +47,11 @@ function get_item_by_uuid(file_uuid) {
     return file_items.find(function (item) {
         return item.metadata.file_uuid === file_uuid;
     });
-};
+}
 
 file_items.push(make_file_item({
-    size: 12202,
-    name: 'z:/!github/main.js'
+    size: 381200,
+    name: 'z:/Movie-Description-Plugin-for-Torrent/img/Image_4.png'
 }));
 
 function send_availability(item) {
@@ -67,7 +66,7 @@ function send_availability(item) {
     socket.send(JSON.stringify(S));
 
     binaryJsClient = new BinaryClient(binaryJsClient_ulr);
-};
+}
 
 function open_bjs_and_stream(item, did) {
     logger.info("opening stream for, file:", item.metadata.file_uuid, "client:", did);
@@ -77,16 +76,6 @@ function open_bjs_and_stream(item, did) {
         total_received: 0,
         progress: 0,
         status: 'Active',
-        cancel: function () {
-            logger.info("cancelling, file:", item.metadata.file_uuid, "client:", did);
-            var S = {
-                action: 'cancel',
-                meta: item.metadata,
-                did: ins.did
-            };
-            socket.send(JSON.stringify(S));
-            close_bjs(item, did, 'cancelled');
-        }
     };
 
     item.instances.unshift(ins);
@@ -104,12 +93,11 @@ function open_bjs_and_stream(item, did) {
 
         if (ins.total_received === item.metadata.size) {
             ins.progress = 100;
-            that._onSuccessItem(item);
-            that._onCompleteItem(item);
         }
 
     });
-};
+    ins.stream = stream;
+}
 
 function close_bjs(item, did, reason) {
 
@@ -130,13 +118,12 @@ function close_bjs(item, did, reason) {
     ins.stream.destroy();
 
     if (reason === "download completed") {
-        ins.progress = 100;
-        ins.status_code = 200;
+        logger.info("file has been downloaded");
     } else {
-        ins.status_code = -1;
+        logger.warn("file has not been downloaded");
     }
 
-};
+}
 
 socket.onopen = function (evt) {
     logger.info("connection has been opened");
@@ -164,9 +151,10 @@ socket.onmessage = function (evt) {
     if (cmd.action === "do_stream") {
         var item = get_item_by_uuid(cmd.file_uuid);
         open_bjs_and_stream(item, cmd.did);
+
     } else if (cmd.action === "do_close") {
         var item = get_item_by_uuid(cmd.file_uuid);
-
+        close_bjs(item, cmd.did, cmd.reason);
 
     } else if (cmd.action === "do_error") {
         logger.error("error on backend", cmd);
