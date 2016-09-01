@@ -1,0 +1,25 @@
+{
+  "name": "streambin-cli",
+  "version": "1.0.0",
+  "description": "StreamBIN-CLI",
+  "main": "index.js",
+  "bin": {
+    "streambin": "index.js"
+  },
+  "dependencies": {
+    "chance": "1.0.4",
+    "commander": "^2.9.0",
+    "jsonutil": "^0.2.0",
+    "log4js": "^0.6.38"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/witoza/streambin.pl"
+  },
+  "author": "witoza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/witoza/streambin.pl/issues"
+  },
+  "homepage": "https://github.com/witoza/streambin.pl"
+}

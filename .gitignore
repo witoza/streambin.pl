@@ -1,6 +1,7 @@
 !.gitkeep
 _backend/node_modules/
 _frontend/node_modules/
+_cli/node_modules/
 _frontend/dist/
 _frontend/app/_bc/
 uploads/
