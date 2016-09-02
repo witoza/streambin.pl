@@ -4,19 +4,34 @@
     <li role="presentation" ng-class="{active: state==2}"><a ng-click="showExplore()" href><i
             class="glyphicon glyphicon-folder-close"></i> Directories</a></li>
     <li role="presentation" ng-class="{active: state=='tab_npm'}"><a ng-click="state='tab_npm'" href><i
-            class="fa fa-terminal" aria-hidden="true"></i> npm</a></li>
+            class="fa fa-terminal" aria-hidden="true"></i> CLI</a></li>
 </ul>
 
 <div ng-show="state=='tab_npm'">
-    <br/>
-    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers and
+    <h2>CLI Client</h2>
+    <p>There is a command line tool <code>streambin-cli</code> to publish files and directories from command line</p>
+    <pre>$ npm i --global streambin-cli
+$ streambin-cli share my_file1.txt my_directory</pre>
+    <pre>$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
+    <p> Files are published until the process is stopped.</p>
+
+    <p>Visit <a href="https://www.npmjs.com/package/streambin-cli">https://www.npmjs.com/package/streambin-cli</a> for
+        instructions.</p>
+
+    <h2>Local installation</h2>
+    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers
+        and
         outgoing traffic.
     </p>
 
-    <p>You need to have <code>npm</code> installed.</p>
+    <pre>$ npm i --global streambin
+$ streambin -h http://192.168.0.1/ -p 9001</pre>
 
-    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.
-    </p>
+    <p>Now open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to resources
+        - you can use your internal LAN Ip address for that.</p>
+
+    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for
+        instructions.</p>
 </div>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">

@@ -399,7 +399,7 @@ module
             };
 
             FileUploader.prototype.open_bjs_and_stream = function (item, did) {
-                console.log("opening stream for, file:", item.metadata.file_uuid, "client:", did);
+                console.log("opening stream for file:", item.metadata.file_uuid, "client:", did);
 
                 var that = this;
 
@@ -433,8 +433,6 @@ module
 
                     if (ins.total_received === item.metadata.size) {
                         ins.progress = 100;
-                        that._onSuccessItem(item);
-                        that._onCompleteItem(item);
                     }
 
                     that._render();
@@ -460,7 +458,6 @@ module
                 ins.sr.stream.end();
                 ins.sr.stream.destroy();
 
-                ins.sr.reader.pause();
                 ins.sr.reader.destroy();
 
                 if (reason === "download completed") {
