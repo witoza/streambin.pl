@@ -12,6 +12,9 @@
     "commander": "^2.9.0",
     "jsonutil": "^0.2.0",
     "log4js": "^0.6.38",
+    "prettysize": "0.0.3",
+    "progress": "^1.1.8",
+    "walk": "^2.3.9",
     "websocket": "^1.0.23"
   },
   "repository": {
