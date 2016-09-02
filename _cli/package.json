@@ -4,7 +4,7 @@
   "description": "StreamBIN-CLI",
   "main": "index.js",
   "bin": {
-    "streambin": "index.js"
+    "streambin-cli": "index.js"
   },
   "dependencies": {
     "binaryjs": "0.2.1",

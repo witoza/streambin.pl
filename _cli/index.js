@@ -8,6 +8,8 @@ const log4js = require('log4js');
 const jsonutil = require('jsonutil');
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const logger = log4js.getLogger();
+logger.setLevel('INFO');
+
 const BinaryClient = require('binaryjs').BinaryClient;
 const ProgressBar = require('progress');
 const walk = require('walk');
@@ -20,8 +22,8 @@ function gen_uuid() {
     });
 }
 
-var host = "https://streambin.pl/";
-var dir_uuid = "local";
+var host;
+var dir_uuid;
 
 function publish(file_names) {
 
@@ -70,7 +72,7 @@ function publish(file_names) {
     logger.info("Total", file_items.length, "file(s) of size", pretty(total_size));
     logger.info("All files are being published under: " + (host + "d/" + dir_uuid));
 
-    const binaryJsClient_ulr = host.replace(/^http/, 'ws') + "/binary-uploader-stream";
+    const binaryJsClient_ulr = host.replace(/^http/, 'ws') + "binary-uploader-stream";
 
     const binaryJsClient = new BinaryClient(binaryJsClient_ulr);
     binaryJsClient.on('error', function (err) {
@@ -111,7 +113,7 @@ function publish(file_names) {
     }
 
     function open_bjs_and_stream(item, did) {
-        logger.info("opening stream for, file:", item.metadata.file_uuid, "client:", did);
+        logger.debug("opening stream for, file:", item.metadata.file_uuid, "client:", did);
 
         var ins = {
             did: did,
@@ -125,10 +127,10 @@ function publish(file_names) {
         const m = Object.assign({}, item.metadata);
         m.did = ins.did;
 
-        var bar = new ProgressBar('  ' + m.did + ' downloading [:bar] :percent :etas', {
+        var bar = new ProgressBar('Downloading: ' + item.metadata.name + ' [:bar] :percent :etas', {
             complete: '=',
             incomplete: ' ',
-            width: 60,
+            width: 40,
             total: m.size
         });
 
@@ -160,15 +162,19 @@ function publish(file_names) {
             return;
         }
 
-        logger.info("closing stream", item.metadata.file_uuid, did, "because:", reason);
+        logger.debug("closing stream", item.metadata.file_uuid, did, "because:", reason);
 
         ins.status = reason;
 
-        ins.stream.end();
-        ins.stream.destroy();
+        setTimeout(function () {
+            //give it some time
+            ins.stream.end();
+            ins.stream.destroy();
+
+        }, 1000);
 
         if (reason === "download completed") {
-            logger.info("file has been downloaded");
+            logger.debug("file has been downloaded");
         } else {
             logger.warn("file has not been downloaded");
         }
@@ -176,14 +182,14 @@ function publish(file_names) {
     }
 
     socket.onopen = function (evt) {
-        logger.info("connection has been opened");
+        logger.debug("connection has been opened");
 
         file_items.forEach(function (file_item) {
             send_availability(file_item);
         });
 
         function send_ping() {
-            logger.info("sending ping");
+            logger.debug("sending ping");
             var S = {
                 action: 'ping',
                 meta: {}
@@ -196,19 +202,23 @@ function publish(file_names) {
 
     socket.onmessage = function (evt) {
         var cmd = JSON.parse(evt.data);
-        logger.info("command received", cmd);
 
         if (cmd.action === "do_stream") {
+            logger.debug("do_stream cmd received", cmd);
+
             var item = get_item_by_uuid(cmd.file_uuid);
             open_bjs_and_stream(item, cmd.did);
 
         } else if (cmd.action === "do_close") {
+            logger.debug("do_close cmd received", cmd);
+
             var item = get_item_by_uuid(cmd.file_uuid);
             close_bjs(item, cmd.did, cmd.reason);
 
         } else if (cmd.action === "do_error") {
             logger.error("error on backend", cmd);
         }
+
     };
 
     socket.onclose = function (evt) {
@@ -218,9 +228,39 @@ function publish(file_names) {
 
 }
 
-var myArgs = process.argv.slice(2);
+var files = [];
+
+var program = require('commander');
+program
+    .option('-a, --addr [streambin_address]', 'StreamBIN address, default is https://streambin.pl/')
+    .option('-d, --dir_uuid [dir_uuid]', 'directory UUID, default random UUID')
+    .command('share <dir> [otherDirs...]')
+    .action(function (dir, otherDirs) {
+        files.push(dir);
+        if (otherDirs) {
+            otherDirs.forEach(function (oDir) {
+                files.push(oDir);
+            });
+        }
+    });
+program.parse(process.argv);
+
+var host = program.addr;
+if (host == null) {
+    host = "https://streambin.pl/";
+}
+
+var dir_uuid = program.dir_uuid;
+if (dir_uuid == null) {
+    dir_uuid = gen_uuid();
+}
+
+logger.info("host=", host);
+logger.info("dir_uuid=", dir_uuid);
+logger.info("files=", files);
+
 var file_names = [];
-for (var fname of myArgs) {
+for (var fname of files) {
     if (!fs.existsSync(fname)) {
         logger.warn("file", fname, "does not exists");
         continue;
@@ -233,3 +273,5 @@ if (file_names.length == 0) {
 } else {
     publish(file_names);
 }
+
+

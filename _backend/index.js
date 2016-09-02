@@ -270,8 +270,6 @@ program
     .option('-p, --port <port>', 'Port number')
     .parse(process.argv);
 
-var args = process.argv.slice(2);
-
 const app_dir = program.dir || "/dist";
 
 app.use(express.static(__dirname + app_dir));
