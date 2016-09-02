@@ -259,7 +259,7 @@ angular
             };
 
             uploader.onAfterAddingAll = function (addedFileItems) {
-                console.info('onAfterAddingAll', addedFileItems);
+                console.info('onAfterAddingAll');
             };
             uploader.onBeforeUploadItem = function (item) {
                 console.info('onBeforeUploadItem', item);

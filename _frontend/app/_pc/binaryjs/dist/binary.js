@@ -923,7 +923,7 @@ util.inherits(BlobReadStream, Stream);
 
 BlobReadStream.prototype.pause = function(){
   this.paused = true;
-  console.log("paused");
+  console.log("call paused");
 };
 
 BlobReadStream.prototype.resume = function(){
@@ -934,7 +934,7 @@ BlobReadStream.prototype.resume = function(){
 BlobReadStream.prototype.destroy = function(){
   this.readable = false;
   clearTimeout(this._timeoutId);
-  console.log("destroyed");
+    console.log("call destroyed");
 };
 
   BlobReadStream.prototype._read = function () {
@@ -945,36 +945,52 @@ BlobReadStream.prototype.destroy = function(){
       self._emitReadChunk();
     }
 
-    if (!this.ready_to_read_fn()) {
-      this._timeoutId = setTimeout(self._read.bind(self), 50);
+    var readDelay = this._readDelay;
+    if (readDelay !== 0) {
+      this._timeoutId = setTimeout(emitReadChunk, readDelay);
     } else {
-      var readDelay = this._readDelay;
-      if (readDelay !== 0) {
-        this._timeoutId = setTimeout(emitReadChunk, readDelay);
-      } else {
-        util.setZeroTimeout(emitReadChunk);
-      }
+      util.setZeroTimeout(emitReadChunk);
     }
   };
 
-BlobReadStream.prototype._emitReadChunk = function(){
+  BlobReadStream.prototype._emitReadChunk = function () {
 
-  if(this.paused || !this.readable) return;
-  var chunkSize = Math.min(this._source.size - this._start, this._readChunkSize);
+    function doit() {
 
-  if(chunkSize === 0){
-      this.readable = false;
-      this.emit("end");
-      return;
-  }
+      if (this.paused || !this.readable) return;
+      var chunkSize = Math.min(this._source.size - this._start, this._readChunkSize);
 
-  var sourceEnd = this._start + chunkSize;
-  var chunk = (this._source.slice || this._source.webkitSlice || this._source.mozSlice).call(this._source, this._start, sourceEnd);
+      if (chunkSize === 0) {
+        this.readable = false;
+        this.emit("end");
+        return;
+      }
 
-  this._start = sourceEnd;
-  this._read();
+      var sourceEnd = this._start + chunkSize;
+      var chunk = (this._source.slice || this._source.webkitSlice || this._source.mozSlice).call(this._source, this._start, sourceEnd);
 
-  this.emit("data", chunk);
+      this._start = sourceEnd;
+      this._read();
+
+      this.emit("data", chunk);
+    }
+
+      var that = this;
+      if (this.ignore_emitReadChunk) {
+          return;
+      }
+      this.ignore_emitReadChunk = true;
+
+      var fn = function () {
+          if (!that.ready_to_read_fn()) {
+              setTimeout(fn, 20);
+          } else {
+              doit.bind(that)();
+              delete that.ignore_emitReadChunk;
+          }
+      };
+
+      fn();
 
 };
 
@@ -1493,10 +1509,10 @@ util.inherits(BinaryClient, EventEmitter);
     var that = this;
 
     function ready_to_read_fn() {
-      var is_ready = that._socket.bufferedAmount <= (that._options.chunkSize * 4);
-      if (!is_ready) {
-        console.log("bufferedAmount is too big: " + that._socket.bufferedAmount);
-      }
+      var is_ready = that._socket.bufferedAmount <= (that._options.chunkSize * 2);
+      // if (!is_ready) {
+      //   console.log("bufferedAmount is too big: " + that._socket.bufferedAmount);
+      // }
       return is_ready;
     }
 

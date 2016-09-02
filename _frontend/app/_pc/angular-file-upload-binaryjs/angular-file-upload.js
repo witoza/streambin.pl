@@ -433,8 +433,6 @@ module
 
                     if (ins.total_received === item.metadata.size) {
                         ins.progress = 100;
-                        that._onSuccessItem(item);
-                        that._onCompleteItem(item);
                     }
 
                     that._render();
@@ -460,7 +458,6 @@ module
                 ins.sr.stream.end();
                 ins.sr.stream.destroy();
 
-                ins.sr.reader.pause();
                 ins.sr.reader.destroy();
 
                 if (reason === "download completed") {
