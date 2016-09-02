@@ -11,22 +11,27 @@
     <h2>CLI Client</h2>
     <p>There is a command line tool <code>streambin-cli</code> to publish files and directories from command line</p>
     <pre>$ npm i --global streambin-cli
-$ streambin-cli my_file1.txt my_directory</pre>
-  <p>  Files are published until the process is stopped.</p>
+$ streambin-cli share my_file1.txt my_directory</pre>
+    <pre>$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
+    <p> Files are published until the process is stopped.</p>
 
-    <p>Visit <a href="https://www.npmjs.com/package/streambin-cli">https://www.npmjs.com/package/streambin-cli</a> for instructions.</p>
+    <p>Visit <a href="https://www.npmjs.com/package/streambin-cli">https://www.npmjs.com/package/streambin-cli</a> for
+        instructions.</p>
 
     <h2>Local installation</h2>
-    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers and
+    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers
+        and
         outgoing traffic.
     </p>
 
     <pre>$ npm i --global streambin
 $ streambin -h http://192.168.0.1/ -p 9001</pre>
 
-    <p>Now open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to resources - you can use your internal LAN Ip address for that.</p>
+    <p>Now open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to resources
+        - you can use your internal LAN Ip address for that.</p>
 
-    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for instructions.</p>
+    <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for
+        instructions.</p>
 </div>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
