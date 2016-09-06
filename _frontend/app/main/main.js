@@ -201,9 +201,11 @@ angular
                     if (already_there) {
                         add_msg('File <b>' + fileItem._file.name + '</b> has already been added');
                         console.info("file is already being published - skipping");
+                        uploader.removeFromQueue(fileItem);
                         return;
                     }
                 }
+
 
                 fileItem.metadata = {
                     file_uuid: gen_uuid(),
