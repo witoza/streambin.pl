@@ -1,13 +1,13 @@
 {
   "name": "streambin",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "StreamBIN",
   "main": "index.js",
   "scripts": {
     "start": "node index.js -d /../_frontend/app -p 9001"
   },
   "bin": {
-    "streambin": "index.js"
+    "streambin": "./index.js"
   },
   "dependencies": {
     "archiver": "^1.0.1",

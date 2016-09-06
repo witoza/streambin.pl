@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 
 "use strict";
 
@@ -133,7 +133,6 @@ function publish(file_names) {
             width: 40,
             total: m.size
         });
-
         const readStream = fs.createReadStream(m.name);
         const stream = binaryJsClient.send(readStream, m);
         stream.on('data', function (data) {
