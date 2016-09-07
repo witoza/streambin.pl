@@ -400,15 +400,26 @@ bs.on('connection', function (client) {
     });
 
     client.on('stream', function (stream, meta) {
-        stats.now_transmiting++;
         const file_uuid = meta.file_uuid;
         const did = meta.did;
         logger.info(file_uuid, did, ': received stream');
 
-        var M = writers[file_uuid].data.file_meta;
-        var D = writers[file_uuid].downloaders[did];
+        const W = writers[file_uuid];
+        if (W == null) {
+            logger.error("file has been already unloaded");
+            return;
+        }
+
+        const M = W.data.file_meta;
+        const D = W.downloaders[did];
+        if (D == null) {
+            logger.error("stream has been received, but downloader does not exist - didn't ask for it or has been already closed");
+            return;
+        }
+
         D.stream_time = Date.now();
 
+        stats.now_transmiting++;
         D.onstream(stream);
 
         stream.on('data', function (data) {
