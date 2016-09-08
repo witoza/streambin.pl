@@ -9,33 +9,43 @@
 
 <div ng-show="state=='tab_npm'">
     <h2>CLI Client</h2>
-    <p>There is a command line tool <code>streambin-cli</code> to publish files and directories from command line</p>
-    <pre>$ npm i --global streambin-cli
-$ streambin-cli share my_file1.txt my_directory</pre>
-    <pre>$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
-    <p> Files are published until the process is stopped.</p>
+    <p>StreamBIN comes with a command line tool thanks to which you can publish files and directories from command
+        line.</p>
+
+    <b>Instalation:</b>
+    <pre>$ npm i --global streambin-cli</pre>
+    <b>Usage:</b>
+    <pre>$ streambin-cli share my_file1.txt my_directory
+$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
+    <p> The files are published until the <code>node</code> process is active.</p>
 
     <p>Visit <a href="https://www.npmjs.com/package/streambin-cli">https://www.npmjs.com/package/streambin-cli</a> for
-        instructions.</p>
+        more.</p>
+
+    <hr/>
 
     <h2>Local installation</h2>
-    <p>You can install <b>StreamBIN</b> in your local network to share files in your Intranet without external servers
+    <p>You can install StreamBIN in your local network to share files in your Intranet without external servers
         and
         outgoing traffic.
     </p>
 
-    <pre>$ npm i --global streambin
-$ streambin -h http://192.168.0.1/ -p 9001</pre>
+    <b>Instalation:</b>
+    <pre>$ npm i --global streambin</pre>
 
-    <p>Now open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to resources
+    <b>Usage:</b>
+    <pre>$ streambin -h http://192.168.0.1/ -p 9001</pre>
+
+    <p>Now, open http://localhost:9001 and share your files. The host (-h) parameter is used to create links to
+        resources
         - you can use your internal LAN Ip address for that.</p>
 
     <p>Visit <a href="https://www.npmjs.com/package/streambin">https://www.npmjs.com/package/streambin</a> for
-        instructions.</p>
+        more.</p>
 
     <center>
-        <h4>*** Please note it was tested/developed under npm 4.5, it does'nt work under 6.4 and 6.5 (some WS issues)
-            ***</h4></center>
+        <h4>Note it was tested/developed under npm 4.5, it does'nt work under 6.4 and 6.5 (some websockets
+            issues)</h4></center>
 </div>
 
 <div ng-show="state==1" nv-file-drop="" uploader="uploader">
@@ -393,7 +403,7 @@ $ streambin -h http://192.168.0.1/ -p 9001</pre>
 
 <div ng-show="state==4">
     <h2>Intro</h2>
-    <p><b>StreamBIN</b> allows you to use WebBrowser to share a file in the Internet as long as web page is opened.
+    <p><b>StreamBIN</b> allows you to use WebBrowser to share files in the Internet as long as web page is opened.
         It was build as a pet project to remedy the typical problem I had which was to send file from one laptop to the
         other without USB sticks, emails or services like Dropbox where you need an account.
         It differs from all these solution in a way that it does not persist any data - everything is done in-flight and
@@ -407,18 +417,21 @@ $ streambin -h http://192.168.0.1/ -p 9001</pre>
             ID is generated which is used as a part of URL.
             This file is known only to the publisher, and he needs to inform receiver about that
         </li>
-        <li>File is not uploaded to the server but streamed, so downloading can start instantly as no buffering in
+        <li>File is streamed to the server and then directly to the receiver, so downloading can start instantly as no
+            buffering is
             required and no data is persisted on the server side
         </li>
         <li>No buffering is done on a server side. Server passes only chunks of raw data from client to receiver</li>
-        <li>There is a possibility to upload multiple files and whole directories and group them in the Directory</li>
+        <li>There is a possibility to upload multiple files and whole directories and group them in the Directory
+            aggregator
+        </li>
         <li>File is streamed no sooner than the receiver requests the file</li>
     </ul>
 
     <h2>Use cases</h2>
     <p>There are several possibilities to use this, off the top of my head, you can:</p>
     <ul>
-        <li>Send file to your different machine e.x. from laptop to phone or laptop to laptop</li>
+        <li>Send file to your different machine e.x. from laptop to phone or laptop 1 to laptop 2</li>
         <li>Send file between different OS e.x: windows <-> linux</li>
         <li>Send file to a friend</li>
         <li>Send file to a person you don't know - in real life - publish the file on your phone and let him scan the QR
@@ -439,18 +452,25 @@ $ streambin -h http://192.168.0.1/ -p 9001</pre>
         <li>All information needed to set up sender with receiver is destroyed after publisher closes/reloads the web
             page
         </li>
-        <li>It is possible to figure out from what machine certain downloading/uploading happened by looking at the
-            access
-            log (it logs accessed URLs, not content) at the host server, so please, don't upload anything illegal, or
-            download from unknown people. That can be mitigated, if you own the host server, or it is installed
-            somewhere when access logs are not kept.
+        <li>It is possible to figure out from which IP certain downloading/uploading happened by looking at the
+            apache access log (it logs accessed URLs, not content) on the server
         </li>
+    </ul>
+    <h2>Legal</h2>
+    <ul>
+        <li>Please, don't upload anything illegal or download from unknown people</li>
     </ul>
 
     <h2>Contact</h2>
-    <p>Comments, questions ? Drop me a line at <a
-            href="mailto:witold.zegarowski@gmail.com?Subject=StreamBIN%20question">witold.zegarowski@gmail.com</a>
-    </p>
+    <ul>
+        <li>
+            Visit project's <a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a> page
+        </li>
+        <li>
+            Drop me a line at <a href="mailto:witold.zegarowski@gmail.com?Subject=StreamBIN%20question">witold.zegarowski@gmail.com</a>
+        </li>
+    </ul>
+
 </div>
 
 <div ng-show="state=='stats'">
@@ -467,10 +487,11 @@ $ streambin -h http://192.168.0.1/ -p 9001</pre>
         <br/>
         This software is open-source, if you like it, help me share the costs of hosting.
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-            <input type="hidden" name="cmd" value="_s-xclick" />
-            <input type="hidden" name="hosted_button_id" value="8XDVW727444WY" />
-            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate" />
-            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+            <input type="hidden" name="cmd" value="_s-xclick"/>
+            <input type="hidden" name="hosted_button_id" value="8XDVW727444WY"/>
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit"
+                   title="PayPal - The safer, easier way to pay online!" alt="Donate"/>
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
         </form>
     </small>
 </div>

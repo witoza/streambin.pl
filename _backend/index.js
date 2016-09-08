@@ -14,11 +14,17 @@ const bodyParser = require('body-parser');
 const archiver = require('archiver');
 const Chance = require('chance'), chance = new Chance();
 
+const startTime = new Date()
+    .toISOString()
+    .replace(/T/, ' ')
+    .replace(/\..+/, '');
+
 const writers = {};
 
 const logger = log4js.getLogger();
 
 const stats = {
+    startTime: startTime,
     total_files_streamed_success: 0,
     total_files_streamed_fail: 0,
     now_transmiting: 0,
