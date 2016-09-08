@@ -8,23 +8,24 @@
 </ul>
 
 <div ng-show="state=='tab_npm'">
-    <h2>CLI Client</h2>
+    <h2>CLI client</h2>
     <p>StreamBIN comes with a command line tool thanks to which you can publish files and directories from command
         line.</p>
 
     <b>Instalation:</b>
     <pre>$ npm i --global streambin-cli</pre>
     <b>Usage:</b>
-    <pre>$ streambin-cli share my_file1.txt my_directory
-$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
-    <p> The files are published until the <code>node</code> process is active.</p>
+    <pre>$ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory</pre>
+    <p>Address parameters (-a) and Directory name (-d) can be skipped</p>
+    <pre>$ streambin-cli share my_file1.txt my_directory </pre>
+    <p> The files are published until the <code>node</code> process is closed.</p>
 
     <p>Visit <a href="https://www.npmjs.com/package/streambin-cli">https://www.npmjs.com/package/streambin-cli</a> for
         more.</p>
 
     <hr/>
 
-    <h2>Local installation</h2>
+    <h2>Local server / installation</h2>
     <p>You can install StreamBIN in your local network to share files in your Intranet without external servers
         and
         outgoing traffic.
@@ -44,7 +45,7 @@ $ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory
         more.</p>
 
     <center>
-        <h4>Note it was tested/developed under npm 4.5, it does'nt work under 6.4 and 6.5 (some websockets
+        <h4>The packages were tested and developed under npm 4.5, they don't work with npm 6.4 nor 6.5 (some websockets
             issues)</h4></center>
 </div>
 
@@ -500,8 +501,6 @@ $ streambin-cli -a http://streambin.pl/ -d local share my_file1.txt my_directory
     <small><a ng-click="state = 4; " href>Learn more</a></small>
     -
     <small><a ng-click="showStats()" href>Stats</a></small>
-    -
-    <small><a ng-click="state = 4; " href>Contact</a></small>
     -
     <small><a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a></small>
     <a href="https://github.com/witoza/streambin.pl" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
