@@ -82,6 +82,19 @@ function num_of_keys(obj) {
     return Object.keys(obj).length;
 }
 
+app.get("/mark_main/:key", function (req, res) {
+    if (program.key != req.params.key) {
+        res.json({msg: "bad key"});
+        return;
+    }
+    send_message_to_all(
+        `Dear users, please finish your downloading as in 5 minutes I'll be doing new deployment and service will not be available for couple of minutes.
+Also your sharings will be lost.
+
+--StreamBIN Team`);
+    res.json({});
+});
+
 app.get('/config', function (req, res) {
 
     const config = {
@@ -273,6 +286,7 @@ program
     .option('-d, --dir <dir>', 'The directory with frontend')
     .option('-h, --hostname <hostname>', 'Hostname')
     .option('-p, --port <port>', 'Port number')
+    .option('-k, --key <key>', 'Admin key')
     .parse(process.argv);
 
 const app_dir = program.dir || "/dist";
@@ -291,11 +305,11 @@ wss.on('connection', function connection(ws) {
     logger.info("new sync ws client connected");
 
     ws.on('message', function incoming(message) {
-        var S = JSON.parse(message);
-        var file_uuid = S.meta.file_uuid;
-        var ws_send = function (cmd) {
+        const S = JSON.parse(message);
+        const file_uuid = S.meta.file_uuid;
+        const ws_send = function (cmd) {
             cmd.file_uuid = file_uuid;
-            var str = JSON.stringify(cmd);
+            const str = JSON.stringify(cmd);
             if (file_uuid) {
                 logger.info(file_uuid, ": sending", str);
             } else {
@@ -365,7 +379,7 @@ wss.on('connection', function connection(ws) {
         logger.info("closing all files connected to that sync ws");
 
         for (let file_uuid in writers) {
-            var D = writers[file_uuid];
+            const D = writers[file_uuid];
             if (D.func.ws === ws) {
                 for (let did in D.downloaders) {
                     var d = D[did];
@@ -390,6 +404,22 @@ wss.on('connection', function connection(ws) {
     });
 
 });
+
+function send_message_to_all(msg) {
+    logger.info("sending message to all publishers");
+    for (let file_uuid in writers) {
+        try {
+            const D = writers[file_uuid];
+            const cmd = {
+                action: 'inform',
+                msg,
+            };
+            D.func.ws.send(JSON.stringify(cmd));
+        } catch (err) {
+            logger.warn("can't send message", err);
+        }
+    }
+}
 
 var bs = new BinaryServer({server: server, path: '/binary-uploader-stream'});
 bs.on('connection', function (client) {
