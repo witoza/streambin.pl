@@ -245,13 +245,12 @@ app.get('/d/:file_uuid', function (req, res) {
     }
 
     const filename = path.basename(D.data.file_meta.name);
-
+    const newFileName = encodeURIComponent(filename);
     res.setHeader('Content-type', 'application/octet-stream');
-    res.setHeader('Content-disposition', 'attachment; filename=\"' + filename + '\"');
+    res.setHeader('Content-disposition', `attachment; filename*=UTF-8''${newFileName}`);
     res.setHeader('Content-Transfer-Encoding', 'binary');
     res.setHeader('Cache-Control', 'max-age=5');
     res.setHeader('Content-length', D.data.file_meta.size);
-
 
     const pipe_to_res = function (input) {
         input.pipe(res);
