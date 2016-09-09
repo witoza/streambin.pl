@@ -407,14 +407,22 @@ wss.on('connection', function connection(ws) {
 
 function send_message_to_all(msg) {
     logger.info("sending message to all publishers");
+
+    const set = new Set();
+
+    const cmd = {
+        action: 'inform',
+        msg,
+    };
+
     for (let file_uuid in writers) {
         try {
-            const D = writers[file_uuid];
-            const cmd = {
-                action: 'inform',
-                msg,
-            };
-            D.func.ws.send(JSON.stringify(cmd));
+            const ws = writers[file_uuid].func.ws;
+            if (set.has(ws)) {
+                continue;
+            }
+            ws.send(JSON.stringify(cmd));
+            set.add(ws);
         } catch (err) {
             logger.warn("can't send message", err);
         }
