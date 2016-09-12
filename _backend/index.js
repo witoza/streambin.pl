@@ -32,11 +32,11 @@ const stats = {
 };
 
 String.prototype.startsWithAny = function () {
-    return Array.prototype.some.call(arguments, arg => this.startsWith(arg));
+    return [].some.call(arguments, arg => this.startsWith(arg));
 };
 
 String.prototype.endsWithAny = function () {
-    return Array.prototype.some.call(arguments, arg => this.endsWith(arg));
+    return [].some.call(arguments, arg => this.endsWith(arg));
 };
 
 const app = express();
@@ -106,15 +106,15 @@ app.get('/config', function (req, res) {
 
 app.get('/status', function (req, res) {
 
-    var dir_uuid = req.query.dir_uuid;
+    let dir_uuid = req.query.dir_uuid;
     if (dir_uuid == null) {
         dir_uuid = 'public';
     }
 
-    var R = [];
+    let R = [];
 
     for (let file_uuid in writers) {
-        var D = writers[file_uuid];
+        let D = writers[file_uuid];
         if (dir_uuid === D.data.file_meta.dir_uuid) {
             R.push(D.data);
         }
@@ -122,7 +122,6 @@ app.get('/status', function (req, res) {
 
     res.json(R);
 });
-
 
 function get_stats() {
     return {
@@ -169,7 +168,7 @@ app.get('/d/:file_uuid', function (req, res) {
                         reason = 'download completed';
                         stats.total_files_streamed_success++;
                     } else {
-                        const msg = "connection broke, downloaded [b]: " + R.total_received + "/" + D.data.file_meta.size;
+                        const msg = "connection broke, downloaded: " + R.total_received + "/" + D.data.file_meta.size + " bytes";
                         logger.info(rid, file_uuid, did, msg);
                         reason = msg;
                         isok = false;
@@ -254,7 +253,7 @@ app.get('/d/:file_uuid', function (req, res) {
                 logger.info(rid, "all files has been downloaded");
                 arch.finalize();
             }).catch(function (err) {
-                logger.info("one of the files can't be downloaded, zip file is bad");
+                logger.info("one of the files can't be downloaded, zip file is bad:", err);
                 res.destroy();
             });
 
@@ -309,7 +308,9 @@ wss.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(message) {
         const S = JSON.parse(message);
+
         const file_uuid = S.meta.file_uuid;
+
         const ws_send = function (cmd) {
             cmd.file_uuid = file_uuid;
             const str = JSON.stringify(cmd);
@@ -330,10 +331,10 @@ wss.on('connection', function connection(ws) {
         if (S.action === 'register') {
             logger.info(file_uuid, ": registering file");
             if (writers[file_uuid] != null) {
-                logger.info(file_uuid, ": info in registry already exist for that key - skipping. THAT SHOULD NOT HAPPEN");
+                logger.fatal(file_uuid, ": info in registry already exist for that key - skipping.");
                 return;
             }
-            var D = {
+            const D = {
                 data: {
                     publish_time: Date.now(),
                     file_meta: S.meta,
@@ -385,7 +386,7 @@ wss.on('connection', function connection(ws) {
             const D = writers[file_uuid];
             if (D.func.ws === ws) {
                 for (let did in D.downloaders) {
-                    var d = D[did];
+                    let d = D[did];
                     if (d) {
                         d.close();
                     }
@@ -394,7 +395,7 @@ wss.on('connection', function connection(ws) {
             }
         }
 
-    };
+    }
 
     ws.on('close', function (e) {
         logger.info('ws socket closed', e);
