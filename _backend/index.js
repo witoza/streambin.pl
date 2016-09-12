@@ -155,7 +155,7 @@ app.get('/d/:file_uuid', function (req, res) {
                 total_received: 0,
                 closed: false,
                 onstream: onstream,
-                close: function () {
+                close() {
                     if (R.closed) {
                         return;
                     }
