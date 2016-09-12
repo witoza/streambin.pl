@@ -27,7 +27,7 @@ const stats = {
     startTime: startTime,
     total_files_streamed_success: 0,
     total_files_streamed_fail: 0,
-    now_transmiting: 0,
+    now_streaming: 0,
     bytes_send: 0,
 };
 
@@ -141,7 +141,9 @@ app.get('/d/:file_uuid', function (req, res) {
 
     const did = chance.word({length: 5});
 
-    var stream_file = function (file_uuid, onstream) {
+    const rid = req.req_id;
+
+    const stream_file = function (file_uuid, onstream) {
 
         return new Promise(function (resolve, reject) {
 
@@ -159,7 +161,7 @@ app.get('/d/:file_uuid', function (req, res) {
                     }
                     R.closed = true;
                     logger.info(rid, file_uuid, did, ": closing downloader");
-                    stats.now_transmiting--;
+                    stats.now_streaming--;
                     var reason = null;
                     var isok = true;
                     if (D.data.file_meta.size === R.total_received) {
@@ -183,11 +185,15 @@ app.get('/d/:file_uuid', function (req, res) {
                     if (isok) {
                         resolve();
                     } else {
-                        reject();
+                        reject(reason);
                     }
                 }
             };
             D.downloaders[did] = R;
+
+            onFinished(req, function () {
+                R.close();
+            });
 
             logger.info(rid, file_uuid, did, ": ready to receive data");
             D.func.do_stream(did);
@@ -196,13 +202,11 @@ app.get('/d/:file_uuid', function (req, res) {
 
     };
 
-    const rid = req.req_id;
-
-    var file_uuid = req.params.file_uuid;
+    const file_uuid = req.params.file_uuid;
 
     logger.info(rid, "new downloading request");
 
-    var D = writers[file_uuid];
+    const D = writers[file_uuid];
     if (file_uuid === undefined || D === undefined) {
         logger.info(rid, "file", file_uuid, "not found");
 
@@ -217,33 +221,32 @@ app.get('/d/:file_uuid', function (req, res) {
             return;
         }
 
-        logger.info(rid, "looks like this is a dir, files belonged:", files);
+        logger.info(rid, "this is a dir, files belonged:", files);
 
         res.setHeader('Content-type', 'application/zip');
         res.setHeader('Content-disposition', 'attachment; filename=\"' + file_uuid + '.zip\"');
+        res.setHeader('Content-Transfer-Encoding', 'binary');
+        res.setHeader('Cache-Control', 'max-age=10');
 
-        var arch = archiver('zip');
+        const arch = archiver('zip');
         arch.pipe(res);
 
-        var pr = Promise.resolve();
+        let pr = Promise.resolve();
 
-        for (var file_uuid of files) {
+        for (let file_uuid of files) {
+            pr = pr.then(function () {
+                const onstream = function (input) {
+                    const D = writers[file_uuid];
 
-            (function (file_uuid) {
-                pr = pr.then(function () {
-                    const onstream = function (input) {
-                        const D = writers[file_uuid];
+                    if (D.data.file_meta.relativePath) {
+                        arch.append(input, {name: D.data.file_meta.relativePath})
+                    } else {
+                        arch.append(input, {name: D.data.file_meta.name})
+                    }
 
-                        if (D.data.file_meta.relativePath) {
-                            arch.append(input, {name: D.data.file_meta.relativePath})
-                        } else {
-                            arch.append(input, {name: D.data.file_meta.name})
-                        }
-
-                    };
-                    return stream_file(file_uuid, onstream);
-                });
-            })(file_uuid);
+                };
+                return stream_file(file_uuid, onstream);
+            });
         }
 
         return pr
@@ -262,7 +265,7 @@ app.get('/d/:file_uuid', function (req, res) {
     res.setHeader('Content-type', 'application/octet-stream');
     res.setHeader('Content-disposition', `attachment; filename*=UTF-8''${newFileName}`);
     res.setHeader('Content-Transfer-Encoding', 'binary');
-    res.setHeader('Cache-Control', 'max-age=5');
+    res.setHeader('Cache-Control', 'max-age=10');
     res.setHeader('Content-length', D.data.file_meta.size);
 
     const pipe_to_res = function (input) {
@@ -273,8 +276,8 @@ app.get('/d/:file_uuid', function (req, res) {
         .then(function () {
             res.end();
         })
-        .catch(function () {
-            logger.info("bad download");
+        .catch(function (err) {
+            logger.info("bad download:", err);
             res.destroy();
         });
 
@@ -462,23 +465,18 @@ bs.on('connection', function (client) {
 
         D.stream_time = Date.now();
 
-        stats.now_transmiting++;
+        stats.now_streaming++;
         D.onstream(stream);
 
         stream.on('data', function (data) {
             if (D.closed) {
                 return;
             }
-            if (onFinished.isFinished(D.req)) {
-                logger.info(file_uuid, did, ": reader has closed");
-                D.close();
-                return;
-            }
 
             D.total_received += data.length;
             logger.info(file_uuid, did, ': rcv[b]:', data.length, '; total rcv[%]:', Math.round((D.total_received / M.size) * 100), "; missing[b]:", M.size - D.total_received);
 
-            var progress = {
+            const progress = {
                 total_received: D.total_received,
                 did: did
             };
