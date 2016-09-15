@@ -10,7 +10,7 @@
         <h4>The packages were tested and developed under npm 4.5, they don't work with npm 6.4 nor 6.5 (some websockets
             issues)</h4></center>
 
-    <h2>CLI client</h2>
+    <h3 class="md-headline">CLI client</h3>
     <p>StreamBIN comes with a command line tool thanks to which you can publish files and directories from command
         line.</p>
 
@@ -27,7 +27,7 @@
 
     <hr/>
 
-    <h2>Local server / installation</h2>
+    <h3 class="md-headline">Local server / installation</h3>
     <p>You can install StreamBIN in your local network to share files in your Intranet without external servers
         and
         outgoing traffic.
@@ -192,8 +192,13 @@
 
                     <div ng-if="props[key].expanded">
 
-                        <div layout="row" layout-xs="column" ng-repeat-start="theFile in theFiles"
-                             layout-align="center center">
+                        <div layout="row" layout-xs="column" ng-repeat-start="theFile in theFiles">
+                            <div flex>
+                                <hr size="1"/>
+                            </div>
+                        </div>
+
+                        <div layout="row" layout-xs="column" layout-align="center center">
                             <div flex>
                                 <code class="pull-left">{{theFile.metadata.rest_dir}}{{theFile.file.name}}</code>
                                 <code class="pull-right">{{theFile.file.size | bytes}}&nbsp;</code>
@@ -229,7 +234,8 @@
                                 </div>
                                 <div flex>
                                     <p>
-                                    <center>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}} ({{
+                                    <center>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}}
+                                        ({{
                                         instance.progress }} %)
                                     </center>
                                     </p>
@@ -256,11 +262,6 @@
                                 </div>
                             </div>
 
-                            <div layout="row" layout-xs="column">
-                                <div flex>
-                                    <hr size="1"/>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
