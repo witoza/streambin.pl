@@ -4,7 +4,7 @@ angular
         'ngRoute'])
     .controller('dirCtrl',
 
-        ["$scope", "$localStorage", "$http", "$routeParams", function ($scope, $localStorage, $http, $routeParams) {
+        ["$scope", "$routeParams", "MyRest", function ($scope, $routeParams, MyRest) {
 
             $scope.curr_stream = $routeParams.directoryId;
             $scope.curr_streams_data = [];
@@ -12,7 +12,8 @@ angular
             $scope.get_stream_data = function (sname) {
                 void 0;
                 $scope.curr_stream = sname;
-                get_streams($http, sname, function (data) {
+
+                MyRest.get_streams(sname).then(function (data) {
                     $scope.curr_streams_data = data;
                 });
             };

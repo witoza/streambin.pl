@@ -1,5 +1,5 @@
 if (!Array.prototype.find) {
-    Array.prototype.find = function(predicate) {
+    Array.prototype.find = function (predicate) {
         if (this == null) {
             throw new TypeError('Array.prototype.find called on null or undefined');
         }
@@ -22,7 +22,7 @@ if (!Array.prototype.find) {
 }
 
 if (!Array.prototype.includes) {
-    Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
+    Array.prototype.includes = function (searchElement /*, fromIndex*/) {
         'use strict';
         var O = Object(this);
         var len = parseInt(O.length) || 0;
@@ -35,7 +35,9 @@ if (!Array.prototype.includes) {
             k = n;
         } else {
             k = len + n;
-            if (k < 0) {k = 0;}
+            if (k < 0) {
+                k = 0;
+            }
         }
         var currentElement;
         while (k < len) {
@@ -59,6 +61,8 @@ function gen_uuid() {
 
 angular
     .module('sbApp', [
+        'ngMaterial',
+        'md.data.table',
         'angularFileUpload',
         'ja.qr',
         'ngStorage',
@@ -103,23 +107,6 @@ angular
             return (val.match(/\.0*$/) ? val.substr(0, val.indexOf('.')) : val) + ' ' + units[number];
         }
     })
-    .directive('toggle', function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                if (attrs.toggle == "tooltip") {
-                    $(element).tooltip({
-                        delay: {"show": 750, "hide": 10},
-                        placement: 'bottom',
-                        trigger: 'hover'
-                    });
-                }
-                if (attrs.toggle == "popover") {
-                    $(element).popover();
-                }
-            }
-        };
-    })
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.when('/', {
@@ -132,7 +119,6 @@ angular
                 redirectTo: '/'
             });
         }])
-
     .run(["$rootScope", "$location", "$timeout", function ($rootScope, $location, $timeout) {
 
         void 0;
@@ -143,4 +129,8 @@ angular
 
         $rootScope.drag_and_drop = ('draggable' in document.createElement('span'));
         $rootScope.chrome = window.chrome;
+
+        $rootScope.fire_click = function (id) {
+            angular.element(id).click();
+        };
     }]);

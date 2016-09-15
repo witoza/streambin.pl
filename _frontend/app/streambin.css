@@ -1,104 +1,52 @@
+.container {
+    max-width: 1170px;
+}
 
 .my-drop-zone {
     border: dotted 3px lightgray;
+    border-radius: 10px;
+    background-color: white;
+}
+
+h3 {
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
+}
+
+pre {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .nv-file-over {
     border: dotted 3px red;
-}
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    opacity: 0;
-    cursor: inherit;
-    display: block;
-}
-
-.h_active {
-    font-family: Tahoma, serif;
-    color: white;
-    padding: 10px;
-    letter-spacing: 1px;
-    font-size: 1.3em;
-
-    background-color: steelblue
-}
-
-.h_nactive {
-    font-family: Tahoma, serif;
-    color: white;
-    padding: 10px;
-    letter-spacing: 1px;
-    font-size: 1.3em;
-
-    background-color: grey;
-}
-
-.filep_path_main {
-    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    font-size: 90%;
-    margin: 0;
-    color: #337ab7;
-    font-weight: bold;
-    padding-top: 6px;
-    word-wrap: break-word;
-}
-
-.filep_path {
-    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    font-size: 90%;
-    margin: 0;
-    color: #337ab7;
-    padding-top: 6px;
-    word-wrap: break-word;
+    border-radius: 10px;
 }
 
 .urls {
     font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    border: 1px;
+    /*font-size: larger;*/
+    padding: 5px;
+    background-color: whitesmoke;
+    border-radius: 4px;
+    font-size: smaller;
 }
 
-.flash {
-    -webkit-animation-name: flash-animation;
-    -webkit-animation-duration: 0.8s;
-
-    animation-name: flash-animation;
-    animation-duration: 0.8s;
-}
-
-@-webkit-keyframes flash-animation {
-    from {
-        background: lightskyblue;
-    }
-    to {
-        background: default;
-    }
-}
-
-@keyframes flash-animation {
-    from {
-        background: lightskyblue;
-    }
-    to {
-        background: default;
-    }
-}
-
-.form-inline > .form-group {
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-}
-
-.form-inline > .form-control {
-    display: inline-block;
-    width: auto;
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 2px;
+    padding: 0;
 }

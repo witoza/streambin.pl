@@ -5,68 +5,69 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>StreamBIN</title>
+    <meta name="keywords" content="streambin, stream bin, file transfer, file web transfer, web transfer, stream file, share file, send file via web browser, transfer file via web browser">
+    <meta name="description" content="Transfer files by a Web Browser">
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+
+    <title>StreamBIN - Transfer files by a Web Browser</title>
     <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 
-    <script type="text/javascript" src="_bc/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="_bc/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="_pc/binaryjs/dist/binary.js"></script>
-    <script type="text/javascript" src="_bc/es5-shim/es5-sham.min.js"></script>
-    <script type="text/javascript" src="_bc/angular/angular.min.js"></script>
-    <script type="text/javascript" src="_pc/angular-file-upload-binaryjs/angular-file-upload.js"></script>
-    <script type="text/javascript" src="_bc/qrcode/lib/qrcode.min.js"></script>
-    <script type="text/javascript" src="_bc/angular-qr/angular-qr.min.js"></script>
-    <script type="text/javascript" src="_bc/ngstorage/ngStorage.min.js"></script>
-    <script type="text/javascript" src="_bc/angular-route/angular-route.min.js"></script>
-    <script type="text/javascript" src="_bc/chance/chance.js"></script>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="_bc/angular-material/angular-material.css">
 
-    <link rel="stylesheet" type="text/css" href="_bc/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="_bc/bootstrap/dist/css/bootstrap-theme.min.css"/>
+
+    <script  src="_bc/jquery/dist/jquery.min.js"></script>
+    <script  src="_pc/binaryjs/dist/binary.js"></script>
+    <script  src="_bc/es5-shim/es5-sham.min.js"></script>
+    <script  src="_bc/angular/angular.min.js"></script>
+    <script  src="_pc/angular-file-upload-binaryjs/angular-file-upload.js"></script>
+    <script  src="_bc/qrcode/lib/qrcode.min.js"></script>
+    <script  src="_bc/angular-qr/angular-qr.min.js"></script>
+    <script  src="_bc/ngstorage/ngStorage.min.js"></script>
+    <script  src="_bc/angular-route/angular-route.min.js"></script>
+    <script  src="_bc/chance/chance.js"></script>
+
+    <script src="_bc/angular-aria/angular-aria.js"></script>
+    <script src="_bc/angular-animate/angular-animate.js"></script>
+    <script src="_bc/angular-material/angular-material.js"></script>
+
+
+    <link href="_bc/angular-material-data-table/dist/md-data-table.min.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="_bc/angular-material-data-table/dist/md-data-table.min.js"></script>
+
+
     <link rel="stylesheet" type="text/css" href="_bc/components-font-awesome/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="streambin.css"/>
 
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="dir/dir.js"></script>
-    <script type="text/javascript" src="main/main.js"></script>
+    <script  src="app.js"></script>
+    <script  src="dir/dir.js"></script>
+    <script  src="main/main.js"></script>
 
 </head>
 
 <body ng-cloak>
 
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-83373639-1', 'auto');
-    ga('send', 'pageview');
+        ga('create', 'UA-83373639-1', 'auto');
+        ga('send', 'pageview');
 
-</script>
-
-<div class="container">
+    </script>
 
     <center>
-        <h1>Stream<font color="navy">BIN</font>
+        <h1 class="md-display-1">Stream<font color="navy">BIN</font>
             <small><br/>Transfer files by a Web Browser</small>
         </h1>
-<!--
-        <i>
-            <small>
-                We transmitted <b>{{stats.stats.total_files_streamed_fail + stats.stats.total_files_streamed_success}}</b> files of total size <b>{{stats.stats.bytes_send | bytes}}.</b>
-                Now <b>{{stats.curr.files_available}}</b> files are available, and  <b>{{stats.stats.now_transmiting}}</b> are being streamed.
-            </small>
-        </i>
--->
-
     </center>
 
-    <div ng-view></div>
-
-    <br/>
-
-</div>
+    <div layout layout-align="center">
+        <div flex ng-view class="container"></div>
+    </div>
 
 </body>
 

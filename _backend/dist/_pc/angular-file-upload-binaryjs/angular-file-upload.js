@@ -550,6 +550,8 @@ module
                             console.log("error on backend", cmd);
                             alert("there is a backend problem: " + cmd.reason);
                             location.reload();
+                        } else if (cmd.action === "inform") {
+                            alert(cmd.msg);
                         }
                     };
                     this.socket.onclose = function (evt) {

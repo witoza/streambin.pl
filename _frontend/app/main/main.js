@@ -6,11 +6,40 @@ angular
         'ngRoute'])
     .controller('mainCtrl',
 
-        function ($window, $scope, $rootScope, $localStorage, FileUploader, MyRest) {
+        function ($window, $scope, $rootScope, $localStorage, FileUploader, MyRest, $mdDialog) {
 
             function isEmpty(str) {
                 return str == null || str.trim().length == 0;
             }
+
+            $scope.showPrompt = function (ev) {
+                var confirm = $mdDialog.prompt()
+                    .title('Attach Directory')
+                    .textContent('Enter name of Directory to attach.')
+                    .placeholder('Directory name')
+                    .ariaLabel('Directory name')
+                    .initialValue('')
+                    .targetEvent(ev)
+                    .ok('Attach')
+                    .cancel('Cancel');
+
+                $mdDialog.show(confirm).then(function (result) {
+                    $scope.add_dir(result);
+                }, function () {
+                    console.log('canceled')
+                });
+            };
+
+            $scope.copy_to_clipboard = function ($event) {
+                let that = $event.target;
+                $(that).select();
+                var v = $(that).val();
+                console.log("copied", v);
+                document.execCommand('copy');
+                var cp = $('<p>Copied to clipboard!</p>');
+                cp.fadeOut(2000);
+                $(that).parent().append(cp);
+            };
 
             function get_top_folder(fileList) {
                 for (var k in Object.keys(fileList)) {
@@ -29,7 +58,7 @@ angular
                 $rootScope.stats = stats;
             });
 
-            $(".dir_input").on('change', function (e) {
+            $("input[directory]").on('change', function (e) {
                 console.log('onchange called with e', e);
                 const fileList = e.currentTarget.files;
                 const num_of_files = Object.keys(fileList).length;
@@ -48,8 +77,6 @@ angular
                         size: 0
                     }
                 }
-
-                uploader.addToQueue(fileList);
 
                 add_msg(num_of_files + ' files from directory <b>' + top_dir + '</b> have been added');
             });
@@ -77,11 +104,9 @@ angular
             $scope.curr_streams_data = [];
             $scope.curr_stream = "";
 
-            $scope.dir_to_add = "";
-            $scope.add_dir = function () {
-                var d = $scope.dir_to_add;
+            $scope.add_dir = function (d) {
                 console.log("add_dir", d);
-                if (d === "") {
+                if (isEmpty(d)) {
                     return;
                 }
                 if ($scope.you_streams.includes(d)) {
@@ -89,7 +114,6 @@ angular
                     return;
                 }
                 $scope.you_streams.push(d);
-                $scope.dir_to_add = "";
             };
 
             $scope.get_stream_data = function (sname) {
@@ -108,6 +132,14 @@ angular
                 $scope.get_stream_data($scope.curr_stream);
             };
 
+            var originatorEv;
+
+            $scope.openMenu = function ($mdOpenMenu, ev) {
+                originatorEv = ev;
+                $mdOpenMenu(ev);
+            };
+
+
             $scope.removeStreamDir = function () {
                 var d = $scope.curr_stream;
                 console.log("removeStreamDir", d);
@@ -120,7 +152,7 @@ angular
             $scope.showExplore = function () {
 
                 console.log("showExplore");
-                $scope.state = 2;
+                $scope.current_page = 'p_dirs';
 
                 $scope.curr_streams_data = [];
                 $scope.curr_stream = "";
@@ -130,7 +162,7 @@ angular
             $scope.showStats = function () {
 
                 console.log("showStats");
-                $scope.state = 'stats';
+                $scope.current_page = 'p_stats';
 
                 MyRest.get_stats().then(function (stats) {
                     $rootScope.stats = stats;
@@ -144,12 +176,10 @@ angular
             $scope.saveMySettings = function () {
                 console.log("saveMySettings");
                 $localStorage.dir_uuid = $scope.bind_dir_uuid;
-
-                $scope.dir_to_add = $localStorage.dir_uuid;
-                $scope.add_dir();
+                $scope.add_dir($localStorage.dir_uuid);
             };
 
-            $scope.state = 1;
+            $scope.current_page = 'p_transfer';
 
             const binaryJsClient_ulr = $scope.host.replace(/^http/, 'ws') + 'binary-uploader-stream';
 

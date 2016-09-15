@@ -1,17 +1,16 @@
 <div ng-show="curr_stream != ''">
 
-    <h3>Directory <code>{{curr_stream}}</code></h3>
+    <h3 class="md-headline">Directory <code>{{curr_stream}}</code></h3>
     <p>Found <b>{{curr_streams_data.length }}</b> files</p>
     <p>Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a></p>
 
-    <button type="button" class="btn btn-xs btn-success" ng-click="refreshStreamDir()">
-        <span class="glyphicon glyphicon-refresh"></span> Refresh
-    </button>
+    <md-button class="md-primary md-raised" ng-click="refreshStreamDir()">
+        Refresh
+    </md-button>
 
-
-    <button type="button" class="btn btn-xs btn-warning" ng-click="removeStreamDir()" ng-show="removeStreamDir != null">
-        <i class="fa fa-times"></i> Detach
-    </button>
+    <md-button class="md-warn md-raised" ng-click="removeStreamDir()" ng-show="removeStreamDir != null">
+        Detach
+    </md-button>
 
     <div ng-show="curr_streams_data.length >0">
 
