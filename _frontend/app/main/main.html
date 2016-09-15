@@ -124,6 +124,7 @@
         <center>
 
             <div ng-show="total_files > 1">
+                <p class="md-body-1">
                 All selected files are published under directory <a href ng-click="open_current_dir();">{{dir_uuid}}</a>
 
                 <md-menu>
@@ -132,9 +133,11 @@
                     </md-button>
                     <md-menu-content width="3">
                         <md-menu-item>
-                            <input type="text" class="form-control"
-                                   ng-model="dir_uuid"
-                                   placeholder="Directory">
+                            <md-input-container md-no-float>
+                                <input type="text" class="form-control"
+                                       ng-model="dir_uuid"
+                                       placeholder="Directory">
+                            </md-input-container>
 
                             <md-button ng-click="apply_dir(dir_uuid)">Set</md-button>
                         </md-menu-item>
@@ -150,8 +153,9 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-
-                <p class="md-body-1">Download whole directory as .zip via:</p>
+                <br/>
+                Download whole directory as .zip via:
+                </p>
 
                 <input class="urls" ng-click="copy_to_clipboard($event)" readonly size="32"
                        value='{{host}}d/{{dir_uuid}}'>
@@ -163,16 +167,15 @@
                     QR code
                 </md-button>
 
-                <p></p>
                 <div ng-show="show_qr">
                     <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                         text="download_dir_uuid" image="true"></qr>
                 </div>
 
-                <p></p>
+
+
             </div>
         </center>
-
 
         <div ng-repeat="(key, theFiles) in the_files">
 
@@ -206,7 +209,7 @@
                             </div>
                             <div flex="nogrow">
                                 <center>
-                                    <input size="31" class="urls" ng-click="copy_to_clipboard($event)" readonly
+                                    <input size="32" class="urls" ng-click="copy_to_clipboard($event)" readonly
                                            value='{{ theFile.download_url }}'>
                                     <input size="4" class="urls" ng-click="copy_to_clipboard($event)" readonly
                                            value='curl -J -O {{ theFile.download_url }}'>
@@ -216,7 +219,6 @@
                                     </md-button>
 
                                     <div ng-show="theFile.show_qr">
-                                        <p></p>
                                         <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
                                             text="theFile.download_url" image="true"></qr>
                                     </div>
@@ -286,44 +288,46 @@
         exchange Directory name only once, and other party can see files inside.
         Keep in mind that when somebody guesses your directory name it can get all the files inside.</p>
 
-    <md-input-container>
-        <label>Directory name</label>
-        <input type="text" ng-model="bind_dir_uuid">
+    <md-input-container md-no-float>
+        <input type="text" ng-model="bind_dir_uuid" placeholder="Directory name">
     </md-input-container>
 
     <md-button class="md-raised" ng-click="bind_dir_uuid = ''">Clear</md-button>
     <md-button class="md-raised" ng-click="generate_random_dir_uuid()">Set random</md-button>
     <md-button class="md-primary md-raised" ng-click="saveMySettings()">Save</md-button>
 
-    <p>Current session Directory
-        <a ng-click="get_stream_data(dir_uuid)" href><span
-                ng-class="{'glyphicon glyphicon-folder-open' : dir_uuid == curr_stream, 'glyphicon glyphicon-folder-close' : dir_uuid != curr_stream}"
-                aria-hidden="true"></span> {{ dir_uuid }} </a></p>
+    <p class="md-body-1">Current session Directory <a ng-click="get_stream_data(dir_uuid)" href>{{ dir_uuid }} </a></p>
 
     <hr/>
 
-    <h3 class="md-headline">Browse directories</h3>
+    <h3 class="md-headline">Browse directories
+
+        <md-button class="md-primary md-raised" ng-click="showPrompt($event)">
+            Attach directory
+        </md-button>
+    </h3>
 
     <div layout="row" layout-xs="column">
         <div flex="nogrow">
-            <ul style="list-style-type: none;">
+            <ul style="list-style-type: none; margin: 0px">
 
                 <li ng-repeat="item in you_streams">
-                    <i class="material-icons" ng-show="item!=curr_stream">folder</i>
-                    <i class="material-icons" ng-show="item==curr_stream">folder_open</i>
-                    <a ng-click="get_stream_data(item)" href>{{ item }}</a>
+                    <div layout="row" layout-align="center center">
+                        <div flex="nogrow">
+                            <i class="material-icons" ng-if="item!=curr_stream">folder</i>
+                            <i class="material-icons" ng-if="item==curr_stream">folder_open</i>
+                        </div>
+                        <div flex>
+                            <p class="md-body-1" style="margin:0px">
+                                &nbsp;<a ng-click="get_stream_data(item)" href>{{ item }}</a>
+                            </p>
+                        </div>
+                    </div>
                 </li>
 
             </ul>
-
-            <md-button class="md-primary md-raised" ng-click="showPrompt($event)">
-                Attach new directory
-            </md-button>
-
         </div>
-        <div flex>
-            <div ng-include="'dir/dir.html'"></div>
-        </div>
+        <div layout-padding flex ng-include="'dir/dir.html'"></div>
     </div>
 
 </div>

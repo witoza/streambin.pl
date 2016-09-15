@@ -1,6 +1,6 @@
 <div ng-show="curr_stream != ''">
 
-    <h3 class="md-headline">Directory <code>{{curr_stream}}</code></h3>
+    <h3 class="md-headline">Now browsing directory <code>{{curr_stream}}</code></h3>
     <p>Found <b>{{curr_streams_data.length }}</b> files</p>
     <p>Direct URL: <a target="_blank" ng-href="#/dir/{{curr_stream}}"><b>{{host+"#/dir/"+curr_stream}}</b></a></p>
 
@@ -18,27 +18,27 @@
 
         <br/>
 
-        <table class="table table-hover">
+        <table>
             <thead>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Download URL</th>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Download URL</th>
             </thead>
             <tbody>
-            <tr ng-repeat="item in curr_streams_data">
-                    <td ng-if="item.file_meta.relativePath">
-                        <p class="filep_path_main">{{ item.file_meta.relativePath }}</p>
+                <tr ng-repeat="item in curr_streams_data">
+                        <td ng-if="item.file_meta.relativePath">
+                            <p class="filep_path_main">{{ item.file_meta.relativePath }}</p>
+                        </td>
+                        <td ng-if="!item.file_meta.relativePath">
+                            <p class="filep_path_main">{{ item.file_meta.name }}</p>
+                        </td>
+                    <td>
+                        {{ item.file_meta.size | bytes }}
                     </td>
-                    <td ng-if="!item.file_meta.relativePath">
-                        <p class="filep_path_main">{{ item.file_meta.name }}</p>
+                    <td>
+                        <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid }}</a>
                     </td>
-                <td>
-                    {{ item.file_meta.size | bytes }}
-                </td>
-                <td>
-                    <a ng-href="{{ host }}d/{{ item.file_meta.file_uuid }}">{{ host }}d/{{ item.file_meta.file_uuid }}</a>
-                </td>
-            </tr>
+                </tr>
             </tbody>
         </table>
 

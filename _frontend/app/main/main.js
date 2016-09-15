@@ -36,7 +36,7 @@ angular
                 var v = $(that).val();
                 console.log("copied", v);
                 document.execCommand('copy');
-                var cp = $('<p>Copied to clipboard!</p>');
+                var cp = $('<p style="margin-top: 0.25em;">Copied to clipboard!</p>');
                 cp.fadeOut(2000);
                 $(that).parent().append(cp);
             };
