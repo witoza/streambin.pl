@@ -189,73 +189,77 @@
                         <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
                     </span>
 
-                    <div layout="row" layout-xs="column" ng-repeat-start="theFile in theFiles"
-                         layout-align="center center">
-                        <div flex>
-                            <code class="pull-left">{{ theFile.metadata.rest_dir}}{{theFile.file.name}}</code>
-                            <code class="pull-right">{{theFile.file.size | bytes}}</code>
-                        </div>
-                        <div flex>
-                            <center>
-                                <input size="31" class="urls" ng-click="copy_to_clipboard($event)" readonly
-                                       value='{{ theFile.download_url }}'>
-                                <input size="4" class="urls" ng-click="copy_to_clipboard($event)" readonly
-                                       value='curl -J -O {{ theFile.download_url }}'>
 
-                                <md-button ng-click="theFile.show_qr = !theFile.show_qr">
-                                    QR code
-                                </md-button>
+                    <div ng-if="props[key].expanded">
 
-                                <div ng-show="theFile.show_qr">
-                                    <p></p>
-                                    <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
-                                        text="theFile.download_url" image="true"></qr>
-                                </div>
-                            </center>
-                        </div>
-                    </div>
-
-                    <div flex ng-repeat-end>
-
-                        <div ng-repeat="instance in theFile.instances" layout="row" layout-xs="column"
+                        <div layout="row" layout-xs="column" ng-repeat-start="theFile in theFiles"
                              layout-align="center center">
-                            <div flex>{{ instance.did }}</div>
                             <div flex>
-                                <md-progress-linear md-mode="determinate"
-                                                    value="{{instance.progress}}"></md-progress-linear>
+                                <code class="pull-left">{{theFile.metadata.rest_dir}}{{theFile.file.name}}</code>
+                                <code class="pull-right">{{theFile.file.size | bytes}}&nbsp;</code>
                             </div>
-                            <div flex>
-                                <p>
-                                <center>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}} ({{
-                                    instance.progress }} %)
+                            <div flex="nogrow">
+                                <center>
+                                    <input size="31" class="urls" ng-click="copy_to_clipboard($event)" readonly
+                                           value='{{ theFile.download_url }}'>
+                                    <input size="4" class="urls" ng-click="copy_to_clipboard($event)" readonly
+                                           value='curl -J -O {{ theFile.download_url }}'>
+
+                                    <md-button ng-click="theFile.show_qr = !theFile.show_qr">
+                                        QR code
+                                    </md-button>
+
+                                    <div ng-show="theFile.show_qr">
+                                        <p></p>
+                                        <qr type-number="0" correction-level="'L'" size="200" input-mode="'8bit'"
+                                            text="theFile.download_url" image="true"></qr>
+                                    </div>
                                 </center>
-                                </p>
-                            </div>
-                            <div flex>
-
-                                <div ng-show="instance.status !== 'Active'">
-
-                                                <span ng-show="instance.status_code === 200">
-                                                    <span class="label label-success">Success:</span>
-                                                </span>
-
-                                    <span ng-show="instance.status_code === -1">
-                                                    <span class="label label-warning">Error:</span>
-                                                </span>
-
-                                    <span>{{ instance.status }}</span>
-                                </div>
-
-                                <md-button class="md-accent md-raised" ng-click="instance.cancel()"
-                                           ng-show="instance.status === 'Active'">
-                                    Cancel
-                                </md-button>
                             </div>
                         </div>
 
-                        <div layout="row" layout-xs="column">
-                            <div flex>
-                                <hr size="1"/>
+                        <div flex ng-repeat-end>
+
+                            <div ng-repeat="instance in theFile.instances" layout="row" layout-xs="column"
+                                 layout-align="center center">
+                                <div flex>{{ instance.did }}</div>
+                                <div flex>
+                                    <md-progress-linear md-mode="determinate"
+                                                        value="{{instance.progress}}"></md-progress-linear>
+                                </div>
+                                <div flex>
+                                    <p>
+                                    <center>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}} ({{
+                                        instance.progress }} %)
+                                    </center>
+                                    </p>
+                                </div>
+                                <div flex>
+
+                                    <div ng-show="instance.status !== 'Active'">
+
+                                                    <span ng-show="instance.status_code === 200">
+                                                        <span class="label label-success">Success:</span>
+                                                    </span>
+
+                                        <span ng-show="instance.status_code === -1">
+                                                        <span class="label label-warning">Error:</span>
+                                                    </span>
+
+                                        <span>{{ instance.status }}</span>
+                                    </div>
+
+                                    <md-button class="md-accent md-raised" ng-click="instance.cancel()"
+                                               ng-show="instance.status === 'Active'">
+                                        Cancel
+                                    </md-button>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-xs="column">
+                                <div flex>
+                                    <hr size="1"/>
+                                </div>
                             </div>
                         </div>
                     </div>
