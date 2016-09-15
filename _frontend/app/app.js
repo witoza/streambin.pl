@@ -62,7 +62,6 @@ function gen_uuid() {
 angular
     .module('sbApp', [
         'ngMaterial',
-        'md.data.table',
         'angularFileUpload',
         'ja.qr',
         'ngStorage',

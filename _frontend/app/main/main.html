@@ -63,6 +63,8 @@
 
         <div class="my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
+                <br/><i class="material-icons">file_upload</i><br/>
+
                 <span ng-show="drag_and_drop">
                 Drag and drop here or
                 </span>
@@ -90,10 +92,9 @@
             <p>
         </center>
 
-
         <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
             <center>
-                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span><br>
+                <br/><i class="material-icons">file_upload</i><br/>
 
                 <span ng-show="total_files == 1">
                     <code><b>{{total_files}}</b> file has been selected</code><br/>
@@ -308,9 +309,9 @@
             <ul style="list-style-type: none;">
 
                 <li ng-repeat="item in you_streams">
-                    <a ng-click="get_stream_data(item)" href><span
-                            ng-class="{'glyphicon glyphicon-folder-open' : item==curr_stream, 'glyphicon glyphicon-folder-close' : item!=curr_stream}"
-                            aria-hidden="true"></span> {{ item }}</a>
+                    <i class="material-icons" ng-show="item!=curr_stream">folder</i>
+                    <i class="material-icons" ng-show="item==curr_stream">folder_open</i>
+                    <a ng-click="get_stream_data(item)" href>{{ item }}</a>
                 </li>
 
             </ul>
