@@ -275,7 +275,7 @@
 
 </div>
 
-<div ng-show="current_page=='p_dirs'">
+<div ng-show="current_page=='p_dirs'" flex>
 
     <h3 class="md-headline">Directory name, which your files will be published with</h3>
 
@@ -305,7 +305,7 @@
     <h3 class="md-headline">Browse directories</h3>
 
     <div layout="row" layout-xs="column">
-        <div flex="20">
+        <div flex="nogrow">
             <ul style="list-style-type: none;">
 
                 <li ng-repeat="item in you_streams">
@@ -411,28 +411,38 @@
 <br/>
 <hr/>
 
-<div class="pull-left">
-    <p class="md-body-1">
-        &copy; 2016 <a href="http://streambin.pl/#/">streambin.pl</a>
-        <br/>
-        This software is open-source, if you like it, help me share the costs of hosting.
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-        <input type="hidden" name="cmd" value="_s-xclick"/>
-        <input type="hidden" name="hosted_button_id" value="8XDVW727444WY"/>
-        <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit"
-               title="PayPal - The safer, easier way to pay online!" alt="Donate"/>
-        <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
-    </form>
-    </p>
+<div layout="row">
+
+    <div flex>
+        <p class="md-body-1">
+            &copy; 2016 <a href="http://streambin.pl/#/">streambin.pl</a>
+        </p>
+    </div>
+
+    <div flex="nogrow">
+        <p class="md-body-1">
+            <a ng-click="current_page = 'p_info'; " href>Learn more</a></small>
+            -
+            <a ng-click="showStats()" href>Stats</a>
+            -
+            <a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a>
+            <a href="https://github.com/witoza/streambin.pl" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+        </p>
+    </div>
+
 </div>
 
-<div class="pull-right">
-    <p class="md-body-1">
-        <a ng-click="current_page = 'p_info'; " href>Learn more</a></small>
-        -
-        <a ng-click="showStats()" href>Stats</a>
-        -
-        <a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a>
-        <a href="https://github.com/witoza/streambin.pl" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
-    </p>
+<div layout="row">
+    <div flex>
+        This software is open-source, if you like it, help me share the costs of hosting.
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick"/>
+            <input type="hidden" name="hosted_button_id" value="8XDVW727444WY"/>
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit"
+                   title="PayPal - The safer, easier way to pay online!" alt="Donate"/>
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1"/>
+        </form>
+    </div>
 </div>
+
+
