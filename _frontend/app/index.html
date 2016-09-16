@@ -61,8 +61,10 @@
         </h1>
     </center>
 
-    <div layout layout-align="center">
-        <div flex ng-view class="container"></div>
+    <div layout="row" layout-align="center">
+        <div class="container">
+            <div flex="noshrink" ng-view></div>
+        </div>
     </div>
 
 </body>

@@ -56,44 +56,46 @@
     <div ng-show="!total_files">
 
         <center>
-            <h3 class="md-headline">Choose files or directories<br/>
-                <p class="md-body-1">The files are streamed to the receiver, never persisted on the server</p>
+            <h3 class="md-headline">Choose files or directories
+                <p class="md-body-1">
+                    The files are streamed to the receiver, never persisted on the server
+                </p>
             </h3>
-        </center>
 
-        <div class="my-drop-zone" nv-file-over="" uploader="uploader">
-            <center>
+            <div class="my-drop-zone" nv-file-over="" uploader="uploader">
                 <br/><i class="material-icons">file_upload</i><br/>
 
                 <span ng-show="drag_and_drop">
-                Drag and drop here or
+                    Drag and drop here or
                 </span>
 
-                <md-button class="md-primary md-raised" ng-click="fire_click('#f1')">Select file</md-button>
-                <md-button ng-show="chrome" class="md-primary md-raised md-hue-2" ng-click="fire_click('#f2')">Select
-                    directory
+                <md-button class="md-primary md-raised" ng-click="fire_click('#f1')">
+                    <i class="fa fa-file" aria-hidden="true"></i>
+                    Select file
+                </md-button>
+                <md-button ng-show="chrome" class="md-primary md-raised md-hue-2" ng-click="fire_click('#f2')">
+                    <i class="fa fa-folder" aria-hidden="true"></i>
+                    Select directory
                 </md-button>
 
                 <span ng-show="!chrome">
                     <i>[use Chrome to select whole directories]</i>
                 </span>
-            </center>
-        </div>
+            </div>
+        </center>
+
     </div>
 
     <div ng-show="total_files > 0">
 
         <center>
-            <h3 class="md-headline">Now, you can download the files or select more</h3>
-            <p>To cancel publishing and close all the clients simply <a
-                    href="javascript:location.reload();">reload</a> or <a
-                    ng-click="close_page()" href>close</a> this page</p>
+            <h3 class="md-headline">Now, you can download the files or select more
+                <p class="md-body-1">
+                    To cancel publishing and close all the clients simply <a href="javascript:location.reload();">reload</a> or <a ng-click="close_page()" href>close</a> this page
+                <p>
+            </h3>
 
-            <p>
-        </center>
-
-        <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
-            <center>
+            <div class="my-drop-zone" nv-file-over="" uploader="uploader">
                 <br/><i class="material-icons">file_upload</i><br/>
 
                 <span ng-show="total_files == 1">
@@ -109,8 +111,13 @@
                 Drag and drop here or
                 </span>
 
-                <md-button class="md-primary md-raised" ng-click="fire_click('#f1')">Select file</md-button>
-                <md-button ng-show="chrome" class="md-primary md-raised" ng-click="fire_click('#f2')">Select directory
+                <md-button class="md-primary md-raised" ng-click="fire_click('#f1')">
+                    <i class="fa fa-file" aria-hidden="true"></i>
+                    Select file
+                </md-button>
+                <md-button ng-show="chrome" class="md-primary md-raised md-hue-2" ng-click="fire_click('#f2')">
+                    <i class="fa fa-folder" aria-hidden="true"></i>
+                    Select directory
                 </md-button>
 
                 <span ng-show="!chrome">
@@ -118,43 +125,40 @@
                 </span>
 
                 <p class="md-body-2">Keep this browser tab selected/visible - it greatly improves the upload speed</p>
-            </center>
-        </div>
-
-        <center>
+            </div>
 
             <div ng-show="total_files > 1">
                 <p class="md-body-1">
                 All selected files are published under directory <a href ng-click="open_current_dir();">{{dir_uuid}}</a>
 
-                <md-menu>
-                    <md-button ng-click="openMenu($mdOpenMenu, $event)">
-                        Change...
-                    </md-button>
-                    <md-menu-content width="3">
-                        <md-menu-item>
-                            <md-input-container md-no-float>
-                                <input type="text" class="form-control"
-                                       ng-model="dir_uuid"
-                                       placeholder="Directory">
-                            </md-input-container>
+                    <md-menu>
+                        <md-button ng-click="openMenu($mdOpenMenu, $event)">
+                            Change...
+                        </md-button>
+                        <md-menu-content width="3">
+                            <md-menu-item>
+                                <md-input-container md-no-float>
+                                    <input type="text" class="form-control"
+                                           ng-model="dir_uuid"
+                                           placeholder="Directory">
+                                </md-input-container>
 
-                            <md-button ng-click="apply_dir(dir_uuid)">Set</md-button>
-                        </md-menu-item>
-                        <md-menu-item>
-                            <md-button ng-click="apply_dir(original_dir_uuid); ">
-                                Directory <b>{{original_dir_uuid}}</b>
-                            </md-button>
-                        </md-menu-item>
-                        <md-menu-item>
-                            <md-button ng-click="apply_dir('public'); ">
-                                Directory <b>public</b>
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-                <br/>
-                Download whole directory as .zip via:
+                                <md-button ng-click="apply_dir(dir_uuid)">Set</md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="apply_dir(original_dir_uuid); ">
+                                    Directory <b>{{original_dir_uuid}}</b>
+                                </md-button>
+                            </md-menu-item>
+                            <md-menu-item>
+                                <md-button ng-click="apply_dir('public'); ">
+                                    Directory <b>public</b>
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <br/>
+                    Download whole directory as .zip via:
                 </p>
 
                 <input class="urls" ng-click="copy_to_clipboard($event)" readonly size="32"
@@ -172,14 +176,12 @@
                         text="download_dir_uuid" image="true"></qr>
                 </div>
 
-
-
             </div>
         </center>
 
         <div ng-repeat="(key, theFiles) in the_files">
 
-            <md-card md-theme="default" md-theme-watch>
+            <md-card>
                 <md-card-title>
                     <md-card-title-text>
                         <span class="md-headline">{{key}}</span>
@@ -193,12 +195,11 @@
                         <code><a href ng-click="props[key].expanded = !props[key].expanded">expand...</a></code>
                     </span>
 
-
                     <div ng-if="props[key].expanded">
 
                         <div layout="row" layout-xs="column" ng-repeat-start="theFile in theFiles">
                             <div flex>
-                                <hr size="1"/>
+                                <hr/>
                             </div>
                         </div>
 
@@ -232,34 +233,25 @@
                                  layout-align="center center">
                                 <div flex>{{ instance.did }}</div>
                                 <div flex>
-                                    <md-progress-linear md-mode="determinate"
-                                                        value="{{instance.progress}}"></md-progress-linear>
+                                    <md-progress-linear md-mode="determinate" value="{{instance.progress}}"></md-progress-linear>
                                 </div>
                                 <div flex>
-                                    <p>
-                                    <center>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}}
-                                        ({{
-                                        instance.progress }} %)
+                                    <center>
+                                         <p>{{ instance.total_received | bytes }} / {{ theFile.metadata.size | bytes}} ({{ instance.progress }} %)</p>
                                     </center>
-                                    </p>
                                 </div>
                                 <div flex>
-
                                     <div ng-show="instance.status !== 'Active'">
-
-                                                    <span ng-show="instance.status_code === 200">
-                                                        <span class="label label-success">Success:</span>
-                                                    </span>
+                                        <span ng-show="instance.status_code === 200">
+                                            <p>Success: {{ instance.status }}</p>
+                                        </span>
 
                                         <span ng-show="instance.status_code === -1">
-                                                        <span class="label label-warning">Error:</span>
-                                                    </span>
-
-                                        <span>{{ instance.status }}</span>
+                                            <p>Error: {{ instance.status }}</p>
+                                        </span>
                                     </div>
 
-                                    <md-button class="md-accent md-raised" ng-click="instance.cancel()"
-                                               ng-show="instance.status === 'Active'">
+                                    <md-button class="md-accent md-raised" ng-click="instance.cancel()"  ng-show="instance.status === 'Active'">
                                         Cancel
                                     </md-button>
                                 </div>
@@ -273,7 +265,6 @@
         </div>
 
     </div>
-
 
 </div>
 
@@ -292,16 +283,15 @@
         <input type="text" ng-model="bind_dir_uuid" placeholder="Directory name">
     </md-input-container>
 
-    <md-button class="md-raised" ng-click="bind_dir_uuid = ''">Clear</md-button>
-    <md-button class="md-raised" ng-click="generate_random_dir_uuid()">Set random</md-button>
-    <md-button class="md-primary md-raised" ng-click="saveMySettings()">Save</md-button>
+    <md-button class="md-raised" ng-click="bind_dir_uuid = ''">set clear</md-button>
+    <md-button class="md-raised" ng-click="generate_random_dir_uuid()">set random</md-button>
+    <md-button class="md-primary md-raised" ng-click="saveMySettings()">save</md-button>
 
     <p class="md-body-1">Current session Directory <a ng-click="get_stream_data(dir_uuid)" href>{{ dir_uuid }} </a></p>
 
     <hr/>
 
-    <h3 class="md-headline">Browse directories
-
+    <h3 class="md-headline" style="margin-bottom: 0px">Browse directories
         <md-button class="md-primary md-raised" ng-click="showPrompt($event)">
             Attach directory
         </md-button>
@@ -309,7 +299,8 @@
 
     <div layout="row" layout-xs="column">
         <div flex="nogrow">
-            <ul style="list-style-type: none; margin: 0px">
+
+            <ul style="list-style-type: none; margin: 0px;">
 
                 <li ng-repeat="item in you_streams">
                     <div layout="row" layout-align="center center">
@@ -333,7 +324,7 @@
 </div>
 
 <div ng-show="current_page=='p_info'">
-    <h2>Intro</h2>
+    <h3 class="md-headline">Intro</h3>
     <p><b>StreamBIN</b> allows you to use WebBrowser to share files in the Internet as long as web page is opened.
         It was build as a pet project to remedy the typical problem I had which was to send file from one laptop to the
         other without USB sticks, emails or services like Dropbox where you need an account.
@@ -342,7 +333,7 @@
         This works, as long as your web page is active, when you close/reload it, connection is closed, downloading on
         the other side stops and information about availability is destroyed.</p>
 
-    <h2>Features</h2>
+    <h3 class="md-headline">Features</h3>
     <ul>
         <li>Allowing user to send, and the other parties to receive files. For each file, unique, not possible to guess
             ID is generated which is used as a part of URL.
@@ -359,7 +350,7 @@
         <li>File is streamed no sooner than the receiver requests the file</li>
     </ul>
 
-    <h2>Use cases</h2>
+    <h3 class="md-headline">Use cases</h3>
     <p>There are several possibilities to use this, off the top of my head, you can:</p>
     <ul>
         <li>Send file to your different machine e.x. from laptop to phone or laptop 1 to laptop 2</li>
@@ -374,7 +365,7 @@
         </li>
     </ul>
 
-    <h2>Anonymity</h2>
+    <h3 class="md-headline">Anonymity</h3>
     <ul>
         <li>Application does not keep information about the publisher or receiver in permanent form. The data needed
             to set up connection is kept in server's RAM for the duration of file publishing
@@ -387,14 +378,15 @@
             apache access log (it logs accessed URLs, not content) on the server
         </li>
     </ul>
-    <h2>Legal</h2>
+
+    <h3 class="md-headline">Legal</h3>
     <ul>
         <li>The service is provided "AS-IS", which means, there is no warranty whatsoever, you use it at your own risk
         </li>
         <li>Please, don't upload anything illegal or download from unknown people</li>
     </ul>
 
-    <h2>Contact</h2>
+    <h3 class="md-headline">Contact</h3>
     <ul>
         <li>
             Visit project's <a href="https://github.com/witoza/streambin.pl" target="_blank">GitHub</a> page
@@ -407,8 +399,9 @@
 </div>
 
 <div ng-show="current_page=='p_stats'">
-    <h2>Stats</h2>
-    <p>They are cleared when app restarts.</p>
+    <h3 class="md-headline">Stats
+        <p class="md-body-1">They are cleared when the app restarts.</p>
+    </h3>
     <pre>{{ stats | json}}</pre>
 </div>
 
@@ -425,7 +418,7 @@
 
     <div flex="nogrow">
         <p class="md-body-1">
-            <a ng-click="current_page = 'p_info'; " href>Learn more</a></small>
+            <a ng-click="current_page = 'p_info'; " href>Learn more</a>
             -
             <a ng-click="showStats()" href>Stats</a>
             -
