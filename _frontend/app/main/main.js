@@ -265,6 +265,10 @@ angular
                 $scope.total_files++;
                 $scope.total_size += fileItem.metadata.size;
 
+                if ($scope.total_size > 500000000) {
+                    $scope.display_info_big_files = true;
+                }
+
                 if (dir === "/") {
                     add_msg('File <b>' + fileItem.metadata.name + '</b> has been added');
 
